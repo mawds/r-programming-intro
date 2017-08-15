@@ -349,6 +349,53 @@ permalink: /discuss/
 FIXME
 '''
 
+EXTRAS_CHALLENGES_MD = '''\
+---
+layout: page 
+title: Challenges and Discussion
+permalink: /challenge/
+---
+<script>
+  window.onload = function() {
+    var lesson_episodes = [
+    {% for episode in site.episodes %}
+    "{{ episode.url}}"{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+    ];
+    var xmlHttp = [];  /* Required since we are going to query every episode. */
+    for (i=0; i < lesson_episodes.length; i++) {
+      xmlHttp[i] = new XMLHttpRequest();
+      xmlHttp[i].episode = lesson_episodes[i];  /* To enable use this later. */
+      xmlHttp[i].onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var article_here = document.getElementById(this.episode);
+        var parser = new DOMParser();
+        var htmlDoc = parser.parseFromString(this.responseText,"text/html");
+        var htmlDocBlockquote = htmlDoc.getElementsByClassName("challenge");
+        for(j=0; j < htmlDocBlockquote.length; j++) {
+                article_here.innerHTML += htmlDocBlockquote[j].outerHTML;
+        }
+        }
+      }
+      episode_url = "{{ page.root }}" + lesson_episodes[i];
+      xmlHttp[i].open("GET", episode_url);
+      xmlHttp[i].send(null);
+    }
+    /* Call the code to fold the solutions away */
+    var element = document.createElement("script");
+    element.src = "../assets/js/lesson.js";
+    document.body.appendChild(element);
+  }
+</script>
+{% comment %}
+Create anchor for each one of the episodes.
+{% endcomment %}
+{% for episode in site.episodes %}
+<article id="{{ episode.url }}"></article>
+{% endfor %}
+</script>
+'''
+
 EXTRAS_FIGURES_MD = '''\
 ---
 layout: page
@@ -383,6 +430,7 @@ BOILERPLATE = (
     ('_episodes/01-introduction.md', EPISODES_INTRODUCTION_MD),
     ('_extras/about.md', EXTRAS_ABOUT_MD),
     ('_extras/discuss.md', EXTRAS_DISCUSS_MD),
+    ('_extras/challenge.md', EXTRAS_CHALLENGES_MD),
     ('_extras/figures.md', EXTRAS_FIGURES_MD),
     ('_extras/guide.md', EXTRAS_GUIDE_MD),
     ('_includes/all_figures.html', INCLUDES_ALL_FIGURES_HTML)
