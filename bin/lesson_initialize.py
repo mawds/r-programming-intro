@@ -340,19 +340,10 @@ permalink: /about/
 {% include carpentries.html %}
 '''
 
-EXTRAS_DISCUSS_MD = '''\
----
-layout: page
-title: Discussion
-permalink: /discuss/
----
-FIXME
-'''
-
 EXTRAS_CHALLENGES_MD = '''\
 ---
 layout: page 
-title: Challenges and Discussion
+title: Challenges and Discussion (beta)
 permalink: /challenge/
 ---
 <script>
@@ -428,7 +419,6 @@ BOILERPLATE = (
     ('aio.md', ROOT_AIO_MD),
     ('_episodes/01-introduction.md', EPISODES_INTRODUCTION_MD),
     ('_extras/about.md', EXTRAS_ABOUT_MD),
-    ('_extras/discuss.md', EXTRAS_DISCUSS_MD),
     ('_extras/challenge.md', EXTRAS_CHALLENGES_MD),
     ('_extras/figures.md', EXTRAS_FIGURES_MD),
     ('_extras/guide.md', EXTRAS_GUIDE_MD),
