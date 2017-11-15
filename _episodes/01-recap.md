@@ -11,10 +11,7 @@ keypoints:
 source: Rmd
 ---
 
-```{r, include=FALSE}
-source("../bin/chunk-options.R")
-knitr_fig_path("01-")
-```
+
 
 ## Introduction 
 
@@ -48,8 +45,41 @@ Cover:
 
 Although R contains functions to load data into it, we used the tidyverse equivalents in the previous course.   We loaded CSV data using the `read_csv()` function.  For example, to load the `gapminder` data we used:
 
-```{r}
+
+~~~
 library(tidyverse)
+~~~
+{: .r}
+
+
+
+~~~
+── Attaching packages ────────────────────────────────── tidyverse 1.2.0 ──
+~~~
+{: .output}
+
+
+
+~~~
+✔ ggplot2 2.2.1     ✔ readr   1.1.1
+✔ tibble  1.3.4     ✔ purrr   0.2.4
+✔ tidyr   0.7.2     ✔ dplyr   0.7.4
+✔ ggplot2 2.2.1     ✔ forcats 0.2.0
+~~~
+{: .output}
+
+
+
+~~~
+── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+~~~
+{: .output}
+
+
+
+~~~
 gapminder <- read_csv(file = "data/gapminder-FiveYearData.csv",
                       col_types = cols(
                         country = col_character(),
@@ -59,8 +89,8 @@ gapminder <- read_csv(file = "data/gapminder-FiveYearData.csv",
                         lifeExp = col_double(),
                         gdpPercap = col_double()
                       ) )
-
-```
+~~~
+{: .r}
 
 We explicitly list the column type of each variable in order to improve the robustness of our code.
 
@@ -162,9 +192,29 @@ TODO compare pros and cons - blank missing data will break the latter, but easie
 
 We also have to deal with the text at the start of the file.
 
-```{r}
+
+~~~
 co2 <- read_table("data/co2_weekly_mlo.txt",
                   comment = "#",
                   col_names = FALSE)
-```
+~~~
+{: .r}
+
+
+
+~~~
+Parsed with column specification:
+cols(
+  X1 = col_integer(),
+  X2 = col_integer(),
+  X3 = col_integer(),
+  X4 = col_double(),
+  X5 = col_double(),
+  X6 = col_integer(),
+  X7 = col_double(),
+  X8 = col_double(),
+  X9 = col_double()
+)
+~~~
+{: .output}
 
