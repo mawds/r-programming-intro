@@ -1,0 +1,21 @@
+---
+title: "Introduction"
+teaching: 45
+exercises: 10
+questions:
+- "Questions"
+objectives:
+- "Objectives"
+keypoints:
+- "Key points"
+source: Rmd
+---
+
+```{r, include=FALSE}
+source("../bin/chunk-options.R")
+knitr_fig_path("01-")
+```
+
+## Heading
+
+Lesson goes here
