@@ -5,7 +5,7 @@ exercises: 10
 questions:
 - "Questions"
 objectives:
-- "Objectives"
+- "To recap the material covered in "Introdution to the Tidyverse""
 keypoints:
 - "Key points"
 source: Rmd
@@ -16,6 +16,10 @@ source("../bin/chunk-options.R")
 knitr_fig_path("01-")
 ```
 
-## Heading
+## Introduction 
 
-Lesson goes here
+The University of Manchester "Introduction to the Tidyverse" covers...
+
+This episode recaps this course.
+
+
