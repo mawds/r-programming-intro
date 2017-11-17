@@ -1,0 +1,22 @@
+---
+title: "Functions 1"
+teaching: 45
+exercises: 10
+questions:
+- "Questions"
+objectives:
+- "To recap the material covered in Introdution to the Tidyverse"
+keypoints:
+- "Key points"
+source: Rmd
+---
+
+```{r, include=FALSE}
+source("../bin/chunk-options.R")
+knitr_fig_path("01-")
+```
+
+## Introduction 
+
+
+Lesson goes here

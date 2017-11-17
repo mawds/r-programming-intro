@@ -3,11 +3,17 @@ title: "Introduction"
 teaching: 45
 exercises: 10
 questions:
-- "Questions"
+- "How do I load data into R?"
+- "How can I manipulate and create new variables in a data set?"
+- "How can I plot my data?"
+- "How do I handle date data?"
 objectives:
-- "To recap the material covered in Introdution to the Tidyverse"
+- "To recap the material covered in the Introdution to the Tidyverse course"
 keypoints:
-- "Key points"
+- "The tidyverse provdes an integrated set of packages that are useful for data analysis."
+- "Use `read_xxx()` to read in different types of data, e.g. `read_csv()` for comma separated data."
+- "`ggplot2` lets us generate graphs."
+- "The `lubridate` package makes dealing with dates and times easier."
 source: Rmd
 ---
 
@@ -190,31 +196,323 @@ going to work for the CO2 data.  There are two different approaches we can use:
  
 TODO compare pros and cons - blank missing data will break the latter, but easier to implement the former
 
-We also have to deal with the text at the start of the file.
+We also have to deal with the text at the start of the file.  Fortunately the documentation text is 
+preceeded with a `#` character on each row.  This can serve as a _comment_ character; just like in R.  The readr `read_xxx()` functions allow us to specify a character to treat as a comment using the `comment="#"` option.
+
+
 
 
 ~~~
-co2 <- read_table("data/co2_weekly_mlo.txt",
+co2weekly <- read_table("data/co2_weekly_mlo.txt",
                   comment = "#",
-                  col_names = FALSE)
+                  col_names = c("yyyy",
+                                "mm",
+                                "dd",
+                                "decYear",
+                                "co2Ppm",
+                                "days",
+                                "co2OneYearAgo",
+                                "co2TenYearsAgo",
+                                "c02Increase1800"),
+                  col_types = cols(
+                    yyyy = col_integer(),
+                    mm = col_integer(),
+                    dd = col_integer(),
+                    decYear = col_double(),
+                    co2Ppm = col_double(),
+                    days = col_integer(),
+                    co2OneYearAgo = col_double(),
+                    co2TenYearsAgo = col_double(),
+                    c02Increase1800 = col_double()
+                  ))
+~~~
+{: .r}
+
+
+As with all the readr loading functions, we obtain a tibble, which we can view directly from Rstudio (using the environment pane, which by default is in the top right), or using the `print()` function:
+
+
+~~~
+print(co2weekly) # use, e.g. n=100 to print more rows
 ~~~
 {: .r}
 
 
 
 ~~~
-Parsed with column specification:
-cols(
-  X1 = col_integer(),
-  X2 = col_integer(),
-  X3 = col_integer(),
-  X4 = col_double(),
-  X5 = col_double(),
-  X6 = col_integer(),
-  X7 = col_double(),
-  X8 = col_double(),
-  X9 = col_double()
-)
+# A tibble: 2,233 x 9
+    yyyy    mm    dd  decYear co2Ppm  days co2OneYearAgo co2TenYearsAgo
+   <int> <int> <int>    <dbl>  <dbl> <int>         <dbl>          <dbl>
+ 1  1974     5    19 1974.380 333.34     6       -999.99        -999.99
+ 2  1974     5    26 1974.399 332.95     6       -999.99        -999.99
+ 3  1974     6     2 1974.418 332.32     5       -999.99        -999.99
+ 4  1974     6     9 1974.437 332.18     7       -999.99        -999.99
+ 5  1974     6    16 1974.456 332.37     7       -999.99        -999.99
+ 6  1974     6    23 1974.475 331.59     6       -999.99        -999.99
+ 7  1974     6    30 1974.495 331.68     6       -999.99        -999.99
+ 8  1974     7     7 1974.514 331.44     6       -999.99        -999.99
+ 9  1974     7    14 1974.533 330.85     5       -999.99        -999.99
+10  1974     7    21 1974.552 330.76     7       -999.99        -999.99
+# ... with 2,223 more rows, and 1 more variables: c02Increase1800 <dbl>
 ~~~
 {: .output}
+
+In contrast to the gapminder data we used previously, it looks like we will need to tidy the data-set before we use it for further analysis.  It looks like `-999.99` is used as a missing or invalid data value.  We will deal with this later when we come to writing functions.   
+
+It would be useful to combine the fields `yyyy`, `mm`, `dd` into a "proper" date.   The `lubridate` package, which is part of the tidyverse offers lots of functions that make dealing with dates easier.   The `lubridate` package isn't loaded by default when we use `library("tidyverse")`.
+
+Lubridate comes with several functions to process strings that look like dates (e.g. "1 November 2017") into date objects.
+
+TODO more on date objects - why bother making them etc.
+
+
+~~~
+library(lubridate)
+~~~
+{: .r}
+
+
+
+~~~
+
+Attaching package: 'lubridate'
+~~~
+{: .output}
+
+
+
+~~~
+The following object is masked from 'package:base':
+
+    date
+~~~
+{: .output}
+
+
+
+~~~
+dmy("1 November 2017")
+~~~
+{: .r}
+
+
+
+~~~
+[1] "2017-11-01"
+~~~
+{: .output}
+
+
+
+~~~
+dmy("1 Jan 2018")
+~~~
+{: .r}
+
+
+
+~~~
+[1] "2018-01-01"
+~~~
+{: .output}
+
+
+
+~~~
+dmy("1-12-2017")
+~~~
+{: .r}
+
+
+
+~~~
+[1] "2017-12-01"
+~~~
+{: .output}
+
+
+
+~~~
+mdy("12-1-2017")
+~~~
+{: .r}
+
+
+
+~~~
+[1] "2017-12-01"
+~~~
+{: .output}
+
+
+
+~~~
+dmy("13-1-2017")
+~~~
+{: .r}
+
+
+
+~~~
+[1] "2017-01-13"
+~~~
+{: .output}
+
+
+
+~~~
+# But note:
+mdy("13-1-2017")
+~~~
+{: .r}
+
+
+
+~~~
+Warning: All formats failed to parse. No formats found.
+~~~
+{: .error}
+
+
+
+~~~
+[1] NA
+~~~
+{: .output}
+
+We need convert our `yyyy`, `mm` and `dd` fields into a string that looks like a date. To do this we can use the `paste()` function:
+
+
+~~~
+paste("a", "b", "c")
+~~~
+{: .r}
+
+
+
+~~~
+[1] "a b c"
+~~~
+{: .output}
+
+Following the tidyverse approach of pipes (` %>% `)
+
+
+~~~
+co2weekly %>% mutate(datestring = paste(yyyy, mm, dd)) %>%  select(yyyy, mm, dd, datestring)
+~~~
+{: .r}
+
+
+
+~~~
+# A tibble: 2,233 x 4
+    yyyy    mm    dd datestring
+   <int> <int> <int>      <chr>
+ 1  1974     5    19  1974 5 19
+ 2  1974     5    26  1974 5 26
+ 3  1974     6     2   1974 6 2
+ 4  1974     6     9   1974 6 9
+ 5  1974     6    16  1974 6 16
+ 6  1974     6    23  1974 6 23
+ 7  1974     6    30  1974 6 30
+ 8  1974     7     7   1974 7 7
+ 9  1974     7    14  1974 7 14
+10  1974     7    21  1974 7 21
+# ... with 2,223 more rows
+~~~
+{: .output}
+
+
+
+~~~
+# Has produced something that looks like it should parse as a date
+# Note we could have pasted the yyyy mm dd fields in (almost) any order, provided we use the 
+# corresponding lubridate function to convert them to a date
+
+co2weekly %>% mutate(sampledate = ymd(paste(yyyy, mm, dd)))
+~~~
+{: .r}
+
+
+
+~~~
+# A tibble: 2,233 x 10
+    yyyy    mm    dd  decYear co2Ppm  days co2OneYearAgo co2TenYearsAgo
+   <int> <int> <int>    <dbl>  <dbl> <int>         <dbl>          <dbl>
+ 1  1974     5    19 1974.380 333.34     6       -999.99        -999.99
+ 2  1974     5    26 1974.399 332.95     6       -999.99        -999.99
+ 3  1974     6     2 1974.418 332.32     5       -999.99        -999.99
+ 4  1974     6     9 1974.437 332.18     7       -999.99        -999.99
+ 5  1974     6    16 1974.456 332.37     7       -999.99        -999.99
+ 6  1974     6    23 1974.475 331.59     6       -999.99        -999.99
+ 7  1974     6    30 1974.495 331.68     6       -999.99        -999.99
+ 8  1974     7     7 1974.514 331.44     6       -999.99        -999.99
+ 9  1974     7    14 1974.533 330.85     5       -999.99        -999.99
+10  1974     7    21 1974.552 330.76     7       -999.99        -999.99
+# ... with 2,223 more rows, and 2 more variables: c02Increase1800 <dbl>,
+#   sampledate <date>
+~~~
+{: .output}
+
+
+
+~~~
+co2weekly <- co2weekly %>% mutate(sampledate = ymd(paste(yyyy, mm, dd))) 
+~~~
+{: .r}
+
+## Plotting
+
+We used `ggplot2` to produce graphs in the previous course.  As a recap, let's plot CO_2
+concentration against time for this data-set.  `ggplot2` is loaded as part of the tidyverse.
+
+
+~~~
+ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line() 
+~~~
+{: .r}
+
+<img src="../fig/rmd-01-unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
+
+
+
+> ## Challenge:  Improving the graph
+> The graph is dominated by the missing data. Dealing with this properly is the subject of the
+> next episode.  Before we do this, use the ggplot cheat-sheet to work out how to
+> alter the y axis of the plot to better display the data.  Alter the axis labels to something
+> more informative, and give the graph a title.
+> 
+> > ## Solution
+> >
+> > 
+> > ~~~
+> > ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) +
+> >  geom_line() +
+> >  coord_cartesian(ylim = c(300,450))  +
+> >  # scale_y_continuous(limits = c(300,450))  could also use this - note how data outside
+> >  # the plot area are handled.
+> >  labs(x = "Sample date",
+> >       y = "CO2 parts per million",
+> >       title = "CO2 level") +
+> > ~~~
+> > {: .r}
+> > 
+> > 
+> > 
+> > ~~~
+> > Error: <text>:9:0: unexpected end of input
+> > 7:       y = "CO2 parts per million",
+> > 8:       title = "CO2 level") +
+> >   ^
+> > ~~~
+> > {: .error}
+> > 
+> > Note we can use `scale_x_date(date_labels = "5 years", date_format  = "%Y"), for example
+> > to alter the formatting of the x axis.   This is one of the benefits of treating the dates
+> > as a date object; it defines methods we can use to do date specific things with the data.
+> {: .solution}
+{: .challenge}
+
+
 
