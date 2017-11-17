@@ -257,7 +257,8 @@ print(co2weekly) # use, e.g. n=100 to print more rows
 ~~~
 {: .output}
 
-In contrast to the gapminder data we used previously, it looks like we will need to tidy the data-set before we use it for further analysis.  It looks like `-999.99` is used as a missing or invalid data value.  We will deal with this later when we come to writing functions.   
+In contrast to the gapminder data we used previously, it looks like we will need to tidy the data-set before we use it for further analysis.  It looks like `-999.99` is used as a missing or invalid data value.  We will deal with this later when we come to writing functions.   FIXME - do this here, using tidyverse and pipes.  Then compare to
+programming approach in next episode.
 
 It would be useful to combine the fields `yyyy`, `mm`, `dd` into a "proper" date.   The `lubridate` package, which is part of the tidyverse offers lots of functions that make dealing with dates easier.   The `lubridate` package isn't loaded by default when we use `library("tidyverse")`.
 
