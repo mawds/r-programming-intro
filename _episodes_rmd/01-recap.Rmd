@@ -247,6 +247,11 @@ co2weekly <- co2weekly %>% mutate(sampledate = ymd(paste(yyyy, mm, dd)))
 
 ```
 
+```{r, echo=FALSE}
+save.image(file="checkpoints/01end.RData")
+```
+
+
 ## Plotting
 
 We used `ggplot2` to produce graphs in the previous course.  As a recap, let's plot CO_2
