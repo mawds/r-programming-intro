@@ -578,3 +578,22 @@ We can use a `for` loop to run our field cleaning function `cleanfield()` on mor
 
 
 
+
+
+## Checking our results
+
+Let's run our function on our main data-set, and plot the results to  verify it has done what we expected:
+
+
+~~~
+fieldsWithMissingData <- c("co2Ppm", "co2OneYearAgo", "co2TenYearsAgo", "co2Increase1800")
+co2weekly <- cleanfields(co2weekly, fieldsWithMissingData) 
+ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line() 
+~~~
+{: .r}
+
+<img src="../fig/rmd-02-func-R-unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" style="display: block; margin: auto;" />
+
+The `-999.99`s that were visible on the plot in episode 1 have now been removed.  `NA`s are shown as gaps in the 
+line plotted by `geom_line()`
+

@@ -408,3 +408,18 @@ cleanfields <- function(dataset, fieldlist){
 
 ```
 
+
+
+## Checking our results
+
+Let's run our function on our main data-set, and plot the results to  verify it has done what we expected:
+
+```{r}
+fieldsWithMissingData <- c("co2Ppm", "co2OneYearAgo", "co2TenYearsAgo", "co2Increase1800")
+co2weekly <- cleanfields(co2weekly, fieldsWithMissingData) 
+ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line() 
+```
+
+The `-999.99`s that were visible on the plot in episode 1 have now been removed.  `NA`s are shown as gaps in the 
+line plotted by `geom_line()`
+
