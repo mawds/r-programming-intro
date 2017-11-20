@@ -631,6 +631,211 @@ which suggests we can use `read_table()` to load a file.  The missing data value
 > {: .solution}
 {: .challenge}
 
+## Getting started
+
+Let's load one of the weather files into R, using the `read_table()` function, as we already know how to do this.
+We'll use the following command, so that we are all using the same variable names (you should copy and paste
+this command to save typing):
+
+FIXME? Get participants to generate col_types and check sensible guesses?
+
+
+~~~
+weather <- read_table("data/met_mlo_insitu_1_obop_hour_1977.txt",
+                      col_names = c("obs",
+                                    "yyyy",
+                                    "mm",
+                                    "dd",
+                                    "hh",
+                                    "winddir",
+                                    "windspeed",
+                                    "windsteadiness",
+                                    "pressure",
+                                    "temperature2m",
+                                    "temperature10m",
+                                    "temperaturetop",
+                                    "relhumidity",
+                                    "precipitation" ),
+                      col_types = cols(
+                        obs = col_character(),
+                        yyyy = col_integer(),
+                        mm = col_character(),
+                        dd = col_character(),
+                        hh = col_character(),
+                        winddir = col_integer(),
+                        windspeed = col_double(),
+                        windsteadiness = col_integer(),
+                        pressure = col_double(),
+                        temperature2m = col_double(),
+                        temperature10m = col_double(),
+                        temperaturetop = col_double(),
+                        relhumidity = col_integer(),
+                        precipitation = col_integer()
+                      )
+)
+~~~
+{: .r}
+
+> ## Challenge
+>
+> Create a new field, `recdate` that contains the date and hour of the observation, stored
+> as a `datetime` (this is a special type of data that will let us handle the date and time
+> in a similar way to the dates we used with the CO2 data).  
+> 
+> Hint: Look at the help file for `lubridate`'s `ymd_h()` function
+> 
+> > ## Solution
+> > 
+> > ~~~
+> > weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
+> > ~~~
+> > {: .r}
+> {: .solution}
+{: .challenge}
+
+
+## An improved field cleaning function
+
+Let's deal with making our `cleanfields()` function work with 
+something other than the default missing value.   We will need to provide a
+way of giving the function a list of variable names *and* the value that we
+should treat as missing.
+
+One way of doing this is to provide a named vector of missing values.  We
+can assign names to elements of a vector in R:
+
+
+~~~
+missingvalues <- c(winddir = -999, windspeed = -999.9, temperature10m = -999.9)
+missingvalues
+~~~
+{: .r}
+
+
+
+~~~
+       winddir      windspeed temperature10m 
+        -999.0         -999.9         -999.9 
+~~~
+{: .output}
+We can extract the names of the vector using the `names()` function:
+
+~~~
+names(missingvalues)
+~~~
+{: .r}
+
+
+
+~~~
+[1] "winddir"        "windspeed"      "temperature10m"
+~~~
+{: .output}
+
+Note that we can also use the `names()` function to set the names of an object:
+
+
+~~~
+myvec <- c(1,2,3)
+names(myvec) <- c("a","b","c")
+myvec
+~~~
+{: .r}
+
+
+
+~~~
+a b c 
+1 2 3 
+~~~
+{: .output}
+This approach is easier if we're nameing vectors in a function, for example.  But it makes it easier
+to assign names to the wrong elements if you type the two vectors by hand.  In contrast, in the first method it
+is clearer *what* the name we're assigning to each element is.
+
+This gives us all the "ingredients" we need to write a function that we can use to clean the weather data.
+
+FIXME - too many concepts in one go for this challenge? Perhaps split into 2 challenges?
+
+> ## Challenge: Cleaning the weather data
+> 
+> Using the `cleanfields()` function we wrote earlier as a starting point, create a function, `cleanfields2()`
+> that will read a named vector of missing values and use these to clean the data.  
+> 
+> Hint:  There were two different approaches to using `for`:
+> 
+> ~~~
+> for(field in fieldlist){
+>   print(field)
+> }
+> 
+> for(i in 1:length(fieldlist)){
+>   print(fieldlist[i])
+> }
+> ~~~
+> {: .r}
+> 
+> You will find it easier to use the second form, since we will need to refer to the positions of the 
+> elements in our vector of missing values.
+> 
+> > ## Solution
+> > 
+> > One way of solving this challenge is: 
+> > 
+> > 
+> > ~~~
+> > cleanfields2 <- function(dataset, missinglist){
+> >   
+> >   variablenames <- names(missinglist) 
+> >   for (i in 1:length(missinglist)) {
+> >     variablename = variablenames[i] 
+> >     missingval = missinglist[i] 
+> >     dataset[[ variablename ]] <- cleanfield(dataset[[ variablename ]], missingvalue = missingval)
+> >   }
+> >   
+> >   return(dataset) 
+> > }
+> > ~~~
+> > {: .r}
+> > 
+> > We could write this more succinctly, for example using `dataset[[ variablenames[i] ]]` instead of defining the 
+> > `variablename` variable on each iteration of the `for` loop.  This is, however, less clear.
+> > 
+> {: .solution }
+{: .challenge }
+
+~~~
+sum(weather$temperature10m == -999.9 )
+~~~
+{: .r}
+
+
+
+~~~
+[1] 8760
+~~~
+{: .output}
+
+
+
+~~~
+sum(cleanfields2(weather, missingvalues)$temperature10m == -999.9, na.rm = TRUE)
+~~~
+{: .r}
+
+
+
+~~~
+[1] 0
+~~~
+{: .output}
+
+
+
+Ideally we want our `cleanfields()` function to work in our existing code
+too.  This is referred to as backwards compatibility.
+
+
 ## Testing our code
 
 New episode?  
