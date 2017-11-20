@@ -376,7 +376,7 @@ ifelse(demodata == 5, demodata,  NA)
 
 FIXME - explain function in detail
 
-> ## Challenge: putting this all together
+> ## Challenge: PUTting this all together
 > 
 > Write a function, `cleanfield()` that will take a vector of data and replace
 > all instances of "-999.99" with NA, and then return a vector with the cleaned data.
@@ -386,7 +386,6 @@ FIXME - explain function in detail
 > > ## Solution
 > > 
 > > ~~~
-> > > >
 > > cleanfield <- function(indata, missingvalue = -999.99){
 > >  outdata <- ifelse(indata == missingvalue, NA, indata)
 > >  return(outdata)
@@ -394,18 +393,8 @@ FIXME - explain function in detail
 > > ~~~
 > > {: .r}
 > > 
-> > 
-> > 
-> > ~~~
-> > Error: <text>:1:1: unexpected '>'
-> > 1: >
-> >     ^
-> > ~~~
-> > {: .error}
-> > 
 > {: .solution}
 {: .challenge}
-```
 
 
 
@@ -445,7 +434,7 @@ and
 co2small[["co2PPm"]] <- cleanfield(co2small[["co2Ppm"]])
 ```
 
-The second line of code will produce a *new* column, `co2PPm`, rather than replacing the exiting data.
+The second line of code will produce a *new* column, `co2PPm`, rather than replacing the existing data.
 
 Let's write another function that will take a tibble, and a vector of variables we wish to apply
 the `cleanfield()` function to.
