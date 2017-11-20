@@ -439,6 +439,8 @@ The second line of code will produce a *new* column, `co2PPm`, rather than repla
 Let's write another function that will take a tibble, and a vector of variables we wish to apply
 the `cleanfield()` function to.
 
+## For loops
+
 In this case we will need to loop over the vector of variable names.   The `for` loop is the programming construct we can use to do this:
 
 
@@ -489,7 +491,12 @@ for (i in 1:length(testdata)) {
 ~~~
 {: .output}
 
-FIXME - discuss why we use length
+> ## Making your code robust
+>
+> In the example above we could have written `for (i in 1:6)`, since this is the length
+> of the testdata vector.    By using `length(testdata)` our code will be able to handle
+> any length of the `testdata` vector.  This makes the code more generalisable and robust
+{: .callout}
 
 By setting up the loop this way we can assign new values to the elements of `testtdata`.  For example, to multiply each element by 2, we could use:
 
