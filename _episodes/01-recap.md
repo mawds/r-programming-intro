@@ -464,8 +464,6 @@ co2weekly <- co2weekly %>% mutate(sampledate = ymd(paste(yyyy, mm, dd)))
 {: .r}
 
 
-
-
 ## Plotting
 
 We used `ggplot2` to produce graphs in the previous course.  As a recap, let's plot CO_2
@@ -477,7 +475,7 @@ ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line()
 ~~~
 {: .r}
 
-<img src="../fig/rmd-01-unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" />
+<img src="../fig/rmd-01-unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
 
 
 
@@ -517,6 +515,8 @@ ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line()
 > > as a date object; it defines methods we can use to do date specific things with the data.
 > {: .solution}
 {: .challenge}
+
+
 
 
 
