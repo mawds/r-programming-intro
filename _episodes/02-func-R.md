@@ -983,6 +983,79 @@ is.null(c(1,2,3))
 > {: .solution }
 {: .challenge }
 
+## Processing a file
+
+We now have all the elements we need to load and process a file.  We can:
+
+* Load a file using `read_table()`
+* Make the datetime field, using `ymd_h()`
+* Clean the data using `cleandataset()`
+
+Let's combine these functions into a single function.  This will take a single argument; the name of the file
+it is to read.  
+
+
+~~~
+loadWeatherData <- function(infile){
+  # Load in a weather data file
+  
+weather <- read_table(infile,
+                      col_names = c("obs",
+                                    "yyyy",
+                                    "mm",
+                                    "dd",
+                                    "hh",
+                                    "winddir",
+                                    "windspeed",
+                                    "windsteadiness",
+                                    "pressure",
+                                    "temperature2m",
+                                    "temperature10m",
+                                    "temperaturetop",
+                                    "relhumidity",
+                                    "precipitation" ),
+                      col_types = cols(
+                        obs = col_character(),
+                        yyyy = col_integer(),
+                        mm = col_character(),
+                        dd = col_character(),
+                        hh = col_character(),
+                        winddir = col_integer(),
+                        windspeed = col_double(),
+                        windsteadiness = col_integer(),
+                        pressure = col_double(),
+                        temperature2m = col_double(),
+                        temperature10m = col_double(),
+                        temperaturetop = col_double(),
+                        relhumidity = col_integer(),
+                        precipitation = col_integer()
+                      )
+)
+
+  
+ weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
+
+ missingvalues <- c(winddir = -999,
+                    windspeed = -999.9,
+                    windsteadiness = -9,
+                    pressure = -999.9,
+                    temperature2m = -999.9,
+                    temperature10m = -999.9,
+                    temperaturetop = -999.9,
+                    relhumidity = -99,
+                    precipitation = -99)
+ weather <- cleandataset(weather, missingvalues)
+
+ return(weather)
+}
+
+cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_2010.txt")
+~~~
+{: .r}
+
+
+
+
 ## Testing our code
 
 We should check our functions are doing what we think they are
