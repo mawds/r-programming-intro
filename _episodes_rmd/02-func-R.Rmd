@@ -423,3 +423,60 @@ ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line()
 The `-999.99`s that were visible on the plot in episode 1 have now been removed.  `NA`s are shown as gaps in the 
 line plotted by `geom_line()`
 
+
+## Loading temperature data
+
+The `data` directory contains a series of files, which contain hourly weather observations from an observatory.  Let's work through the process of how to load all these files into a single (large) data-set.  There is a file, `met_README` that explains the file naming convention and the format of the data in the files. Take a look at the README file, and at one of the files containing the weather data.
+
+The README file explains that the "Fields in each line are delimited by whitespace." This is the same as the CO2 data,
+which suggests we can use `read_table()` to load a file.  The missing data value in the CO2 data was all `-999.99`. The README file states that the missing data for some fields are different from this (for example, the missing value for wind direction is `-999`).
+
+> ## Challenge: What do we need to do?
+>
+> With the person sat next to you, discuss the process we will need to go through to load and clean all of the 
+> files, and output a single tibble containing all their contents.  Don't worry if you don't know how to 
+> do all of these tasks in R; the important thing is to thinkg about how we might break the process down into
+> smaller chunks.  We can then write a function for each of these chunks, to produce our finished loading process. 
+> You may realise that we already have functions that (almost) do what we need.
+> 
+> > ## Solution
+> > 
+> > * We will need to process each file in turn.  We know how to loop over a vector of values, using a `for` loop.  We don't *yet* know how to list a series of files that match a pattern
+> > 
+> > In each file:
+> >
+> > * We will need to load the data into a tibble.  `readr` comes with lots of functions to do this; we can
+> > use `read_table()` as we did with the CO2 data (although the parameters we use will need to be modified as the 
+> > variables contained in the data are different).
+> > * We will need to clean the data.  We have a function that will do this for a single field, with an arbitrary special value to represent "missing".  Our function to handle more than one field doesn't let us specify anything other than the default missing value from our CO2 data.  But we may be able to extend this function.  
+> > * We will need to handle the date and time fields in the data.  We used `lubridate`'s `ymd()` function to 
+> > do this with the CO2 data. So we're part way there on this
+> > * It would be a good idea to validate the data.  For example, precipitation should be `>=0`, the wind direction 
+> > should be between 0 and 359 degrees.
+> >
+> {: .solution}
+{: .challenge}
+
+## Testing our code
+
+New episode?  
+
+```{r}
+library(testthat)
+
+expect_equal(cleanfield(c(1,2,-999.99)), c(1,2,NA))
+expect_equal(cleanfield(c(1,2,3)), c(1,2,3))
+expect_equal(cleanfield(c("a","b","c", "-999.99")), c("a","b","c", NA))
+
+expect_equal(cleanfield(c(1,2,3), missingvalue = 2), c(1,NA,3))
+
+testtibble <- tibble(x = c(1,2,-999.99), y = c(1,2,3))
+cleanedtibble <- testtibble
+cleanedtibble[["x"]] <- c(1,2,NA)
+
+expect_equal(cleanfields(testtibble, "x"), cleanedtibble)
+expect_equal(cleanfields(testtibble, c("x")), cleanedtibble)
+
+
+```
+
