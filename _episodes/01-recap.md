@@ -213,7 +213,7 @@ co2weekly <- read_table("data/co2_weekly_mlo.txt",
                                 "days",
                                 "co2OneYearAgo",
                                 "co2TenYearsAgo",
-                                "c02Increase1800"),
+                                "co2Increase1800"),
                   col_types = cols(
                     yyyy = col_integer(),
                     mm = col_integer(),
@@ -223,7 +223,7 @@ co2weekly <- read_table("data/co2_weekly_mlo.txt",
                     days = col_integer(),
                     co2OneYearAgo = col_double(),
                     co2TenYearsAgo = col_double(),
-                    c02Increase1800 = col_double()
+                    co2Increase1800 = col_double()
                   ))
 ~~~
 {: .r}
@@ -253,7 +253,7 @@ print(co2weekly) # use, e.g. n=100 to print more rows
  8  1974     7     7 1974.514 331.44     6       -999.99        -999.99
  9  1974     7    14 1974.533 330.85     5       -999.99        -999.99
 10  1974     7    21 1974.552 330.76     7       -999.99        -999.99
-# ... with 2,223 more rows, and 1 more variables: c02Increase1800 <dbl>
+# ... with 2,223 more rows, and 1 more variables: co2Increase1800 <dbl>
 ~~~
 {: .output}
 
@@ -451,7 +451,7 @@ co2weekly %>% mutate(sampledate = ymd(paste(yyyy, mm, dd)))
  8  1974     7     7 1974.514 331.44     6       -999.99        -999.99
  9  1974     7    14 1974.533 330.85     5       -999.99        -999.99
 10  1974     7    21 1974.552 330.76     7       -999.99        -999.99
-# ... with 2,223 more rows, and 2 more variables: c02Increase1800 <dbl>,
+# ... with 2,223 more rows, and 2 more variables: co2Increase1800 <dbl>,
 #   sampledate <date>
 ~~~
 {: .output}
