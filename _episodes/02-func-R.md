@@ -804,6 +804,190 @@ FIXME - too many concepts in one go for this challenge? Perhaps split into 2 cha
 > {: .solution }
 {: .challenge }
 
+
+We now have two functions, `cleanfields()` and `cleanfields2()`, which do almost the same thing.   It would be 
+good if we could combine these into a single function, which would call the appropriate version depending on 
+whether we gave it a vector of variable names (for `cleanfields()`),  or a vector of named missing values (for `cleanfields2()`)
+
+We need a way of testing whether the vector has names, and a way of doing one thing if it does, and another if it doesn't.  
+
+## if
+
+The `if...else` construct lets us take an action if a condition is true:
+
+
+~~~
+x <- 5
+
+x < 3
+~~~
+{: .r}
+
+
+
+~~~
+[1] FALSE
+~~~
+{: .output}
+
+
+
+~~~
+if (x < 3) {
+  print("x is less than 3") # This isn't executed
+}
+
+# Using else is optional
+if (x < 3) {
+  print("x is less than 3") # This isn't executed
+} else {
+  print("x is not less than 3")
+}
+~~~
+{: .r}
+
+
+
+~~~
+[1] "x is not less than 3"
+~~~
+{: .output}
+
+The condition we test can be anything that evaluates to a single `TRUE` or `FALSE` value.
+
+We can use this to work out which version of our function we want to call.  Using pseudo code:
+
+
+~~~
+cleandataset <- function(dataset, fieldstoclean){
+  
+  if( fieldstoclean doesn't have names ){
+    run cleanfields
+  } else {
+    run cleanfields2
+  }
+
+  return our results
+}
+~~~
+{: .r}
+
+We used the `names()` function to extract the names of a named vector.  Let's look at how we can use
+this to generate a condition that evaluates to `TRUE` or `FALSE` depending on whether a vector has names:
+
+
+~~~
+withnames <- c(name1 = 1, name2 = 2.2)
+nonames <- c("name1", "name2")
+
+names(withnames) # Will give us the names if there are any
+~~~
+{: .r}
+
+
+
+~~~
+[1] "name1" "name2"
+~~~
+{: .output}
+
+
+
+~~~
+names(nonames) # Or NULL if there are not
+~~~
+{: .r}
+
+
+
+~~~
+NULL
+~~~
+{: .output}
+
+
+
+~~~
+# But NULL isn't TRUE (or FALSE)
+# We need to use 
+is.null(NULL)
+~~~
+{: .r}
+
+
+
+~~~
+[1] TRUE
+~~~
+{: .output}
+
+
+
+~~~
+# to see whether something is NULL
+is.null(c(1,2,3))
+~~~
+{: .r}
+
+
+
+~~~
+[1] FALSE
+~~~
+{: .output}
+
+> ## Challenge: Combining the functions
+> 
+> Modify the pseudocode above to write a function, `cleandataset(dataset, fieldstoclean)`, that will accept either a list of field names or a named numeric vector, and call the appropriate function `cleanfield()` or `cleanfield2()`
+> 
+> > ## Solution
+> > 
+> > 
+> > ~~~
+> > cleandataset <- function(dataset, fieldstoclean) {
+> >   
+> >   if ( is.null( names(fieldstoclean)) ) {
+> >     cleandata <- cleanfields(dataset, fieldstoclean)
+> >   } else {
+> >     cleandata <- cleanfields2(dataset, fieldstoclean)
+> >   }
+> >   
+> >   return(cleandata)
+> > }
+> > 
+> > cleandataset(weather, missingvalues)
+> > ~~~
+> > {: .r}
+> > 
+> > 
+> > 
+> > ~~~
+> > # A tibble: 8,760 x 15
+> >      obs  yyyy    mm    dd    hh winddir windspeed windsteadiness pressure
+> >    <chr> <int> <chr> <chr> <chr>   <int>     <dbl>          <int>    <dbl>
+> >  1   MLO  1977    01    01    00     140      11.2            100    678.6
+> >  2   MLO  1977    01    01    01     140      10.7            100    678.6
+> >  3   MLO  1977    01    01    02     140       8.9            100    679.0
+> >  4   MLO  1977    01    01    03     140       8.5            100    679.3
+> >  5   MLO  1977    01    01    04     140       8.9            100    679.7
+> >  6   MLO  1977    01    01    05     140       8.5            100    680.0
+> >  7   MLO  1977    01    01    06     140       8.0            100    680.0
+> >  8   MLO  1977    01    01    07     140       8.0            100    680.0
+> >  9   MLO  1977    01    01    08     140       6.7            100    679.7
+> > 10   MLO  1977    01    01    09     140       7.2            100    679.7
+> > # ... with 8,750 more rows, and 6 more variables: temperature2m <dbl>,
+> > #   temperature10m <lgl>, temperaturetop <dbl>, relhumidity <int>,
+> > #   precipitation <int>, recdate <dttm>
+> > ~~~
+> > {: .output}
+> {: .solution }
+{: .challenge }
+
+## Testing our code
+
+We should check our functions are doing what we think they are
+
+
 ~~~
 sum(weather$temperature10m == -999.9 )
 ~~~
@@ -829,14 +1013,6 @@ sum(cleanfields2(weather, missingvalues)$temperature10m == -999.9, na.rm = TRUE)
 [1] 0
 ~~~
 {: .output}
-
-
-
-Ideally we want our `cleanfields()` function to work in our existing code
-too.  This is referred to as backwards compatibility.
-
-
-## Testing our code
 
 New episode?  
 
