@@ -32,6 +32,7 @@ knitr_fig_path("02-func-R-")
 
 ```{r, echo=FALSE, message=FALSE}
 library(tidyverse)
+library(lubridate)
 load("checkpoints/01end.RData")
 ```
 
@@ -789,7 +790,9 @@ weatherfiles <- c("data/met_mlo_insitu_1_obop_hour_1977.txt", "data/met_mlo_insi
 
 What happens if we try to use this with our existing function?
 
-```{r}
+FIXME - enable before release.  Disabled so whole episode can be run in Rstudio
+
+```{r, eval=FALSE}
 cleanweather <- loadWeatherData(weatherfiles)
 ```
 
@@ -912,6 +915,7 @@ loadWeatherData <- function(infiles){
     
     missingvalues <- c(winddir = -999,
                        windspeed = -999.9,
+                       windspeed = -99.9, ## Some records use this as missing
                        windsteadiness = -9,
                        pressure = -999.9,
                        temperature2m = -999.9,
@@ -920,6 +924,8 @@ loadWeatherData <- function(infiles){
                        relhumidity = -99,
                        precipitation = -99)
     weather <- cleandataset(weather, missingvalues)
+    
+    
     
     allweather <- bind_rows(allweather, weather)
   }
@@ -947,37 +953,39 @@ can use the `list.files()` function to generate the vector of filenames:
 ```{r}
 weatherfiles <- list.files(path="./data", "met_mlo_ins*",full.names=TRUE)
 cleanweather <- loadWeatherData(weatherfiles)
+cleanweather %>%  
+ group_by(yyyy) %>% 
+ count()  %>% print(n=inf)
 ```
 
-
-
-## Testing our code
-
-We should check our functions are doing what we think they are
+Are we missing data?
 
 ```{r}
-sum(weather$temperature10m == -999.9 )
-sum(cleanfields2(weather, missingvalues)$temperature10m == -999.9, na.rm = TRUE)
+cleanweather %>%  
+ group_by(yyyy, mm, dd) %>% 
+ count()  %>% print(n=inf) %>% 
+  filter(n != 24)
 ```
-
-New episode?  
 
 ```{r}
-library(testthat)
+ggplot(data = cleanweather, aes(x=recdate, y=temperature2m) ) + geom_line()
+```
 
-expect_equal(cleanfield(c(1,2,-999.99)), c(1,2,NA))
-expect_equal(cleanfield(c(1,2,3)), c(1,2,3))
-expect_equal(cleanfield(c("a","b","c", "-999.99")), c("a","b","c", NA))
-
-expect_equal(cleanfield(c(1,2,3), missingvalue = 2), c(1,NA,3))
-
-testtibble <- tibble(x = c(1,2,-999.99), y = c(1,2,3))
-cleanedtibble <- testtibble
-cleanedtibble[["x"]] <- c(1,2,NA)
-
-expect_equal(cleanfields(testtibble, "x"), cleanedtibble)
-expect_equal(cleanfields(testtibble, c("x")), cleanedtibble)
-
+```{r}
+cleanweather %>% filter(yyyy == 2010) %>% mutate(dayinyear = yday(recdate)) %>% 
+  ggplot(aes(x=hh, y=dayinyear, fill = temperature2m)) + geom_raster()
 
 ```
+
+
+```{r}
+
+cleanweather %>% filter(temperature2m > 80)
+cleanweather %>% filter(windspeed < 0)
+cleanweather %>% filter(pressure < 0)
+cleanweather %>% filter(winddir < 0 | winddir > 360) # Recode 360s to 0s?
+
+```
+
+Something has gone wrong...  challenge is working out what.  Need to use read_table2() or read_table(guess_max = Inf)
 

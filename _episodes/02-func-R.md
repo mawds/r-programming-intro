@@ -1067,51 +1067,13 @@ weatherfiles <- c("data/met_mlo_insitu_1_obop_hour_1977.txt", "data/met_mlo_insi
 
 What happens if we try to use this with our existing function?
 
+FIXME - enable before release.  Disabled so whole episode can be run in Rstudio
+
 
 ~~~
 cleanweather <- loadWeatherData(weatherfiles)
 ~~~
 {: .r}
-
-
-
-~~~
-Warning in if (grepl("\n", file)) {: the condition has length > 1 and only
-the first element will be used
-~~~
-{: .error}
-
-
-
-~~~
-Warning in if (grepl("\n", path)) return(path): the condition has length >
-1 and only the first element will be used
-~~~
-{: .error}
-
-
-
-~~~
-Warning in if (is_url(path)) {: the condition has length > 1 and only the
-first element will be used
-~~~
-{: .error}
-
-
-
-~~~
-Warning in if (file.exists(path)) return(normalizePath(path, "/", mustWork
-= FALSE)): the condition has length > 1 and only the first element will be
-used
-~~~
-{: .error}
-
-
-
-~~~
-Error in switch(tools::file_ext(path), gz = gzfile(path, ""), bz2 = bzfile(path, : EXPR must be a length 1 vector
-~~~
-{: .error}
 
 FIXME - introduce debugger here?
 
@@ -1250,6 +1212,7 @@ loadWeatherData <- function(infiles){
     
     missingvalues <- c(winddir = -999,
                        windspeed = -999.9,
+                       windspeed = -99.9, ## Some records use this as missing
                        windsteadiness = -9,
                        pressure = -999.9,
                        temperature2m = -999.9,
@@ -1258,6 +1221,8 @@ loadWeatherData <- function(infiles){
                        relhumidity = -99,
                        precipitation = -99)
     weather <- cleandataset(weather, missingvalues)
+    
+    
     
     allweather <- bind_rows(allweather, weather)
   }
@@ -1303,91 +1268,149 @@ can use the `list.files()` function to generate the vector of filenames:
 ~~~
 weatherfiles <- list.files(path="./data", "met_mlo_ins*",full.names=TRUE)
 cleanweather <- loadWeatherData(weatherfiles)
-~~~
-{: .r}
-
-
-
-## Testing our code
-
-We should check our functions are doing what we think they are
-
-
-~~~
-sum(weather$temperature10m == -999.9 )
+cleanweather %>%  
+ group_by(yyyy) %>% 
+ count()  %>% print(n=inf)
 ~~~
 {: .r}
 
 
 
 ~~~
-[1] 8760
+Error in typeof(x): object 'inf' not found
 ~~~
-{: .output}
+{: .error}
 
-
-
-~~~
-sum(cleanfields2(weather, missingvalues)$temperature10m == -999.9, na.rm = TRUE)
-~~~
-{: .r}
-
+Are we missing data?
 
 
 ~~~
-[1] 0
-~~~
-{: .output}
-
-New episode?  
-
-
-~~~
-library(testthat)
+cleanweather %>%  
+ group_by(yyyy, mm, dd) %>% 
+ count()  %>% print(n=inf) %>% 
+  filter(n != 24)
 ~~~
 {: .r}
 
 
 
 ~~~
-
-Attaching package: 'testthat'
+Error in typeof(x): object 'inf' not found
 ~~~
-{: .output}
-
+{: .error}
 
 
 ~~~
-The following object is masked from 'package:dplyr':
-
-    matches
-~~~
-{: .output}
-
-
-
-~~~
-The following object is masked from 'package:purrr':
-
-    is_null
-~~~
-{: .output}
-
-
-
-~~~
-expect_equal(cleanfield(c(1,2,-999.99)), c(1,2,NA))
-expect_equal(cleanfield(c(1,2,3)), c(1,2,3))
-expect_equal(cleanfield(c("a","b","c", "-999.99")), c("a","b","c", NA))
-
-expect_equal(cleanfield(c(1,2,3), missingvalue = 2), c(1,NA,3))
-
-testtibble <- tibble(x = c(1,2,-999.99), y = c(1,2,3))
-cleanedtibble <- testtibble
-cleanedtibble[["x"]] <- c(1,2,NA)
-
-expect_equal(cleanfields(testtibble, "x"), cleanedtibble)
-expect_equal(cleanfields(testtibble, c("x")), cleanedtibble)
+ggplot(data = cleanweather, aes(x=recdate, y=temperature2m) ) + geom_line()
 ~~~
 {: .r}
+
+<img src="../fig/rmd-02-func-R-unnamed-chunk-51-1.png" title="plot of chunk unnamed-chunk-51" alt="plot of chunk unnamed-chunk-51" style="display: block; margin: auto;" />
+
+
+~~~
+cleanweather %>% filter(yyyy == 2010) %>% mutate(dayinyear = yday(recdate)) %>% 
+  ggplot(aes(x=hh, y=dayinyear, fill = temperature2m)) + geom_raster()
+~~~
+{: .r}
+
+<img src="../fig/rmd-02-func-R-unnamed-chunk-52-1.png" title="plot of chunk unnamed-chunk-52" alt="plot of chunk unnamed-chunk-52" style="display: block; margin: auto;" />
+
+
+
+~~~
+cleanweather %>% filter(temperature2m > 80)
+~~~
+{: .r}
+
+
+
+~~~
+# A tibble: 1,765 x 15
+     obs  yyyy    mm    dd    hh winddir windspeed windsteadiness pressure
+   <chr> <int> <chr> <chr> <chr>   <int>     <dbl>          <int>    <dbl>
+ 1   MLO  1977    05    20    19     350       2.2            100    681.7
+ 2   MLO  1977    05    20    20     300       3.1            100    681.7
+ 3   MLO  1977    05    21    11     130      13.9            100    680.3
+ 4   MLO  1977    05    21    12     140       8.9            100    680.7
+ 5   MLO  1977    05    21    13     180       0.0             NA    680.0
+ 6   MLO  1977    05    21    14     130       9.4            100    680.0
+ 7   MLO  1977    05    21    15     130       8.5            100    680.3
+ 8   MLO  1977    05    21    16     130      10.7            100    680.7
+ 9   MLO  1977    05    21    17     120      11.2            100    681.0
+10   MLO  1977    05    21    18     115      11.2            100    681.0
+# ... with 1,755 more rows, and 6 more variables: temperature2m <dbl>,
+#   temperature10m <dbl>, temperaturetop <dbl>, relhumidity <int>,
+#   precipitation <int>, recdate <dttm>
+~~~
+{: .output}
+
+
+
+~~~
+cleanweather %>% filter(windspeed < 0)
+~~~
+{: .r}
+
+
+
+~~~
+# A tibble: 0 x 15
+# ... with 15 variables: obs <chr>, yyyy <int>, mm <chr>, dd <chr>,
+#   hh <chr>, winddir <int>, windspeed <dbl>, windsteadiness <int>,
+#   pressure <dbl>, temperature2m <dbl>, temperature10m <dbl>,
+#   temperaturetop <dbl>, relhumidity <int>, precipitation <int>,
+#   recdate <dttm>
+~~~
+{: .output}
+
+
+
+~~~
+cleanweather %>% filter(pressure < 0)
+~~~
+{: .r}
+
+
+
+~~~
+# A tibble: 0 x 15
+# ... with 15 variables: obs <chr>, yyyy <int>, mm <chr>, dd <chr>,
+#   hh <chr>, winddir <int>, windspeed <dbl>, windsteadiness <int>,
+#   pressure <dbl>, temperature2m <dbl>, temperature10m <dbl>,
+#   temperaturetop <dbl>, relhumidity <int>, precipitation <int>,
+#   recdate <dttm>
+~~~
+{: .output}
+
+
+
+~~~
+cleanweather %>% filter(winddir < 0 | winddir > 360) # Recode 360s to 0s?
+~~~
+{: .r}
+
+
+
+~~~
+# A tibble: 3,141 x 15
+     obs  yyyy    mm    dd    hh winddir windspeed windsteadiness pressure
+   <chr> <int> <chr> <chr> <chr>   <int>     <dbl>          <int>    <dbl>
+ 1   MLO  1977    02    17    18     999      99.9             NA    679.0
+ 2   MLO  1977    02    18    05     999      99.9             NA    678.6
+ 3   MLO  1977    02    18    08     999      99.9             NA    680.3
+ 4   MLO  1977    02    18    14     999      99.9             NA    678.6
+ 5   MLO  1977    02    20    04     999      99.9             NA    682.0
+ 6   MLO  1977    02    20    05     999      99.9             NA    682.4
+ 7   MLO  1977    02    20    06     999      99.9             NA    682.7
+ 8   MLO  1977    02    20    07     999      99.9             NA    682.7
+ 9   MLO  1977    02    20    08     999      99.9             NA    682.7
+10   MLO  1977    02    20    09     999      99.9             NA    682.7
+# ... with 3,131 more rows, and 6 more variables: temperature2m <dbl>,
+#   temperature10m <dbl>, temperaturetop <dbl>, relhumidity <int>,
+#   precipitation <int>, recdate <dttm>
+~~~
+{: .output}
+
+Something has gone wrong...  challenge is working out what.  Need to use read_table2() or read_table(guess_max = Inf)
 
