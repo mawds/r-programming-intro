@@ -176,7 +176,7 @@ Real-life functions will usually be larger than the ones shown here--typically h
 
 > ## Create a Function
 >
-> In the last lesson, we learned to **c**oncatenate elements into a vector using the `c` function,
+> The `c` function lets us concatenate elements of a vector.
 > e.g. `x <- c("A", "B", "C")` creates a vector `x` with three elements.
 > Furthermore, we can extend that vector again using `c`, e.g. `y <- c(x, "D")` creates a vector `y` with four elements.
 > Write a function called `fence` that takes two vectors as arguments, called
