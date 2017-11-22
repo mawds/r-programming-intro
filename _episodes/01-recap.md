@@ -100,6 +100,8 @@ gapminder <- read_csv(file = "data/gapminder-FiveYearData.csv",
 
 We explicitly list the column type of each variable in order to improve the robustness of our code.
 
+FIXME - add callout noting difference between `read_csv()` and `read.csv()`
+
 > ## Guessing column types
 >
 > You don't need to type all the column types out by hand.  If you run `read_csv()` without
@@ -178,9 +180,9 @@ Let's take a look at the CO2 data we will be using in this lesson:
 > > 
 > > The main differences are:
 > > * The co2 data contains documentation and licencing information at its start.  These rows
-> >   are prefixed with the # symbol
+> >   are prefixed with the # symbol.
 > > * The gapminder data contains variables names in its first row (remember we cannot start an R
-> >   variable with a number, and including spaces needs special tricks).  The co2 data doesn't 
+> >   variable with a number, and including spaces needs special tricks (and is generally a bad idea)).  The co2 data doesn't 
 > >   contain variable names in a nice format.
 > > * In the gapminder data each value is separated by a single comma.  In the co2 data, the values
 > >   are separated by (varying numbers) of spaces.
@@ -257,10 +259,52 @@ print(co2weekly) # use, e.g. n=100 to print more rows
 ~~~
 {: .output}
 
-In contrast to the gapminder data we used previously, it looks like we will need to tidy the data-set before we use it for further analysis.  It looks like `-999.99` is used as a missing or invalid data value.  We will deal with this later when we come to writing functions.   FIXME - do this here, using tidyverse and pipes.  Then compare to
-programming approach in next episode.
+In contrast to the gapminder data we used previously, it looks like we will need to clean the data-set before we use it for further analysis.  
 
-It would be useful to combine the fields `yyyy`, `mm`, `dd` into a "proper" date.   The `lubridate` package, which is part of the tidyverse offers lots of functions that make dealing with dates easier.   The `lubridate` package isn't loaded by default when we use `library("tidyverse")`.
+## Dealing with missing data
+
+It looks like `-999.99` is used as a missing or invalid data value. We can use the `mutate` command to recode the 
+missing data to `NA`:
+
+
+~~~
+co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
+                                 co2OneYearAgo = ifelse(co2OneYearAgo == -999.99, NA, co2OneYearAgo),
+                                 co2TenYearsAgo = ifelse(co2TenYearsAgo == -999.99, NA, co2TenYearsAgo))
+~~~
+{: .r}
+
+This works, but there is a lot of repetition in our code·  This is bad for several reasons:
+
+1. It's error prone (and the errors we introduce are often very hard to spot and debug).  For example, we might mismatch variables:
+
+
+~~~
+co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
+                                 co2OneYearAgo = ifelse(co2OneYearAgo == -999.99, NA, co2OneYearAgo),
+                                 co2TenYearsAgo = ifelse(co2TenYearsAgo == -999.99, NA, co2OneYearsAgo))
+~~~
+{: .r}
+
+or make a typing error for one of the variables:
+
+
+
+~~~
+co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
+                                 co2OneYearAgo = ifelse(co2OneYearAgo == -999.99, NA, co2OneYearAgo),
+                                 co2TenyearsAgo = ifelse(co2TenYearsAgo == -999.99, NA, co2TenYearsAgo))
+~~~
+{: .r}
+
+2. It could get very tedious; we could have hundreds of fields that we needed to recode it the same way.
+
+This illustrates why functions are so useful.  For now, let's leave the `-999.99`s in the data, and deal with them
+properly in the next episode.
+
+## Dealing with Dates
+
+Although we didn't cover them in the introductionto the tidyverse course, it's worth spending a little time on dealing with date data.  It would be useful to combine the fields `yyyy`, `mm`, `dd` into a "proper" date.   The `lubridate` package, which is part of the tidyverse offers lots of functions that make dealing with dates easier.   The `lubridate` package isn't loaded by default when we use `library("tidyverse")`.
 
 Lubridate comes with several functions to process strings that look like dates (e.g. "1 November 2017") into date objects.
 
@@ -475,7 +519,7 @@ ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line()
 ~~~
 {: .r}
 
-<img src="../fig/rmd-01-unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
+<img src="../fig/rmd-01-unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
 
 
 
@@ -496,23 +540,12 @@ ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line()
 > >  # the plot area are handled.
 > >  labs(x = "Sample date",
 > >       y = "CO2 parts per million",
-> >       title = "CO2 level") +
+> >       title = "CO2 level") 
 > > ~~~
 > > {: .r}
 > > 
+> > <img src="../fig/rmd-01-unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" style="display: block; margin: auto;" />
 > > 
-> > 
-> > ~~~
-> > Error: <text>:9:0: unexpected end of input
-> > 7:       y = "CO2 parts per million",
-> > 8:       title = "CO2 level") +
-> >   ^
-> > ~~~
-> > {: .error}
-> > 
-> > Note we can use `scale_x_date(date_labels = "5 years", date_format  = "%Y"), for example
-> > to alter the formatting of the x axis.   This is one of the benefits of treating the dates
-> > as a date object; it defines methods we can use to do date specific things with the data.
 > {: .solution}
 {: .challenge}
 
