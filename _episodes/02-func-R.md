@@ -400,7 +400,7 @@ demodata == 5
 ~~~
 {: .output}
 
-The first argument of `ifelse()` evaluates to a logical vector. If the ith element of the vector is `TRUE`, `ifelse()` will output the ith element of the 2nd argument (so the ith element of `demodata` in this example).  If the element is FALSE the ith element of the 3rd argument will be replaced.  But the 3rd argument is only a single value...what's going on here.  You may remember that R `recycles` vectors if they are too short. This is what happens here; as the 3rd argument in our example consists of a single value, it will be output for all elements that are  `FALSE`
+The first argument of `ifelse()` evaluates to a logical vector. If the ith element of the vector is `TRUE`, `ifelse()` will output the ith element of the 2nd argument (so the ith element of `demodata` in this example).  If the element is FALSE the ith element of the 3rd argument will be replaced.  But the 3rd argument is only a single value...what's going on here?  You may remember that R `recycles` vectors if they are too short. This is what happens here; as the 3rd argument in our example consists of a single value, it will be output for all elements that are  `FALSE`
 
 > ## Challenge: putting this all together
 > 
@@ -609,6 +609,49 @@ ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line()
 The `-999.99`s that were visible on the plot in episode 1 have now been removed.  `NA`s are shown as gaps in the 
 line plotted by `geom_line()`
 
+This suggests that our function is behaving as we expect, for this data-set.   We can (and should) adopt a more formal approach to testing the functionality of our function by writing *unit tests*.   These let us test *specific* elements of our function's functionality.    If we need to modify our function the unit tests let us confirm that our change hasn't broken any of the function's existing functionality.
+
+The R package `testthat` makes it easy for us to write unit tests to verify our function behaves as we'd like.  If you put your functions in a package (see, for example, FIXME), it integrates well with the development process.  For now let's put our tests in a separate file.  In this file we'll load the `testthat` package, and `source()` the file containing our functions:
+
+
+~~~
+library("testthat")
+source("myfunctions.R")
+~~~
+{: .r}
+
+
+~~~
+
+Attaching package: 'testthat'
+~~~
+{: .output}
+
+
+
+~~~
+The following object is masked from 'package:dplyr':
+
+    matches
+~~~
+{: .output}
+
+
+
+~~~
+The following object is masked from 'package:purrr':
+
+    is_null
+~~~
+{: .output}
+
+
+FIXME - finish.  Perhaps include example test file in data package?
+
+
+
+
+
 
 ## Loading temperature data
 
@@ -623,7 +666,7 @@ which suggests we can use `read_table()` to load a file.  The missing data value
 > files, and output a single tibble containing all their contents.  Don't worry if you don't know how to 
 > do all of these tasks in R; the important thing is to thinkg about how we might break the process down into
 > smaller chunks.  We can then write a function for each of these chunks, to produce our finished loading process. 
-> You may realise that we already have functions that (almost) do what we need.
+> You may realise that we already have functions that (almost) do what we need for some of these tasks.
 > 
 > > ## Solution
 > > 
@@ -1317,7 +1360,7 @@ ggplot(data = cleanweather, aes(x=recdate, y=temperature2m) ) + geom_line()
 ~~~
 {: .r}
 
-<img src="../fig/rmd-02-func-R-unnamed-chunk-52-1.png" title="plot of chunk unnamed-chunk-52" alt="plot of chunk unnamed-chunk-52" style="display: block; margin: auto;" />
+<img src="../fig/rmd-02-func-R-unnamed-chunk-54-1.png" title="plot of chunk unnamed-chunk-54" alt="plot of chunk unnamed-chunk-54" style="display: block; margin: auto;" />
 
 
 ~~~
@@ -1326,7 +1369,7 @@ cleanweather %>% filter(yyyy == 2010) %>% mutate(dayinyear = yday(recdate)) %>%
 ~~~
 {: .r}
 
-<img src="../fig/rmd-02-func-R-unnamed-chunk-53-1.png" title="plot of chunk unnamed-chunk-53" alt="plot of chunk unnamed-chunk-53" style="display: block; margin: auto;" />
+<img src="../fig/rmd-02-func-R-unnamed-chunk-55-1.png" title="plot of chunk unnamed-chunk-55" alt="plot of chunk unnamed-chunk-55" style="display: block; margin: auto;" />
 
 
 
