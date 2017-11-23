@@ -32,9 +32,9 @@ cleanfield(testvector)
 
 
 ~~~
-[1]  1  2 NA
+Error in cleanfield(testvector): could not find function "cleanfield"
 ~~~
-{: .output}
+{: .error}
 
 The power of testing comes when we write code to *check* that the function has behaved as expected.  For example:
 
@@ -56,9 +56,9 @@ if( isTRUE(all.equal(cleanfield(testvector), expectedResults)) ){
 
 
 ~~~
-[1] "Test passed"
+Error in cleanfield(testvector): could not find function "cleanfield"
 ~~~
-{: .output}
+{: .error}
 
 
 ~~~
@@ -69,21 +69,11 @@ ls()
 
 
 ~~~
- [1] "asterisk"              "best_practice"        
- [3] "cleanfield"            "cleanfields"          
- [5] "co2clean"              "co2small"             
- [7] "co2weekly"             "demodata"             
- [9] "dry_principle"         "expectedResults"      
-[11] "fahr_to_celsius"       "fahr_to_kelvin"       
-[13] "fence"                 "fieldsWithMissingData"
-[15] "fix_fig_path"          "gapminder"            
-[17] "hook_error"            "hook_in"              
-[19] "hook_out"              "i"                    
-[21] "input_1"               "kelvin_to_celsius"    
-[23] "knitr_fig_path"        "mySum"                
-[25] "outside"               "testdata"             
-[27] "testvector"            "v"                    
-[29] "x"                    
+ [1] "args"                 "dest_md"              "expectedResults"     
+ [4] "fix_fig_path"         "generate_md_episodes" "hook_error"          
+ [7] "hook_in"              "hook_out"             "knitr_fig_path"      
+[10] "missing_pkgs"         "required_pkgs"        "src_rmd"             
+[13] "testvector"          
 ~~~
 {: .output}
 
@@ -161,7 +151,28 @@ test_file("tests/test_cleandata.R", env=.GlobalEnv)
 
 
 ~~~
-Cleaning fields: .......
+Cleaning fields: 12.
+
+Failed --------------------------------------------------------------------
+1. Error: Can clean a field (@test_cleandata.R#7) -------------------------
+could not find function "cleanfield"
+1: expect_equal(c(1, 2, NA), cleanfield(testvector)) at tests/test_cleandata.R:7
+2: compare(object, expected, ...)
+3: compare.numeric(object, expected, ...)
+4: all.equal(x, y, tolerance = tolerance, ...)
+5: all.equal.numeric(x, y, tolerance = tolerance, ...)
+6: attr.all.equal(target, current, tolerance = tolerance, scale = scale, ...)
+7: mode(current)
+
+2. Error: Can clean multiple fields (@test_cleandata.R#19) ----------------
+could not find function "cleanfields"
+1: expect_equal(cleanedtibbleSinglefield, cleanfields(testtibble, "b")) at tests/test_cleandata.R:19
+2: compare(object, expected, ...)
+3: compare.default(object, expected, ...)
+4: all.equal(x, y, ...)
+5: all.equal.tbl_df(x, y, ...)
+6: equal_data_frame(target, current, ignore_col_order = ignore_col_order, ignore_row_order = ignore_row_order, 
+       convert = convert)
 
 DONE ======================================================================
 ~~~
@@ -181,18 +192,99 @@ test_file("tests/test_fail.R")
 Cleaning fields: 1
 
 Failed --------------------------------------------------------------------
-1. Failure: Can clean a field (@test_fail.R#8) ----------------------------
-c(2, 3, NA) not equal to cleanfield(testvector).
-2/3 mismatches (average diff: 1)
-[1] 2 - 1 == 1
-[2] 3 - 2 == 1
-
+1. Error: Can clean a field (@test_fail.R#8) ------------------------------
+could not find function "cleanfield"
+1: expect_equal(c(2, 3, NA), cleanfield(testvector)) at tests/test_fail.R:8
+2: compare(object, expected, ...)
+3: compare.numeric(object, expected, ...)
+4: all.equal(x, y, tolerance = tolerance, ...)
+5: all.equal.numeric(x, y, tolerance = tolerance, ...)
+6: attr.all.equal(target, current, tolerance = tolerance, scale = scale, ...)
+7: mode(current)
 
 DONE ======================================================================
 ~~~
 {: .output}
 
 
+## Challenge
+
+The `test_cleandata.R` file doesn't test whether the code we wrote to check variable names exist
+works properly.  Modify the file where indicated to test this functionality.  You may find the `expect_error()` 
+function useful.
+
+## Solution
+
+
+~~~
+test_that("Missing variable detection works",{
+  
+  # Make a test tibble to run the tests on
+  testtibble <- tibble(a = c(1,2,3), b = c(4,5,6) )
+  # Test that we get an error if we specify a missing variable name
+  expect_error(cleanfields(testtibble, c("a","d")))
+  
+})
+~~~
+{: .r}
+
+
+## Challenge: Repeated variable names
+
+At present we can pass the same variable name to our `cleanfields()` function more than once, e.g.
+
+~~~
+cleanfields(mydata, c("field1","field2","field1"))
+~~~
+{: .r}
+
+The function will still work, but the second pass through the data for the repeated field will have no effect.
+The user probably didn't mean to repeat the field; perhaps they made a typing error and meant field3. 
+
+Write a test to expect a warning if a variable name is repeated.  Run your tests, and check that the test failure is reported.
+
+Then modify your function so that the test passes.   Developing code in this way is referred to as test driven development. FIXME - provide a link to good resource.  Ask Rob?
+
+Hint:  There are a number of ways of checking whether a vector contains duplicated elements.  `unique()` returns only the unique elements of a vector.  You could compare the length of this vector to the original vector.  `anyDuplicated()` returns the index of the first duplicated element in a vector, or 0 if there are no duplicate elements.
+
+## Solution
+
+A suitable test would be:
+
+~~~
+test_that("Duplicate variables give a warning",{
+  
+  testtibble <- tibble(a = c(1,2,3), b = c(4,5,6) )
+  
+  expect_warning(cleanfields(testtibble, c("a","a")))
+  # Do we still get a warning if the duplicates aren't adjacent?
+  expect_warning(cleanfields(testtibble, c("a","b","a")))
+})
+~~~
+{: .r}
+
+These tests fail unless we modify our `cleanfields()` function:
+
+
+~~~
+cleanfields <- function(dataset, fieldlist){
+  
+  if ( !all(fieldlist %in% names(dataset)) ) {
+    stop("Attempting to clean variables that do not exist in the dataset")
+  }
+  
+  if ( anyDuplicated(fieldlist) != 0 ) {
+    warning("Duplicated variable names specified")
+  }
+  
+  for (f in fieldlist) {
+    dataset[[f]] <- cleanfield(dataset[[f]])
+  }
+  
+  return(dataset) 
+}
+~~~
+{: .r}
 
 
 

@@ -27,6 +27,7 @@ At the end of the previous episode we verified that our `cleanfields()` function
 
 We can (and should) adopt a more formal approach to testing the functionality of our function by writing *unit tests*.   These let us test *specific* elements of our function's functionality.    If we need to modify our function the unit tests let us confirm that our change hasn't broken any of the function's existing functionality.
 
+
 For example, let's test that our `cleanfield()` function behaves as we expect:
 
 ```{r}
@@ -35,25 +36,142 @@ cleanfield(testvector)
 
 ```
 
-The power of testing comes when we write code to *check* that the function has behaved as expected.  
+The power of testing comes when we write code to *check* that the function has behaved as expected.  For example:
 
+FIXME - this is a horrid example, as it takes us down the rabbit-hole of dealing with `NA`s in logic tests
+and the all.equal() wrinkle
 
-The R package `testthat` makes it easy for us to write unit tests to verify our function behaves as we'd like.  If you put your functions in a package (see, for example, FIXME), it integrates well with the development process.  For now let's put our tests in a separate file.  In this file we'll load the `testthat` package, and `source()` the file containing our functions:
+```{r}
+expectedResults <- c(1,2,NA)
+
+if( isTRUE(all.equal(cleanfield(testvector), expectedResults)) ){
+  print("Test passed")
+} else {
+  print("Test failed")
+}
+
+```
+
+```{r}
+ls()
+```
+
+Writing such tests is cumbersome.  The R package `testthat` makes it easy for us to write and run tests to verify our function behaves as we'd like.  If you put your functions in a package (see, for example, FIXME), it integrates well with the development process.  For now let's put our tests in a separate file.  In this file we'll load the `testthat` package.  An example of a file containing tests is included in the data you downloaded at the start of the course.
 
 ```{r, eval=FALSE}
-library("testthat")
-source("myfunctions.R")
+context("Cleaning fields")
+
+test_that("Can clean a field", {
+  
+  testvector <- c(1,2,-999.99)
+  
+  expect_equal(c(1,2,NA), cleanfield(testvector))
+  expect_equal(c(1,NA,-999.99), cleanfield(testvector, missingvalue = 2))
+  
+  expect_equal(NA, cleanfield(-999.99))
+  expect_equal(1, cleanfield(1))
+})
+
+test_that("Can clean multiple fields",{
+  
+  testtibble <- tibble(a = c(1,2,3), b = c(3,4,-999.99), c = c(1,-999.99,2))
+  
+  cleanedtibbleSinglefield <- tibble(a = c(1,2,3), b = c(3, 4, NA), c = c(1, -999.99, 2))
+  expect_equal(cleanedtibbleSinglefield, cleanfields(testtibble, "b"))
+  
+  cleanedtibbleMultifield <- tibble(a = c(1,2,3), b = c(3, 4, NA), c = c(1, NA, 2))
+  expect_equal(cleanedtibbleMultifield, cleanfields(testtibble, c("b","c")))
+})
 
 ```
 
-```{r, echo=FALSE}
+We can execute the tests by loading the `testthat` package, and running `test_file()`:
+
+```{r}
 library("testthat")
+test_file("tests/test_cleandata.R", env=.GlobalEnv)
+```
+
+To show you what happens when a test fails:
+
+```{r}
+test_file("tests/test_fail.R")
 ```
 
 
-FIXME - finish.  Perhaps include example test file in data package?
+## Challenge
+
+The `test_cleandata.R` file doesn't test whether the code we wrote to check variable names exist
+works properly.  Modify the file where indicated to test this functionality.  You may find the `expect_error()` 
+function useful.
+
+## Solution
+
+```{r}
+
+test_that("Missing variable detection works",{
+  
+  # Make a test tibble to run the tests on
+  testtibble <- tibble(a = c(1,2,3), b = c(4,5,6) )
+  # Test that we get an error if we specify a missing variable name
+  expect_error(cleanfields(testtibble, c("a","d")))
+  
+})
+```
 
 
+## Challenge: Repeated variable names
+
+At present we can pass the same variable name to our `cleanfields()` function more than once, e.g.
+```{r, eval=FALSE}
+cleanfields(mydata, c("field1","field2","field1"))
+```
+
+The function will still work, but the second pass through the data for the repeated field will have no effect.
+The user probably didn't mean to repeat the field; perhaps they made a typing error and meant field3. 
+
+Write a test to expect a warning if a variable name is repeated.  Run your tests, and check that the test failure is reported.
+
+Then modify your function so that the test passes.   Developing code in this way is referred to as test driven development. FIXME - provide a link to good resource.  Ask Rob?
+
+Hint:  There are a number of ways of checking whether a vector contains duplicated elements.  `unique()` returns only the unique elements of a vector.  You could compare the length of this vector to the original vector.  `anyDuplicated()` returns the index of the first duplicated element in a vector, or 0 if there are no duplicate elements.
+
+## Solution
+
+A suitable test would be:
+```{r, eval=FALSE}
+
+test_that("Duplicate variables give a warning",{
+  
+  testtibble <- tibble(a = c(1,2,3), b = c(4,5,6) )
+  
+  expect_warning(cleanfields(testtibble, c("a","a")))
+  # Do we still get a warning if the duplicates aren't adjacent?
+  expect_warning(cleanfields(testtibble, c("a","b","a")))
+})
+```
+
+These tests fail unless we modify our `cleanfields()` function:
+
+```{r}
+cleanfields <- function(dataset, fieldlist){
+  
+  if ( !all(fieldlist %in% names(dataset)) ) {
+    stop("Attempting to clean variables that do not exist in the dataset")
+  }
+  
+  if ( anyDuplicated(fieldlist) != 0 ) {
+    warning("Duplicated variable names specified")
+  }
+  
+  for (f in fieldlist) {
+    dataset[[f]] <- cleanfield(dataset[[f]])
+  }
+  
+  return(dataset) 
+}
+
+```
 
 
 

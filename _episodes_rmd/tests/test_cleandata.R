@@ -21,3 +21,14 @@ test_that("Can clean multiple fields",{
   cleanedtibbleMultifield <- tibble(a = c(1,2,3), b = c(3, 4, NA), c = c(1, NA, 2))
   expect_equal(cleanedtibbleMultifield, cleanfields(testtibble, c("b","c")))
 })
+
+test_that("Missing variable detection works",{
+  # Dummy test
+  expect_equal(1,1)
+  
+  # Make a test tibble to run the tests on
+  
+  # Test that we get an error if we specify a missing variable name
+  
+})
+
