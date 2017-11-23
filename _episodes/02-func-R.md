@@ -30,13 +30,10 @@ keypoints:
 
 
 
-In the previous episode we loaded in the CO2 data and recoded the missing values to NA FIXME: Do this.   In this
+In the previous episode we loaded in the CO2 data and recoded the missing values to `NA`.    In this
 episode we will recode the missing values using a function.
 
-TODO benefits of functions.. reusability, testing, easier to maintain code, etc.
-
-Before we write a function to recode the missing values, let's illustrate the approach using the example of converting temperatures:
-
+Before we write a function to recode the missing values, let's illustrate writing a simple function to convert temperatures: 
 
 ### Defining a Function
 
@@ -103,7 +100,7 @@ We've successfully called the function that we defined, and we have access to th
 
 ### Composing Functions
 
-Now that we've seen how to turn Fahrenheit into Kelvin, it's easy to turn Kelvin into Celsius:
+Now that we've seen how to turn Fahrenheit into Kelvin, let's write another function to turn Kelvin into Celsius:
 
 
 ~~~
@@ -272,7 +269,6 @@ co2small <- co2weekly[1:5,]
 ~~~
 {: .r}
 
-
 Let's think about the tasks we need to perform, and how we might write functions to do them (or use existing functions to do them).
 
 1. We will need to specify and select a column of data from the tibble.
@@ -377,7 +373,7 @@ This just leaves task 2 to worry about.   We need to go through each element of 
 
 ~~~
 demodata <- 1:10
-ifelse(demodata == 5, demodata,  NA)
+ifelse(demodata == 5, demodata, NA)
 ~~~
 {: .r}
 
@@ -388,9 +384,25 @@ ifelse(demodata == 5, demodata,  NA)
 ~~~
 {: .output}
 
-FIXME - explain function in detail
+Let's unpick this to understand what the `ifelse()` function is doing;
 
-> ## Challenge: PUTting this all together
+
+~~~
+demodata <- 1:10
+demodata == 5
+~~~
+{: .r}
+
+
+
+~~~
+ [1] FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE
+~~~
+{: .output}
+
+The first argument of `ifelse()` evaluates to a logical vector. If the ith element of the vector is `TRUE`, `ifelse()` will output the ith element of the 2nd argument (so the ith element of `demodata` in this example).  If the element is FALSE the ith element of the 3rd argument will be replaced.  But the 3rd argument is only a single value...what's going on here.  You may remember that R `recycles` vectors if they are too short. This is what happens here; as the 3rd argument in our example consists of a single value, it will be output for all elements that are  `FALSE`
+
+> ## Challenge: putting this all together
 > 
 > Write a function, `cleanfield()` that will take a vector of data and replace
 > all instances of "-999.99" with NA, and then return a vector with the cleaned data.
@@ -592,7 +604,7 @@ ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line()
 ~~~
 {: .r}
 
-<img src="../fig/rmd-02-func-R-unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" style="display: block; margin: auto;" />
+<img src="../fig/rmd-02-func-R-unnamed-chunk-27-1.png" title="plot of chunk unnamed-chunk-27" alt="plot of chunk unnamed-chunk-27" style="display: block; margin: auto;" />
 
 The `-999.99`s that were visible on the plot in episode 1 have now been removed.  `NA`s are shown as gaps in the 
 line plotted by `geom_line()`
@@ -1305,7 +1317,7 @@ ggplot(data = cleanweather, aes(x=recdate, y=temperature2m) ) + geom_line()
 ~~~
 {: .r}
 
-<img src="../fig/rmd-02-func-R-unnamed-chunk-51-1.png" title="plot of chunk unnamed-chunk-51" alt="plot of chunk unnamed-chunk-51" style="display: block; margin: auto;" />
+<img src="../fig/rmd-02-func-R-unnamed-chunk-52-1.png" title="plot of chunk unnamed-chunk-52" alt="plot of chunk unnamed-chunk-52" style="display: block; margin: auto;" />
 
 
 ~~~
@@ -1314,7 +1326,7 @@ cleanweather %>% filter(yyyy == 2010) %>% mutate(dayinyear = yday(recdate)) %>%
 ~~~
 {: .r}
 
-<img src="../fig/rmd-02-func-R-unnamed-chunk-52-1.png" title="plot of chunk unnamed-chunk-52" alt="plot of chunk unnamed-chunk-52" style="display: block; margin: auto;" />
+<img src="../fig/rmd-02-func-R-unnamed-chunk-53-1.png" title="plot of chunk unnamed-chunk-53" alt="plot of chunk unnamed-chunk-53" style="display: block; margin: auto;" />
 
 
 
