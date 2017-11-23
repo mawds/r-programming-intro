@@ -67,10 +67,10 @@ library(tidyverse)
 
 
 ~~~
-✔ ggplot2 2.2.1     ✔ readr   1.1.1
-✔ tibble  1.3.4     ✔ purrr   0.2.4
-✔ tidyr   0.7.2     ✔ dplyr   0.7.4
-✔ ggplot2 2.2.1     ✔ forcats 0.2.0
+✔ ggplot2 2.2.1     ✔ purrr   0.2.4
+✔ tibble  1.3.4     ✔ dplyr   0.7.4
+✔ tidyr   0.7.2     ✔ stringr 1.2.0
+✔ readr   1.1.1     ✔ forcats 0.2.0
 ~~~
 {: .output}
 
@@ -315,6 +315,13 @@ TODO more on date objects - why bother making them etc.
 library(lubridate)
 ~~~
 {: .r}
+
+
+
+~~~
+Loading required package: methods
+~~~
+{: .output}
 
 
 

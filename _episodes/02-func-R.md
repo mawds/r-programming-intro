@@ -967,6 +967,9 @@ xor(FALSE, FALSE)
 [1] FALSE
 ~~~
 {: .output}
+
+FIXME - testing equality
+
 The `&&` and `||` operators only operate on the first element of a vector, which is typically what you want when 
 writing an `if` statement.  There are also versions which operate on _each_ element of a vector see `?base::Logic` for more details.
 
@@ -997,7 +1000,7 @@ cleanfields <- function(dataset, fieldlist){
 ~~~
 {: .r}
 
-Note that we don't need to use an `else` statement here, as `stop()` causes the function to abort.
+Note that we don't need to use an `else` statement here, as `stop()` causes the function to abort.  The `warning("This is a warning")` function will print the specified message as a warning.
 
 
 

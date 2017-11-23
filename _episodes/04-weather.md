@@ -118,7 +118,7 @@ Error in read_table("data/met_mlo_insitu_1_obop_hour_1977.txt", col_names = c("o
 > > 
 > > 
 > > ~~~
-> > Error in eval(lhs, parent, parent): object 'weather' not found
+> > Error in weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy, mm, : could not find function "%>%"
 > > ~~~
 > > {: .error}
 > {: .solution}
@@ -546,7 +546,7 @@ cleanweather %>%
 
 
 ~~~
-Error in eval(lhs, parent, parent): object 'cleanweather' not found
+Error in cleanweather %>% group_by(yyyy) %>% count(): could not find function "%>%"
 ~~~
 {: .error}
 
@@ -643,7 +643,7 @@ cleanweather %>%
 
 
 ~~~
-Error in eval(lhs, parent, parent): object 'cleanweather' not found
+Error in cleanweather %>% group_by(yyyy) %>% count(): could not find function "%>%"
 ~~~
 {: .error}
 
@@ -676,7 +676,7 @@ cleanweather %>%
 
 
 ~~~
-Error in eval(lhs, parent, parent): object 'cleanweather' not found
+Error in cleanweather %>% group_by(yyyy) %>% count() %>% print(n = inf): could not find function "%>%"
 ~~~
 {: .error}
 
@@ -694,7 +694,7 @@ cleanweather %>%
 
 
 ~~~
-Error in eval(lhs, parent, parent): object 'cleanweather' not found
+Error in cleanweather %>% group_by(yyyy, mm, dd) %>% count() %>% print(n = inf) %>% : could not find function "%>%"
 ~~~
 {: .error}
 
@@ -721,7 +721,7 @@ cleanweather %>% filter(yyyy == 2010) %>% mutate(dayinyear = yday(recdate)) %>%
 
 
 ~~~
-Error in eval(lhs, parent, parent): object 'cleanweather' not found
+Error in cleanweather %>% filter(yyyy == 2010) %>% mutate(dayinyear = yday(recdate)) %>% : could not find function "%>%"
 ~~~
 {: .error}
 
@@ -735,7 +735,7 @@ cleanweather %>% filter(temperature2m > 80)
 
 
 ~~~
-Error in eval(lhs, parent, parent): object 'cleanweather' not found
+Error in cleanweather %>% filter(temperature2m > 80): could not find function "%>%"
 ~~~
 {: .error}
 
@@ -749,7 +749,7 @@ cleanweather %>% filter(windspeed < 0)
 
 
 ~~~
-Error in eval(lhs, parent, parent): object 'cleanweather' not found
+Error in cleanweather %>% filter(windspeed < 0): could not find function "%>%"
 ~~~
 {: .error}
 
@@ -763,7 +763,7 @@ cleanweather %>% filter(pressure < 0)
 
 
 ~~~
-Error in eval(lhs, parent, parent): object 'cleanweather' not found
+Error in cleanweather %>% filter(pressure < 0): could not find function "%>%"
 ~~~
 {: .error}
 
@@ -777,7 +777,7 @@ cleanweather %>% filter(winddir < 0 | winddir > 360) # Recode 360s to 0s?
 
 
 ~~~
-Error in eval(lhs, parent, parent): object 'cleanweather' not found
+Error in cleanweather %>% filter(winddir < 0 | winddir > 360): could not find function "%>%"
 ~~~
 {: .error}
 

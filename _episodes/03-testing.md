@@ -19,6 +19,7 @@ At the end of the previous episode we verified that our `cleanfields()` function
 
 We can (and should) adopt a more formal approach to testing the functionality of our function by writing *unit tests*.   These let us test *specific* elements of our function's functionality.    If we need to modify our function the unit tests let us confirm that our change hasn't broken any of the function's existing functionality.
 
+
 For example, let's test that our `cleanfield()` function behaves as we expect:
 
 
@@ -35,17 +36,95 @@ cleanfield(testvector)
 ~~~
 {: .output}
 
-The power of testing comes when we write code to *check* that the function has behaved as expected.  
+The power of testing comes when we write code to *check* that the function has behaved as expected.  For example:
+
+FIXME - this is a horrid example, as it takes us down the rabbit-hole of dealing with `NA`s in logic tests
+and the all.equal() wrinkle
 
 
-The R package `testthat` makes it easy for us to write unit tests to verify our function behaves as we'd like.  If you put your functions in a package (see, for example, FIXME), it integrates well with the development process.  For now let's put our tests in a separate file.  In this file we'll load the `testthat` package, and `source()` the file containing our functions:
+~~~
+expectedResults <- c(1,2,NA)
+
+if( isTRUE(all.equal(cleanfield(testvector), expectedResults)) ){
+  print("Test passed")
+} else {
+  print("Test failed")
+}
+~~~
+{: .r}
+
+
+
+~~~
+[1] "Test passed"
+~~~
+{: .output}
+
+
+~~~
+ls()
+~~~
+{: .r}
+
+
+
+~~~
+ [1] "asterisk"              "best_practice"        
+ [3] "cleanfield"            "cleanfields"          
+ [5] "co2clean"              "co2small"             
+ [7] "co2weekly"             "demodata"             
+ [9] "dry_principle"         "expectedResults"      
+[11] "fahr_to_celsius"       "fahr_to_kelvin"       
+[13] "fence"                 "fieldsWithMissingData"
+[15] "fix_fig_path"          "gapminder"            
+[17] "hook_error"            "hook_in"              
+[19] "hook_out"              "i"                    
+[21] "input_1"               "kelvin_to_celsius"    
+[23] "knitr_fig_path"        "mySum"                
+[25] "outside"               "testdata"             
+[27] "testvector"            "v"                    
+[29] "x"                    
+~~~
+{: .output}
+
+Writing such tests is cumbersome.  The R package `testthat` makes it easy for us to write and run tests to verify our function behaves as we'd like.  If you put your functions in a package (see, for example, FIXME), it integrates well with the development process.  For now let's put our tests in a separate file.  In this file we'll load the `testthat` package.  An example of a file containing tests is included in the data you downloaded at the start of the course.
+
+
+~~~
+context("Cleaning fields")
+
+test_that("Can clean a field", {
+  
+  testvector <- c(1,2,-999.99)
+  
+  expect_equal(c(1,2,NA), cleanfield(testvector))
+  expect_equal(c(1,NA,-999.99), cleanfield(testvector, missingvalue = 2))
+  
+  expect_equal(NA, cleanfield(-999.99))
+  expect_equal(1, cleanfield(1))
+})
+
+test_that("Can clean multiple fields",{
+  
+  testtibble <- tibble(a = c(1,2,3), b = c(3,4,-999.99), c = c(1,-999.99,2))
+  
+  cleanedtibbleSinglefield <- tibble(a = c(1,2,3), b = c(3, 4, NA), c = c(1, -999.99, 2))
+  expect_equal(cleanedtibbleSinglefield, cleanfields(testtibble, "b"))
+  
+  cleanedtibbleMultifield <- tibble(a = c(1,2,3), b = c(3, 4, NA), c = c(1, NA, 2))
+  expect_equal(cleanedtibbleMultifield, cleanfields(testtibble, c("b","c")))
+})
+~~~
+{: .r}
+
+We can execute the tests by loading the `testthat` package, and running `test_file()`:
 
 
 ~~~
 library("testthat")
-source("myfunctions.R")
 ~~~
 {: .r}
+
 
 
 ~~~
@@ -73,7 +152,45 @@ The following object is masked from 'package:purrr':
 {: .output}
 
 
-FIXME - finish.  Perhaps include example test file in data package?
+
+~~~
+test_file("tests/test_cleandata.R", env=.GlobalEnv)
+~~~
+{: .r}
+
+
+
+~~~
+Cleaning fields: .......
+
+DONE ======================================================================
+~~~
+{: .output}
+
+To show you what happens when a test fails:
+
+
+~~~
+test_file("tests/test_fail.R")
+~~~
+{: .r}
+
+
+
+~~~
+Cleaning fields: 1
+
+Failed --------------------------------------------------------------------
+1. Failure: Can clean a field (@test_fail.R#8) ----------------------------
+c(2, 3, NA) not equal to cleanfield(testvector).
+2/3 mismatches (average diff: 1)
+[1] 2 - 1 == 1
+[2] 3 - 2 == 1
+
+
+DONE ======================================================================
+~~~
+{: .output}
 
 
 

@@ -60,7 +60,7 @@ workshop-check :
 .PHONY : lesson-check lesson-md lesson-files lesson-fixme lesson-watchrmd
 
 # RMarkdown files
-RMD_SRC = $(wildcard _episodes_rmd/??-*.Rmd)
+RMD_SRC = $(sort $(wildcard _episodes_rmd/??-*.Rmd))
 RMD_DST = $(patsubst _episodes_rmd/%.Rmd,_episodes/%.md,$(RMD_SRC))
 
 # Lesson source files in the order they appear in the navigation menu.
@@ -90,7 +90,8 @@ lesson-watchrmd:
 	@bin/watchRmd.sh &
 
 _episodes/%.md: _episodes_rmd/%.Rmd
-	@bin/knit_lessons.sh $< $@
+	Rscript -e 'knitr::knit("$<","$@")'
+#	@bin/knit_lessons.sh $< $@
 
 ## lesson-check     : validate lesson Markdown.
 lesson-check :
