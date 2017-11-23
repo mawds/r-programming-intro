@@ -52,9 +52,6 @@ if( isTRUE(all.equal(cleanfield(testvector), expectedResults)) ){
 
 ```
 
-```{r}
-ls()
-```
 
 Writing such tests is cumbersome.  The R package `testthat` makes it easy for us to write and run tests to verify our function behaves as we'd like.  If you put your functions in a package (see, for example, FIXME), it integrates well with the development process.  For now let's put our tests in a separate file.  In this file we'll load the `testthat` package.  An example of a file containing tests is included in the data you downloaded at the start of the course.
 

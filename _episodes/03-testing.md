@@ -32,9 +32,9 @@ cleanfield(testvector)
 
 
 ~~~
-Error in cleanfield(testvector): could not find function "cleanfield"
+[1]  1  2 NA
 ~~~
-{: .error}
+{: .output}
 
 The power of testing comes when we write code to *check* that the function has behaved as expected.  For example:
 
@@ -56,26 +56,10 @@ if( isTRUE(all.equal(cleanfield(testvector), expectedResults)) ){
 
 
 ~~~
-Error in cleanfield(testvector): could not find function "cleanfield"
-~~~
-{: .error}
-
-
-~~~
-ls()
-~~~
-{: .r}
-
-
-
-~~~
- [1] "args"                 "dest_md"              "expectedResults"     
- [4] "fix_fig_path"         "generate_md_episodes" "hook_error"          
- [7] "hook_in"              "hook_out"             "knitr_fig_path"      
-[10] "missing_pkgs"         "required_pkgs"        "src_rmd"             
-[13] "testvector"          
+[1] "Test passed"
 ~~~
 {: .output}
+
 
 Writing such tests is cumbersome.  The R package `testthat` makes it easy for us to write and run tests to verify our function behaves as we'd like.  If you put your functions in a package (see, for example, FIXME), it integrates well with the development process.  For now let's put our tests in a separate file.  In this file we'll load the `testthat` package.  An example of a file containing tests is included in the data you downloaded at the start of the course.
 
@@ -151,28 +135,7 @@ test_file("tests/test_cleandata.R", env=.GlobalEnv)
 
 
 ~~~
-Cleaning fields: 12.
-
-Failed --------------------------------------------------------------------
-1. Error: Can clean a field (@test_cleandata.R#7) -------------------------
-could not find function "cleanfield"
-1: expect_equal(c(1, 2, NA), cleanfield(testvector)) at tests/test_cleandata.R:7
-2: compare(object, expected, ...)
-3: compare.numeric(object, expected, ...)
-4: all.equal(x, y, tolerance = tolerance, ...)
-5: all.equal.numeric(x, y, tolerance = tolerance, ...)
-6: attr.all.equal(target, current, tolerance = tolerance, scale = scale, ...)
-7: mode(current)
-
-2. Error: Can clean multiple fields (@test_cleandata.R#19) ----------------
-could not find function "cleanfields"
-1: expect_equal(cleanedtibbleSinglefield, cleanfields(testtibble, "b")) at tests/test_cleandata.R:19
-2: compare(object, expected, ...)
-3: compare.default(object, expected, ...)
-4: all.equal(x, y, ...)
-5: all.equal.tbl_df(x, y, ...)
-6: equal_data_frame(target, current, ignore_col_order = ignore_col_order, ignore_row_order = ignore_row_order, 
-       convert = convert)
+Cleaning fields: .......
 
 DONE ======================================================================
 ~~~
@@ -192,15 +155,12 @@ test_file("tests/test_fail.R")
 Cleaning fields: 1
 
 Failed --------------------------------------------------------------------
-1. Error: Can clean a field (@test_fail.R#8) ------------------------------
-could not find function "cleanfield"
-1: expect_equal(c(2, 3, NA), cleanfield(testvector)) at tests/test_fail.R:8
-2: compare(object, expected, ...)
-3: compare.numeric(object, expected, ...)
-4: all.equal(x, y, tolerance = tolerance, ...)
-5: all.equal.numeric(x, y, tolerance = tolerance, ...)
-6: attr.all.equal(target, current, tolerance = tolerance, scale = scale, ...)
-7: mode(current)
+1. Failure: Can clean a field (@test_fail.R#8) ----------------------------
+c(2, 3, NA) not equal to cleanfield(testvector).
+2/3 mismatches (average diff: 1)
+[1] 2 - 1 == 1
+[2] 3 - 2 == 1
+
 
 DONE ======================================================================
 ~~~
