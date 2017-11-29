@@ -13,6 +13,7 @@ keypoints:
 
 
 
+
 In the previous episodes we showed how to create functions, and test that they are working.  In this episode we will use these ideas, and expand on them to load the weather data that you downloaded at the start of the course.  
 
 
@@ -93,13 +94,6 @@ weather <- read_table("data/met_mlo_insitu_1_obop_hour_1977.txt",
 ~~~
 {: .r}
 
-
-
-~~~
-Error in read_table("data/met_mlo_insitu_1_obop_hour_1977.txt", col_names = c("obs", : could not find function "read_table"
-~~~
-{: .error}
-
 > ## Challenge
 >
 > Create a new field, `recdate` that contains the date and hour of the observation, stored
@@ -114,13 +108,6 @@ Error in read_table("data/met_mlo_insitu_1_obop_hour_1977.txt", col_names = c("o
 > > weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
 > > ~~~
 > > {: .r}
-> > 
-> > 
-> > 
-> > ~~~
-> > Error in weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy, mm, : could not find function "%>%"
-> > ~~~
-> > {: .error}
 > {: .solution}
 {: .challenge}
 
@@ -351,9 +338,24 @@ is.null(c(1,2,3))
 > > 
 > > 
 > > ~~~
-> > Error in cleanfield(dataset[[variablename]], missingvalue = missingval): could not find function "cleanfield"
+> > # A tibble: 8,760 x 15
+> >      obs  yyyy    mm    dd    hh winddir windspeed windsteadiness pressure
+> >    <chr> <int> <chr> <chr> <chr>   <int>     <dbl>          <int>    <dbl>
+> >  1   MLO  1977    01    01    00     140      11.2            100    678.6
+> >  2   MLO  1977    01    01    01     140      10.7            100    678.6
+> >  3   MLO  1977    01    01    02     140       8.9            100    679.0
+> >  4   MLO  1977    01    01    03     140       8.5            100    679.3
+> >  5   MLO  1977    01    01    04     140       8.9            100    679.7
+> >  6   MLO  1977    01    01    05     140       8.5            100    680.0
+> >  7   MLO  1977    01    01    06     140       8.0            100    680.0
+> >  8   MLO  1977    01    01    07     140       8.0            100    680.0
+> >  9   MLO  1977    01    01    08     140       6.7            100    679.7
+> > 10   MLO  1977    01    01    09     140       7.2            100    679.7
+> > # ... with 8,750 more rows, and 6 more variables: temperature2m <dbl>,
+> > #   temperature10m <lgl>, temperaturetop <dbl>, relhumidity <int>,
+> > #   precipitation <int>, recdate <dttm>
 > > ~~~
-> > {: .error}
+> > {: .output}
 > {: .solution }
 {: .challenge }
 
@@ -427,13 +429,6 @@ weather <- read_table(infile,
 cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_2010.txt")
 ~~~
 {: .r}
-
-
-
-~~~
-Error in read_table(infile, col_names = c("obs", "yyyy", "mm", "dd", "hh", : could not find function "read_table"
-~~~
-{: .error}
 
 
 ## Loading more than one file at once
@@ -526,13 +521,6 @@ cleanweather <- loadWeatherData(weatherfiles)
 ~~~
 {: .r}
 
-
-
-~~~
-Error in read_table(infile, col_names = c("obs", "yyyy", "mm", "dd", "hh", : could not find function "read_table"
-~~~
-{: .error}
-
 That looks like it's worked; but what does our `cleanweather` data set contain?
 
 
@@ -546,9 +534,13 @@ cleanweather %>%
 
 
 ~~~
-Error in cleanweather %>% group_by(yyyy) %>% count(): could not find function "%>%"
+# A tibble: 1 x 2
+# Groups:   yyyy [1]
+   yyyy     n
+  <int> <int>
+1  1978  8760
 ~~~
-{: .error}
+{: .output}
 
 We only have data for the most recent year that we read in.  This is because the `weather` data-set gets overwritten each time we run through the `for` loop.  Let's modify the function so that we append the current year's data to a tibble that we define out of the loop.
 
@@ -627,13 +619,6 @@ cleanweather <- loadWeatherData(weatherfiles)
 
 
 ~~~
-Error in read_table(infile, col_names = c("obs", "yyyy", "mm", "dd", "hh", : could not find function "read_table"
-~~~
-{: .error}
-
-
-
-~~~
 cleanweather %>%  
  group_by(yyyy) %>% 
  count()  
@@ -643,9 +628,14 @@ cleanweather %>%
 
 
 ~~~
-Error in cleanweather %>% group_by(yyyy) %>% count(): could not find function "%>%"
+# A tibble: 2 x 2
+# Groups:   yyyy [2]
+   yyyy     n
+  <int> <int>
+1  1977  8760
+2  1978  8760
 ~~~
-{: .error}
+{: .output}
 
 So we can now pass more than one file to our `loadWeatherData` function.   Rather than type all the files in, we
 can use the `list.files()` function to generate the vector of filenames:
@@ -654,19 +644,6 @@ can use the `list.files()` function to generate the vector of filenames:
 ~~~
 weatherfiles <- list.files(path="./data", "met_mlo_ins*",full.names=TRUE)
 cleanweather <- loadWeatherData(weatherfiles)
-~~~
-{: .r}
-
-
-
-~~~
-Error in read_table(infile, col_names = c("obs", "yyyy", "mm", "dd", "hh", : could not find function "read_table"
-~~~
-{: .error}
-
-
-
-~~~
 cleanweather %>%  
  group_by(yyyy) %>% 
  count()  %>% print(n=inf)
@@ -676,7 +653,7 @@ cleanweather %>%
 
 
 ~~~
-Error in cleanweather %>% group_by(yyyy) %>% count() %>% print(n = inf): could not find function "%>%"
+Error in typeof(x): object 'inf' not found
 ~~~
 {: .error}
 
@@ -694,7 +671,7 @@ cleanweather %>%
 
 
 ~~~
-Error in cleanweather %>% group_by(yyyy, mm, dd) %>% count() %>% print(n = inf) %>% : could not find function "%>%"
+Error in typeof(x): object 'inf' not found
 ~~~
 {: .error}
 
@@ -704,12 +681,7 @@ ggplot(data = cleanweather, aes(x=recdate, y=temperature2m) ) + geom_line()
 ~~~
 {: .r}
 
-
-
-~~~
-Error in ggplot(data = cleanweather, aes(x = recdate, y = temperature2m)): could not find function "ggplot"
-~~~
-{: .error}
+<img src="../fig/rmd-04-weather-R-unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" style="display: block; margin: auto;" />
 
 
 ~~~
@@ -718,12 +690,7 @@ cleanweather %>% filter(yyyy == 2010) %>% mutate(dayinyear = yday(recdate)) %>%
 ~~~
 {: .r}
 
-
-
-~~~
-Error in cleanweather %>% filter(yyyy == 2010) %>% mutate(dayinyear = yday(recdate)) %>% : could not find function "%>%"
-~~~
-{: .error}
+<img src="../fig/rmd-04-weather-R-unnamed-chunk-27-1.png" title="plot of chunk unnamed-chunk-27" alt="plot of chunk unnamed-chunk-27" style="display: block; margin: auto;" />
 
 
 
@@ -735,9 +702,24 @@ cleanweather %>% filter(temperature2m > 80)
 
 
 ~~~
-Error in cleanweather %>% filter(temperature2m > 80): could not find function "%>%"
+# A tibble: 1,765 x 15
+     obs  yyyy    mm    dd    hh winddir windspeed windsteadiness pressure
+   <chr> <int> <chr> <chr> <chr>   <int>     <dbl>          <int>    <dbl>
+ 1   MLO  1977    05    20    19     350       2.2            100    681.7
+ 2   MLO  1977    05    20    20     300       3.1            100    681.7
+ 3   MLO  1977    05    21    11     130      13.9            100    680.3
+ 4   MLO  1977    05    21    12     140       8.9            100    680.7
+ 5   MLO  1977    05    21    13     180       0.0             NA    680.0
+ 6   MLO  1977    05    21    14     130       9.4            100    680.0
+ 7   MLO  1977    05    21    15     130       8.5            100    680.3
+ 8   MLO  1977    05    21    16     130      10.7            100    680.7
+ 9   MLO  1977    05    21    17     120      11.2            100    681.0
+10   MLO  1977    05    21    18     115      11.2            100    681.0
+# ... with 1,755 more rows, and 6 more variables: temperature2m <dbl>,
+#   temperature10m <dbl>, temperaturetop <dbl>, relhumidity <int>,
+#   precipitation <int>, recdate <dttm>
 ~~~
-{: .error}
+{: .output}
 
 
 
@@ -749,9 +731,14 @@ cleanweather %>% filter(windspeed < 0)
 
 
 ~~~
-Error in cleanweather %>% filter(windspeed < 0): could not find function "%>%"
+# A tibble: 0 x 15
+# ... with 15 variables: obs <chr>, yyyy <int>, mm <chr>, dd <chr>,
+#   hh <chr>, winddir <int>, windspeed <dbl>, windsteadiness <int>,
+#   pressure <dbl>, temperature2m <dbl>, temperature10m <dbl>,
+#   temperaturetop <dbl>, relhumidity <int>, precipitation <int>,
+#   recdate <dttm>
 ~~~
-{: .error}
+{: .output}
 
 
 
@@ -763,9 +750,14 @@ cleanweather %>% filter(pressure < 0)
 
 
 ~~~
-Error in cleanweather %>% filter(pressure < 0): could not find function "%>%"
+# A tibble: 0 x 15
+# ... with 15 variables: obs <chr>, yyyy <int>, mm <chr>, dd <chr>,
+#   hh <chr>, winddir <int>, windspeed <dbl>, windsteadiness <int>,
+#   pressure <dbl>, temperature2m <dbl>, temperature10m <dbl>,
+#   temperaturetop <dbl>, relhumidity <int>, precipitation <int>,
+#   recdate <dttm>
 ~~~
-{: .error}
+{: .output}
 
 
 
@@ -777,8 +769,27 @@ cleanweather %>% filter(winddir < 0 | winddir > 360) # Recode 360s to 0s?
 
 
 ~~~
-Error in cleanweather %>% filter(winddir < 0 | winddir > 360): could not find function "%>%"
+# A tibble: 3,141 x 15
+     obs  yyyy    mm    dd    hh winddir windspeed windsteadiness pressure
+   <chr> <int> <chr> <chr> <chr>   <int>     <dbl>          <int>    <dbl>
+ 1   MLO  1977    02    17    18     999      99.9             NA    679.0
+ 2   MLO  1977    02    18    05     999      99.9             NA    678.6
+ 3   MLO  1977    02    18    08     999      99.9             NA    680.3
+ 4   MLO  1977    02    18    14     999      99.9             NA    678.6
+ 5   MLO  1977    02    20    04     999      99.9             NA    682.0
+ 6   MLO  1977    02    20    05     999      99.9             NA    682.4
+ 7   MLO  1977    02    20    06     999      99.9             NA    682.7
+ 8   MLO  1977    02    20    07     999      99.9             NA    682.7
+ 9   MLO  1977    02    20    08     999      99.9             NA    682.7
+10   MLO  1977    02    20    09     999      99.9             NA    682.7
+# ... with 3,131 more rows, and 6 more variables: temperature2m <dbl>,
+#   temperature10m <dbl>, temperaturetop <dbl>, relhumidity <int>,
+#   precipitation <int>, recdate <dttm>
 ~~~
-{: .error}
+{: .output}
 
 Something has gone wrong...  challenge is working out what.  Need to use read_table2() or read_table(guess_max = Inf)
+
+
+
+

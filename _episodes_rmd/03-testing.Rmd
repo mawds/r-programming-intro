@@ -175,3 +175,6 @@ test_file("tests/test_fail.R")
 
 
 
+```{r, echo=FALSE}
+save.image(file = "checkpoints/03end.RData")
+```

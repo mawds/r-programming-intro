@@ -60,26 +60,27 @@ library(tidyverse)
 
 
 ~~~
-── Attaching packages ────────────────────────────────── tidyverse 1.2.0 ──
+Loading tidyverse: ggplot2
+Loading tidyverse: tibble
+Loading tidyverse: tidyr
+Loading tidyverse: readr
+Loading tidyverse: purrr
+Loading tidyverse: dplyr
 ~~~
 {: .output}
 
 
 
 ~~~
-✔ ggplot2 2.2.1     ✔ purrr   0.2.4
-✔ tibble  1.3.4     ✔ dplyr   0.7.4
-✔ tidyr   0.7.2     ✔ stringr 1.2.0
-✔ readr   1.1.1     ✔ forcats 0.2.0
+Conflicts with tidy packages ----------------------------------------------
 ~~~
 {: .output}
 
 
 
 ~~~
-── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
+filter(): dplyr, stats
+lag():    dplyr, stats
 ~~~
 {: .output}
 
@@ -264,7 +265,40 @@ In contrast to the gapminder data we used previously, it looks like we will need
 ## Dealing with missing data
 
 It looks like `-999.99` is used as a missing or invalid data value. We can use the `mutate` command to recode the 
-missing data to `NA`:
+missing data to `NA`. To do this, we'll use the `ifelse()` function:
+
+
+~~~
+demodata <- 1:10
+ifelse(demodata == 5, demodata, NA)
+~~~
+{: .r}
+
+
+
+~~~
+ [1] NA NA NA NA  5 NA NA NA NA NA
+~~~
+{: .output}
+
+Let's unpick this to understand what the `ifelse()` function is doing;
+
+
+~~~
+demodata <- 1:10
+demodata == 5
+~~~
+{: .r}
+
+
+
+~~~
+ [1] FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE
+~~~
+{: .output}
+
+The first argument of `ifelse()` evaluates to a logical vector. If the ith element of the vector is `TRUE`, `ifelse()` will output the ith element of the 2nd argument (so the ith element of `demodata` in this example).  If the element is FALSE the ith element of the 3rd argument will be replaced.  But the 3rd argument is only a single value...what's going on here?  You may remember that R `recycles` vectors if they are too short. This is what happens here; as the 3rd argument in our example consists of a single value, it will be output for all elements that are  `FALSE`
+
 
 
 ~~~
@@ -274,9 +308,9 @@ co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
 ~~~
 {: .r}
 
-This works, but there is a lot of repetition in our code·  This is bad for several reasons:
+This works, but there is a lot of repetition in our code.  This is bad for several reasons:
 
-1. It's error prone (and the errors we introduce are often very hard to spot and debug).  For example, we might mismatch variables:
+ 1. It's error prone (and the errors we introduce are often very hard to spot and debug).  For example, we might mismatch variables:
 
 
 ~~~
@@ -297,14 +331,21 @@ co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
 ~~~
 {: .r}
 
-2. It could get very tedious; we could have hundreds of fields that we needed to recode it the same way.
+> ## Finding typing errors
+> Even if an error is reported when you run your code, errors like these can be very tricky to spot.
+> If you select a variable name in RStudio (a shortcut for this is to double-click the variable name),
+> it will highlight the other places in your code where the 
+> variable is used.  This can make it easier to spot where a variable has been mistyped.
+{: .callout}
+
+ 2. It could get very tedious; we could have hundreds of fields that we needed to recode it the same way.
 
 This illustrates why functions are so useful.  For now, let's leave the `-999.99`s in the data, and deal with them
 properly in the next episode.
 
 ## Dealing with Dates
 
-Although we didn't cover them in the introductionto the tidyverse course, it's worth spending a little time on dealing with date data.  It would be useful to combine the fields `yyyy`, `mm`, `dd` into a "proper" date.   The `lubridate` package, which is part of the tidyverse offers lots of functions that make dealing with dates easier.   The `lubridate` package isn't loaded by default when we use `library("tidyverse")`.
+Although we didn't cover them in the Introduction to Data Analysis course, it's worth spending a little time on dealing with date data.  It would be useful to combine the fields `yyyy`, `mm`, `dd` into a "proper" date.   The `lubridate` package, which is part of the tidyverse offers lots of functions that make dealing with dates easier.   The `lubridate` package isn't loaded by default when we use `library("tidyverse")`.
 
 Lubridate comes with several functions to process strings that look like dates (e.g. "1 November 2017") into date objects.
 
@@ -526,7 +567,7 @@ ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line()
 ~~~
 {: .r}
 
-<img src="../fig/rmd-01-unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
+<img src="../fig/rmd-01-unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
 
 
 
@@ -551,7 +592,7 @@ ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line()
 > > ~~~
 > > {: .r}
 > > 
-> > <img src="../fig/rmd-01-unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" style="display: block; margin: auto;" />
+> > <img src="../fig/rmd-01-unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" style="display: block; margin: auto;" />
 > > 
 > {: .solution}
 {: .challenge}
