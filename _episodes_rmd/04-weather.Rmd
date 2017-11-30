@@ -116,8 +116,11 @@ weather <- read_table("data/met_mlo_insitu_1_obop_hour_1977.txt",
 
 ## An improved field cleaning function
 
-Let's deal with making our `cleanfields()` function work with 
-something other than the default missing value.   We will need to provide a
+In contrast to the CO2 data, the value used to represent missing data depends on the 
+field.   Let's modify our `cleanfields()` function so that we can (optionally) specify
+the missing value we want to use for each field.
+
+We will need to provide a
 way of giving the function a list of variable names *and* the value that we
 should treat as missing.
 
@@ -134,101 +137,48 @@ We can extract the names of the vector using the `names()` function:
 names(missingvalues)
 ```
 
-Note that we can also use the `names()` function to set the names of an object:
 
-```{r}
-myvec <- c(1,2,3)
-names(myvec) <- c("a","b","c")
-myvec
-```
-This approach is easier if we're nameing vectors in a function, for example.  But it makes it easier
-to assign names to the wrong elements if you type the two vectors by hand.  In contrast, in the first method it
-is clearer *what* the name we're assigning to each element is.
-
-This gives us all the "ingredients" we need to write a function that we can use to clean the weather data.
-
-FIXME - too many concepts in one go for this challenge? Perhaps split into 2 challenges?
-
-> ## Challenge: Cleaning the weather data
+> ## More on `names()`
 > 
-> Using the `cleanfields()` function we wrote earlier as a starting point, create a function, `cleanfields2()`
-> that will read a named vector of missing values and use these to clean the data.  
+> In addition to getting the names of an object, we can also use the `names()` function to set the names of an object:
 > 
-> Hint:  There were two different approaches to using `for`:
-> ```{r, eval=FALSE}
-> for(field in fieldlist){
->   print(field)
-> }
-> 
-> for(i in 1:length(fieldlist)){
->   print(fieldlist[i])
-> }
+> ```{r}
+> myvec <- c(1,2,3)
+> names(myvec) <- c("a","b","c")
+> myvec
 > ```
-> 
-> You will find it easier to use the second form, since we will need to refer to the positions of the 
-> elements in our vector of missing values.
-> 
-> > ## Solution
-> > 
-> > One way of solving this challenge is: 
-> > 
-> > ```{r}
-> > cleanfields2 <- function(dataset, missinglist){
-> >   
-> >   variablenames <- names(missinglist) 
-> >   for (i in 1:length(missinglist)) {
-> >     variablename = variablenames[i] 
-> >     missingval = missinglist[i] 
-> >     dataset[[ variablename ]] <- cleanfield(dataset[[ variablename ]], missingvalue = missingval)
-> >   }
-> >   
-> >   return(dataset) 
-> > }
-> > ```
-> > 
-> > We could write this more succinctly, for example using `dataset[[ variablenames[i] ]]` instead of defining the 
-> > `variablename` variable on each iteration of the `for` loop.  This is, however, less clear.
-> > 
-> {: .solution }
-{: .challenge }
+{: .callout}
 
-```{r, echo =FALSE}
-cleanfields2 <- function(dataset, missinglist){
-  
-  variablenames <- names(missinglist) 
-  for (i in 1:length(missinglist)) {
-    variablename <- variablenames[i] 
-    missingval <- missinglist[i] 
-    dataset[[ variablename ]] <- cleanfield(dataset[[ variablename ]], missingvalue = missingval)
-  }
-  
-  return(dataset) 
-}
-```
-We now have two functions, `cleanfields()` and `cleanfields2()`, which do almost the same thing.   It would be 
-good if we could combine these into a single function, which would call the appropriate version depending on 
-whether we gave it a vector of variable names (for `cleanfields()`),  or a vector of named missing values (for `cleanfields2()`)
 
-We need a way of testing whether the vector has names, and a way of doing one thing if it does, and another if it doesn't.  
+Let's modify our function so that it calls `cleanfield()` with its default `missingvalue` argument if our vector of fields
+to clean doesn't have names, and calls `cleanfield()` with the appropriate missing value if we have specified names.
 
-## Removed if section from here
-We can use this to work out which version of our function we want to call.  Using pseudo code:
+As we have already written tests to check that `cleanfields()` works properly, we can modify our function knowing that
+if we break anything, this should be revealed in the tests we have written.  
+
+In pseudo-code, this is what we want to do:
 
 
 ```{r, eval = FALSE}
 
-cleandataset <- function(dataset, fieldstoclean){
+cleanfields <- function(dataset, fieldlist){
   
   if( fieldstoclean doesn't have names ){
-    run cleanfields
+    run existing code
   } else {
-    run cleanfields2
+    clean the fields according to the values passed and their names
   }
 
   return our results
 }
 
 ```
+
+There are two things we will need to figure out:
+
+1. How to test whether `fieldstoclean` has names
+2. How to write the code that will be executed if `fieldstoclean` has names
+
 
 We used the `names()` function to extract the names of a named vector.  Let's look at how we can use
 this to generate a condition that evaluates to `TRUE` or `FALSE` depending on whether a vector has names:
@@ -240,52 +190,158 @@ nonames <- c("name1", "name2")
 names(withnames) # Will give us the names if there are any
 
 names(nonames) # Or NULL if there are not
-
-# But NULL isn't TRUE (or FALSE)
-# We need to use 
-is.null(NULL)
-# to see whether something is NULL
-is.null(c(1,2,3))
 ```
 
-> ## Challenge: Combining the functions
+This gets us most of the way there; but there is a problem.  Usually we can test if values are equal to each other using
+`==` ( or `all.equal()` if we're dealing with floating point numbers).  This doesn't work for "special" values, like `NULL`, `NA`
+and `Inf`:
+```{r}
+
+x <- NULL
+# But NULL isn't TRUE (or FALSE)
+x == NULL
+# We need to use:
+is.null(NULL)
+```
+
+> ## Indenting your code
 > 
-> Modify the pseudocode above to write a function, `cleandataset(dataset, fieldstoclean)`, that will accept either a list of field names or a named numeric vector, and call the appropriate function `cleanfield()` or `cleanfield2()`
+> As our code becomes more complex, keeping it tidy becomes increasingly important.  One way of doing this is
+> by indenting your code, so that everything at the same "level", e.g. everything that will be executed `if` a condition is
+> true, has the same indent. RStudio performs this indentation for you automatically.  You may find it gets out of sync
+> as you edit and move your blocks of code around.  To re-indent your code, select it and press <kbd>Ctrl</kbd>+<kbd>I</kbd>.
+> 
+> RStudio will highlight the other half of quotes, brackets, and braces which can be very helpful if you forget to close a string, function or block of code.
+> 
+{: .callout}
+
+> ## Challenge:  Testing whether we have names
+> 
+> Modify your `cleanfields()` function to test whether `fieldlist` has  names.  If it does not
+> you should use your existing code to clean the fields.  If it does have names you should
+> stop the function (we will write the code to clean the data when we have names and values in the 
+> next challenge)
+> 
+> When you have written your function, you should test it still works using the tests we wrote earlier.
+> 
 > 
 > > ## Solution
+> > ```{r}
+> > 
+> > 
+> > function(dataset, fieldlist) {
+> >   if (is.null(names(fieldlist))) {
+> >     if (!all(fieldlist %in% names(dataset))) {
+> >       stop("Attempting to clean variables that do not exist in the dataset")
+> >     }
+> >     
+> >     if (anyDuplicated(fieldlist) != 0) {
+> >       warning("Duplicated variable names specified")
+> >     }
+> >     
+> >     
+> >     for (f in fieldlist) {
+> >       dataset[[f]] <- cleanfield(dataset[[f]])
+> >     }
+> >     
+> >   } else {
+> >     stop("Not yet implemented")
+> >   }
+> >   
+> >   return(dataset)
+> >   
+> > }
+> > 
+> > ```
+> {: .solution}
+{: .challenge}
+
+
+We should now write the final part of the function.   We will need to loop over each element of the named `fieldlist`
+vector 
+
+
+> ## Challenge: Cleaning the weather data
+> 
+> Modify your function to implement the missing functionality.
+> 
+> > ## Hint - for loops:
+> >There were two different approaches to using `for`:
+> > ```{r, eval=FALSE}
+> > for(field in fieldlist){
+> >   print(field)
+> > }
+> > 
+> > for(i in 1:length(fieldlist)){
+> >   print(fieldlist[i])
+> > }
+> > ```
+> >  
+> > You will find it easier to use the second form, since we will need to refer to the positions of the 
+> > elements in our vector of missing values.
+> >
+> {: .solution}
+> > ## Solution
+> > 
+> > One way of solving this challenge is: 
 > > 
 > > ```{r}
 > > 
-> > cleandataset <- function(dataset, fieldstoclean) {
+> > cleanfields <- function(dataset, fieldlist){
 > >   
-> >   if ( is.null( names(fieldstoclean)) ) {
-> >     cleandata <- cleanfields(dataset, fieldstoclean)
+> >   if ( is.null(names(fieldlist)) ) {
+> >     
+> >     if ( !all(fieldlist %in% names(dataset)) ) {
+> >       stop("Attempting to clean variables that do not exist in the dataset")
+> >     }
+> >     
+> >     if ( anyDuplicated(fieldlist) != 0 ) {
+> >       warning("Duplicated variable names specified")
+> >     }
+> >     
+> >     for (f in fieldlist) {
+> >       dataset[[f]] <- cleanfield(dataset[[f]])
+> >     }
+> >     
 > >   } else {
-> >     cleandata <- cleanfields2(dataset, fieldstoclean)
+> >     
+> >     variablenames <- names(fieldlist) 
+> >     for (i in 1:length(fieldlist)) {
+> >       
+> >       variablename <- variablenames[i] 
+> >       missingval <- fieldlist[i] 
+> >       
+> >       dataset[[ variablename ]] <- cleanfield(dataset[[ variablename ]], missingvalue = missingval)
+> >       
+> >     } 
 > >   }
 > >   
-> >   return(cleandata)
+> >   return(dataset) 
+> >   
 > > }
 > > 
-> > cleandataset(weather, missingvalues)
 > > ```
+> > 
+> > We could write this more succinctly, for example using `dataset[[ variablenames[i] ]]` instead of defining the 
+> > `variablename` variable on each iteration of the `for` loop.  This is, however, less clear.
+> >
+> > One thing you may notice is that we don't now test whether the variables exist if we're using 
+> > our new approach to cleaning the data.  This is not ideal; if there was more time we would 
+> > write a test for this, and then modify the code implement the required functionality.
+> >
+> > As the function is written, this would mean we would be testing for variable names in two places, 
+> > which isn't ideal - there would then be places for our code to go wrong.  A better approach might be 
+> > to test whether our input variable has names.  If it does not, we could generate a named vector with the 
+> > default missing value.  
+> >
+> > Because we've written tests for our function, we can modify it confidently, knowing that if we break anything
+> > the tests will tell us.
+> > 
 > {: .solution }
 {: .challenge }
 
-```{r, echo = FALSE}
+## Introduce debugging?
 
-cleandataset <- function(dataset, fieldstoclean) {
-  
-  if ( is.null( names(fieldstoclean)) ) {
-    cleandata <- cleanfields(dataset, fieldstoclean)
-  } else {
-    cleandata <- cleanfields2(dataset, fieldstoclean)
-  }
-  
-  return(cleandata)
-}
-
-```
 ## Processing a file
 
 We now have all the elements we need to load and process a file.  We can:
@@ -301,54 +357,54 @@ it is to read.
 loadWeatherData <- function(infile){
   # Load in a weather data file
   
-weather <- read_table(infile,
-                      col_names = c("obs",
-                                    "yyyy",
-                                    "mm",
-                                    "dd",
-                                    "hh",
-                                    "winddir",
-                                    "windspeed",
-                                    "windsteadiness",
-                                    "pressure",
-                                    "temperature2m",
-                                    "temperature10m",
-                                    "temperaturetop",
-                                    "relhumidity",
-                                    "precipitation" ),
-                      col_types = cols(
-                        obs = col_character(),
-                        yyyy = col_integer(),
-                        mm = col_character(),
-                        dd = col_character(),
-                        hh = col_character(),
-                        winddir = col_integer(),
-                        windspeed = col_double(),
-                        windsteadiness = col_integer(),
-                        pressure = col_double(),
-                        temperature2m = col_double(),
-                        temperature10m = col_double(),
-                        temperaturetop = col_double(),
-                        relhumidity = col_integer(),
-                        precipitation = col_integer()
-                      )
-)
-
+  weather <- read_table(infile,
+                        col_names = c("obs",
+                                      "yyyy",
+                                      "mm",
+                                      "dd",
+                                      "hh",
+                                      "winddir",
+                                      "windspeed",
+                                      "windsteadiness",
+                                      "pressure",
+                                      "temperature2m",
+                                      "temperature10m",
+                                      "temperaturetop",
+                                      "relhumidity",
+                                      "precipitation" ),
+                        col_types = cols(
+                          obs = col_character(),
+                          yyyy = col_integer(),
+                          mm = col_character(),
+                          dd = col_character(),
+                          hh = col_character(),
+                          winddir = col_integer(),
+                          windspeed = col_double(),
+                          windsteadiness = col_integer(),
+                          pressure = col_double(),
+                          temperature2m = col_double(),
+                          temperature10m = col_double(),
+                          temperaturetop = col_double(),
+                          relhumidity = col_integer(),
+                          precipitation = col_integer()
+                        )
+  )
   
- weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
-
- missingvalues <- c(winddir = -999,
-                    windspeed = -999.9,
-                    windsteadiness = -9,
-                    pressure = -999.9,
-                    temperature2m = -999.9,
-                    temperature10m = -999.9,
-                    temperaturetop = -999.9,
-                    relhumidity = -99,
-                    precipitation = -99)
- weather <- cleandataset(weather, missingvalues)
-
- return(weather)
+  
+  weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
+  
+  missingvalues <- c(winddir = -999,
+                     windspeed = -999.9,
+                     windsteadiness = -9,
+                     pressure = -999.9,
+                     temperature2m = -999.9,
+                     temperature10m = -999.9,
+                     temperaturetop = -999.9,
+                     relhumidity = -99,
+                     precipitation = -99)
+  weather <- cleanfields(weather, missingvalues)
+  
+  return(weather)
 }
 
 cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_2010.txt")
@@ -426,7 +482,7 @@ loadWeatherData <- function(infiles){
                        temperaturetop = -999.9,
                        relhumidity = -99,
                        precipitation = -99)
-    weather <- cleandataset(weather, missingvalues)
+    weather <- cleanfields(weather, missingvalues)
   }
   return(weather)
 }
@@ -441,8 +497,8 @@ That looks like it's worked; but what does our `cleanweather` data set contain?
 
 ```{r}
 cleanweather %>%  
- group_by(yyyy) %>% 
- count()  
+  group_by(yyyy) %>% 
+  count()  
 ```
 
 We only have data for the most recent year that we read in.  This is because the `weather` data-set gets overwritten each time we run through the `for` loop.  Let's modify the function so that we append the current year's data to a tibble that we define out of the loop.
@@ -498,7 +554,7 @@ loadWeatherData <- function(infiles){
                        temperaturetop = -999.9,
                        relhumidity = -99,
                        precipitation = -99)
-    weather <- cleandataset(weather, missingvalues)
+    weather <- cleanfields(weather, missingvalues)
     
     
     
@@ -518,8 +574,8 @@ cleanweather <- loadWeatherData(weatherfiles)
 
 ```{r}
 cleanweather %>%  
- group_by(yyyy) %>% 
- count()  
+  group_by(yyyy) %>% 
+  count()  
 ```
 
 So we can now pass more than one file to our `loadWeatherData` function.   Rather than type all the files in, we
@@ -529,16 +585,16 @@ can use the `list.files()` function to generate the vector of filenames:
 weatherfiles <- list.files(path="./data", "met_mlo_ins*",full.names=TRUE)
 cleanweather <- loadWeatherData(weatherfiles)
 cleanweather %>%  
- group_by(yyyy) %>% 
- count()  %>% print(n=inf)
+  group_by(yyyy) %>% 
+  count()  %>% print(n=Inf)
 ```
 
 Are we missing data?
 
 ```{r}
 cleanweather %>%  
- group_by(yyyy, mm, dd) %>% 
- count()  %>% print(n=inf) %>% 
+  group_by(yyyy, mm, dd) %>% 
+  count()  %>% print(n=Inf) %>% 
   filter(n != 24)
 ```
 
