@@ -1,0 +1,223 @@
+---
+title: "Loading multiple files"
+teaching: 30
+exercises: 0
+questions:
+- "Example ?"
+objectives:
+- "Example objective"
+keypoints:
+- "Example keypoint"
+---
+
+```{r, include = FALSE}
+source("../bin/chunk-options.R")
+knitr_fig_path("05-multi-R-")
+
+```
+
+```{r, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(lubridate)
+load("checkpoints/04end.RData")
+```
+
+## Loading more than one file at once
+
+We have many years of weather data, and we would like to load them into a single tibble.  We can modify our `loadWeatherData()` function to do this.  
+
+We already know how to iterate over a vector using a `for` loop.  Let's make an example vector by hand, while we develop the function:
+
+```{r}
+weatherfiles <- c("data/met_mlo_insitu_1_obop_hour_1977.txt", "data/met_mlo_insitu_1_obop_hour_1978.txt", "data/met_mlo_insitu_1_obop_hour_1979.txt")
+```
+
+This is what we want our function to do::
+
+```{r}
+loadWeatherDataPseudoCode <- function(weatherfiles){
+  for (f in weatherfiles) {
+    print(paste("Load in data for file", f))
+    print("Append the data to the data we've already loaded")
+  }
+  print("return the tibble containing all the data")
+}
+
+loadWeatherDataPseudoCode(weatherfiles)
+
+```
+
+## Create a new function or modify an existing one?
+
+We could decide to create a new function which would call `loadWeatherData()` for each file,
+rather than modifying our existing function.  There are pros and cons to extending the existing
+function, or creating a new one.  MORE HERE - ease of debugging vs single file is just file vector 
+with length 1
+
+{: .callout}
+
+
+```{r}
+loadWeatherData <- function(infiles){
+  # Load in a weather data file
+  
+  for (infile in infiles) {  
+    weather <- read_table(infile,
+                          col_names = c("obs",
+                                        "yyyy",
+                                        "mm",
+                                        "dd",
+                                        "hh",
+                                        "winddir",
+                                        "windspeed",
+                                        "windsteadiness",
+                                        "pressure",
+                                        "temperature2m",
+                                        "temperature10m",
+                                        "temperaturetop",
+                                        "relhumidity",
+                                        "precipitation" ),
+                          col_types = cols(
+                            obs = col_character(),
+                            yyyy = col_integer(),
+                            mm = col_character(),
+                            dd = col_character(),
+                            hh = col_character(),
+                            winddir = col_integer(),
+                            windspeed = col_double(),
+                            windsteadiness = col_integer(),
+                            pressure = col_double(),
+                            temperature2m = col_double(),
+                            temperature10m = col_double(),
+                            temperaturetop = col_double(),
+                            relhumidity = col_integer(),
+                            precipitation = col_integer()
+                          )
+    )
+    
+    
+    weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
+    
+    missingvalues <- c(winddir = -999,
+                       windspeed = -999.9,
+                       windsteadiness = -9,
+                       pressure = -999.9,
+                       temperature2m = -999.9,
+                       temperature10m = -999.9,
+                       temperaturetop = -999.9,
+                       relhumidity = -99,
+                       precipitation = -99)
+    weather <- cleanfields(weather, missingvalues)
+  }
+  return(weather)
+}
+```
+
+
+```{r}
+cleanweather <- loadWeatherData(weatherfiles)
+```
+
+That looks like it's worked; but what does our `cleanweather` data set contain?
+
+```{r}
+cleanweather %>%  
+  group_by(yyyy) %>% 
+  count()  
+```
+
+We only have data for the most recent year that we read in.  This is because the `weather` data-set gets overwritten each time we run through the `for` loop.  Let's modify the function so that we append the current year's data to a tibble that we define out of the loop.
+
+**This is a really bad thing to do in R - should make a list and bind togeher**
+
+
+```{r}
+loadWeatherData <- function(infiles){
+  # Load in a weather data file
+  allweather <- NULL
+  for (infile in infiles) {  
+    weather <- read_table2(infile,
+                          col_names = c("obs",
+                                        "yyyy",
+                                        "mm",
+                                        "dd",
+                                        "hh",
+                                        "winddir",
+                                        "windspeed",
+                                        "windsteadiness",
+                                        "pressure",
+                                        "temperature2m",
+                                        "temperature10m",
+                                        "temperaturetop",
+                                        "relhumidity",
+                                        "precipitation" ),
+                          col_types = cols(
+                            obs = col_character(),
+                            yyyy = col_integer(),
+                            mm = col_character(),
+                            dd = col_character(),
+                            hh = col_character(),
+                            winddir = col_integer(),
+                            windspeed = col_double(),
+                            windsteadiness = col_integer(),
+                            pressure = col_double(),
+                            temperature2m = col_double(),
+                            temperature10m = col_double(),
+                            temperaturetop = col_double(),
+                            relhumidity = col_integer(),
+                            precipitation = col_integer()
+                          )
+    )
+    
+    
+    weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
+    
+    missingvalues <- c(winddir = -999,
+                       windspeed = -99.9, ## Some records use this as missing
+                       windsteadiness = -9,
+                       pressure = -999.9,
+                       temperature2m = -999.9,
+                       temperature10m = -999.9,
+                       temperaturetop = -999.9,
+                       relhumidity = -99,
+                       precipitation = -99)
+    weather <- cleanfields(weather, missingvalues)
+    
+    
+    
+    allweather <- bind_rows(allweather, weather)
+  }
+  return(allweather)
+}
+```
+
+
+
+
+```{r}
+cleanweather <- loadWeatherData(weatherfiles)
+```
+
+
+```{r}
+cleanweather %>%  
+  group_by(yyyy) %>% 
+  count()  
+```
+
+So we can now pass more than one file to our `loadWeatherData` function.   Rather than type all the files in, we
+can use the `list.files()` function to generate the vector of filenames:
+
+```{r}
+weatherfiles <- list.files(path="./data", "met_mlo_ins*",full.names=TRUE)
+cleanweather <- loadWeatherData(weatherfiles)
+```
+
+```{r}
+summary(cleanweather)
+```
+
+
+```{r, echo=FALSE}
+save.image(file = "checkpoints/05end.RData")
+```
