@@ -340,7 +340,41 @@ vector
 > {: .solution }
 {: .challenge }
 
-## Introduce debugging?
+```{r, include=FALSE}
+cleanfields <- function(dataset, fieldlist){
+  
+  if ( is.null(names(fieldlist)) ) {
+    
+    if ( !all(fieldlist %in% names(dataset)) ) {
+      stop("Attempting to clean variables that do not exist in the dataset")
+    }
+    
+    if ( anyDuplicated(fieldlist) != 0 ) {
+      warning("Duplicated variable names specified")
+    }
+    
+    for (f in fieldlist) {
+      dataset[[f]] <- cleanfield(dataset[[f]])
+    }
+    
+  } else {
+    
+    variablenames <- names(fieldlist) 
+    for (i in 1:length(fieldlist)) {
+      
+      variablename <- variablenames[i] 
+      missingval <- fieldlist[i] 
+      
+      dataset[[ variablename ]] <- cleanfield(dataset[[ variablename ]], missingvalue = missingval)
+      
+    } 
+  }
+  
+  return(dataset) 
+  
+}
+```
+
 
 ## Processing a file
 
@@ -407,219 +441,248 @@ loadWeatherData <- function(infile){
   return(weather)
 }
 
-cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_2010.txt")
+cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_1977.txt")
 ```
 
+## Checking our load has worked
 
-## Loading more than one file at once
-
-We have many years of weather data, and we would like to load them into a single tibble.  We can modify our `loadWeatherData()` function to do this.  We already know how to iterate over a vector using a `for` loop.  Let's make an example vector by hand, while we develop the function:
+The `summary()` function will show us summary statistics for each variable in a data-set.  Let's use this to
+check that our data looks reasonable:
+The summary shows that some variables, e.g. `winddir` have large, positive values:
 
 ```{r}
-weatherfiles <- c("data/met_mlo_insitu_1_obop_hour_1977.txt", "data/met_mlo_insitu_1_obop_hour_1978.txt")
+summary(cleanweather)
 ```
 
-What happens if we try to use this with our existing function?
+It looks like the cleaning process hasn't worked properly!   We've tested our `cleanfields()` function, so we can be reasonably confident that is working properly (it's possible that something has gone wrong that we *haven't* tested for).  So what's going on?
+## Hunting bugs
 
-FIXME - enable before release.  Disabled so whole episode can be run in Rstudio
+Hunting a bug down can be very difficult.   They're often "obvious" once you've found them (it's often the case that the more "obvious" the bug the longer it takes to find).  There are a number of techniques we can use to help us:
 
-```{r, eval=FALSE}
-cleanweather <- loadWeatherData(weatherfiles)
-```
+* We can print out statements (using `print()` so we know which bits of code are being run)
+* We can use a debugger to pause the program execution and look at the values of variables _within_ the function
 
-FIXME - introduce debugger here?
 
-We need to modify our fuction to loop over each element of the vector, and load the corresponding file:
+Take a look at our `loadWeatherData()` function; it does two main things: loads the data and cleans it (it also creates the `recdate` field - but that looks OK in our summary).  We'd like to know what the `weather` tibble looks like once we've read it in, but _before_ we've cleaned it - we can use this to help work out whether the problem is with the data itself (i.e. the file doesn't conform to the specificiation), our loading the data or our cleaning of the data.
 
+Find the line in your code where we generate the `recdate` field, and click to the left of the line number, as shown below:  You should find a red circle appears next to the line.  This creates a breakpoint.  If we run the code again, 
+
+![Debugger screenshot](../fig/debugger.png)
+
+When we run the code again, by pressing <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd>, it will stop on the selected line _before it is executed_.  We can look at the contents of the weather tibble by entering its name in the console window.  
+
+> ## Challenge
+> 
+> Use the `summary()` function (or other methods of your choice) to work out whether the problem is with our cleaning function or with what's being read in.  If there are problems with what's being read in, find a record which appears to be incorrect (perhaps uing, `filter()`).  Take a look at the raw data-file to establish whether the problem is with our _reading in_ of the data, or the data itself.
+> 
+> > ## Solution
+> > 
+> >  Within the debugger, setting a breakpoint as described in the text, 
+> >  we obtain:
+> > 
+> > ```{r, include = FALSE}
+> > # Silently read in data as it will appear in the debugger (i.e. no cleaning)
+> > 
+> >   weather <- read_table("data/met_mlo_insitu_1_obop_hour_1977.txt",
+> >                         col_names = c("obs",
+> >                                       "yyyy",
+> >                                       "mm",
+> >                                       "dd",
+> >                                       "hh",
+> >                                       "winddir",
+> >                                       "windspeed",
+> >                                       "windsteadiness",
+> >                                       "pressure",
+> >                                       "temperature2m",
+> >                                       "temperature10m",
+> >                                       "temperaturetop",
+> >                                       "relhumidity",
+> >                                       "precipitation" ),
+> >                         col_types = cols(
+> >                           obs = col_character(),
+> >                           yyyy = col_integer(),
+> >                           mm = col_character(),
+> >                           dd = col_character(),
+> >                           hh = col_character(),
+> >                           winddir = col_integer(),
+> >                           windspeed = col_double(),
+> >                           windsteadiness = col_integer(),
+> >                           pressure = col_double(),
+> >                           temperature2m = col_double(),
+> >                           temperature10m = col_double(),
+> >                           temperaturetop = col_double(),
+> >                           relhumidity = col_integer(),
+> >                           precipitation = col_integer()
+> >                         )
+> >   )
+> >   
+> >   
+> > ```
+> > 
+> > ```{r}
+> > summary(weather)
+> > ```
+> > 
+> > As we're looking at the data _before_ cleaning it, we see the large negative values that are used to represent missing data.
+> > We also see that some variables have the large positive values we saw before.  This suggests the problem is with our loading of the data, or the data itself. We can find a problematic record
+> > by filtering the tibble:
+> > 
+> > ```{r}
+> > weather %>% filter(winddir == 999)
+> > ```
+> > 
+> > Let's look at the data file:
+> > 
+> > ```{r eval=FALSE}
+> > MLO 1977 02 17 18 -999 -99.9  -9  679.00    7.2 -999.9 -999.9  17 -99
+> > ```
+> > 
+> > The data look like they are correct; the "missing" values are negative; something has gone wrong with how we're reading in the data.
+> > 
+> {: .solution}
+{: .challenge}
+
+In the challenge we deduced that the issue was with how the `read_table()` function is reading the data in.  
+
+Take a look a the help file for `read_table()` - it shows that there is also a function `read_table2()`, which "is like read.table(), [but] it allows any number of whitespace characters between columns, and the lines can be of different lengths."
+
+Let's try this:
 
 ```{r}
-loadWeatherData <- function(infiles){
+loadWeatherData <- function(infile){
   # Load in a weather data file
   
-  for (infile in infiles) {  
-    weather <- read_table(infile,
-                          col_names = c("obs",
-                                        "yyyy",
-                                        "mm",
-                                        "dd",
-                                        "hh",
-                                        "winddir",
-                                        "windspeed",
-                                        "windsteadiness",
-                                        "pressure",
-                                        "temperature2m",
-                                        "temperature10m",
-                                        "temperaturetop",
-                                        "relhumidity",
-                                        "precipitation" ),
-                          col_types = cols(
-                            obs = col_character(),
-                            yyyy = col_integer(),
-                            mm = col_character(),
-                            dd = col_character(),
-                            hh = col_character(),
-                            winddir = col_integer(),
-                            windspeed = col_double(),
-                            windsteadiness = col_integer(),
-                            pressure = col_double(),
-                            temperature2m = col_double(),
-                            temperature10m = col_double(),
-                            temperaturetop = col_double(),
-                            relhumidity = col_integer(),
-                            precipitation = col_integer()
-                          )
-    )
-    
-    
-    weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
-    
-    missingvalues <- c(winddir = -999,
-                       windspeed = -999.9,
-                       windsteadiness = -9,
-                       pressure = -999.9,
-                       temperature2m = -999.9,
-                       temperature10m = -999.9,
-                       temperaturetop = -999.9,
-                       relhumidity = -99,
-                       precipitation = -99)
-    weather <- cleanfields(weather, missingvalues)
-  }
+  weather <- read_table2(infile,
+                        col_names = c("obs",
+                                      "yyyy",
+                                      "mm",
+                                      "dd",
+                                      "hh",
+                                      "winddir",
+                                      "windspeed",
+                                      "windsteadiness",
+                                      "pressure",
+                                      "temperature2m",
+                                      "temperature10m",
+                                      "temperaturetop",
+                                      "relhumidity",
+                                      "precipitation" ),
+                        col_types = cols(
+                          obs = col_character(),
+                          yyyy = col_integer(),
+                          mm = col_character(),
+                          dd = col_character(),
+                          hh = col_character(),
+                          winddir = col_integer(),
+                          windspeed = col_double(),
+                          windsteadiness = col_integer(),
+                          pressure = col_double(),
+                          temperature2m = col_double(),
+                          temperature10m = col_double(),
+                          temperaturetop = col_double(),
+                          relhumidity = col_integer(),
+                          precipitation = col_integer()
+                        )
+  )
+  
+  
+  weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
+  
+  missingvalues <- c(winddir = -999,
+                     windspeed = -999.9,
+                     windsteadiness = -9,
+                     pressure = -999.9,
+                     temperature2m = -999.9,
+                     temperature10m = -999.9,
+                     temperaturetop = -999.9,
+                     relhumidity = -99,
+                     precipitation = -99)
+  weather <- cleanfields(weather, missingvalues)
+  
   return(weather)
 }
+
+cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_1977.txt")
+summary(cleanweather)
 ```
 
+This looks much better, with the exception of the windspeed data, which has `-99.9` as its minimum.  If we check back to the original data, it looks like they are using this as their "missing" value for windspeed, and not `-999.9` as it says in the README.
 
-```{r}
-cleanweather <- loadWeatherData(weatherfiles)
-```
-
-That looks like it's worked; but what does our `cleanweather` data set contain?
-
-```{r}
-cleanweather %>%  
-  group_by(yyyy) %>% 
-  count()  
-```
-
-We only have data for the most recent year that we read in.  This is because the `weather` data-set gets overwritten each time we run through the `for` loop.  Let's modify the function so that we append the current year's data to a tibble that we define out of the loop.
-
-```{r}
-loadWeatherData <- function(infiles){
-  # Load in a weather data file
-  allweather <- NULL
-  for (infile in infiles) {  
-    weather <- read_table(infile,
-                          col_names = c("obs",
-                                        "yyyy",
-                                        "mm",
-                                        "dd",
-                                        "hh",
-                                        "winddir",
-                                        "windspeed",
-                                        "windsteadiness",
-                                        "pressure",
-                                        "temperature2m",
-                                        "temperature10m",
-                                        "temperaturetop",
-                                        "relhumidity",
-                                        "precipitation" ),
-                          col_types = cols(
-                            obs = col_character(),
-                            yyyy = col_integer(),
-                            mm = col_character(),
-                            dd = col_character(),
-                            hh = col_character(),
-                            winddir = col_integer(),
-                            windspeed = col_double(),
-                            windsteadiness = col_integer(),
-                            pressure = col_double(),
-                            temperature2m = col_double(),
-                            temperature10m = col_double(),
-                            temperaturetop = col_double(),
-                            relhumidity = col_integer(),
-                            precipitation = col_integer()
-                          )
-    )
-    
-    
-    weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
-    
-    missingvalues <- c(winddir = -999,
-                       windspeed = -999.9,
-                       windspeed = -99.9, ## Some records use this as missing
-                       windsteadiness = -9,
-                       pressure = -999.9,
-                       temperature2m = -999.9,
-                       temperature10m = -999.9,
-                       temperaturetop = -999.9,
-                       relhumidity = -99,
-                       precipitation = -99)
-    weather <- cleanfields(weather, missingvalues)
-    
-    
-    
-    allweather <- bind_rows(allweather, weather)
-  }
-  return(allweather)
-}
-```
+> ## Challenge:  Our final loading function
+> 
+> Modify your `loadWeatherData()` function so that it uses `read_table2()` and uses the correct
+> value for the missing wind speeds.   You should make sure you put a comment in your function
+> explaining why this is _different_ to the missing value specified in the README.  Check your data 
+> look sensible using the `summary()` function
+> 
+> > ## Solution
+> > 
+> > ```{r}
+> > loadWeatherData <- function(infile){
+> >   # Load in a weather data file
+> >   
+> >   weather <- read_table2(infile,
+> >                         col_names = c("obs",
+> >                                       "yyyy",
+> >                                       "mm",
+> >                                       "dd",
+> >                                       "hh",
+> >                                       "winddir",
+> >                                       "windspeed",
+> >                                       "windsteadiness",
+> >                                       "pressure",
+> >                                       "temperature2m",
+> >                                       "temperature10m",
+> >                                       "temperaturetop",
+> >                                       "relhumidity",
+> >                                       "precipitation" ),
+> >                         col_types = cols(
+> >                           obs = col_character(),
+> >                           yyyy = col_integer(),
+> >                           mm = col_character(),
+> >                           dd = col_character(),
+> >                           hh = col_character(),
+> >                           winddir = col_integer(),
+> >                           windspeed = col_double(),
+> >                           windsteadiness = col_integer(),
+> >                           pressure = col_double(),
+> >                           temperature2m = col_double(),
+> >                           temperature10m = col_double(),
+> >                           temperaturetop = col_double(),
+> >                           relhumidity = col_integer(),
+> >                           precipitation = col_integer()
+> >                         )
+> >   )
+> >   
+> >   
+> >   weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
+> >   
+> >   missingvalues <- c(winddir = -999,
+> >                      windspeed = -99.9, # Was given as -999.9 in met_README
+> >                      windsteadiness = -9,
+> >                      pressure = -999.9,
+> >                      temperature2m = -999.9,
+> >                      temperature10m = -999.9,
+> >                      temperaturetop = -999.9,
+> >                      relhumidity = -99,
+> >                      precipitation = -99)
+> >   weather <- cleanfields(weather, missingvalues)
+> >   
+> >   return(weather)
+> > }
+> > 
+> > cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_1977.txt")
+> > summary(cleanweather)
+> > ```
+> > 
+> {: .solution }
+{: .challenge } 
 
 
+It (finally) looks like we've read the data in successfully.   
 
-
-```{r}
-cleanweather <- loadWeatherData(weatherfiles)
-```
-
-
-```{r}
-cleanweather %>%  
-  group_by(yyyy) %>% 
-  count()  
-```
-
-So we can now pass more than one file to our `loadWeatherData` function.   Rather than type all the files in, we
-can use the `list.files()` function to generate the vector of filenames:
-
-```{r}
-weatherfiles <- list.files(path="./data", "met_mlo_ins*",full.names=TRUE)
-cleanweather <- loadWeatherData(weatherfiles)
-cleanweather %>%  
-  group_by(yyyy) %>% 
-  count()  %>% print(n=Inf)
-```
-
-Are we missing data?
-
-```{r}
-cleanweather %>%  
-  group_by(yyyy, mm, dd) %>% 
-  count()  %>% print(n=Inf) %>% 
-  filter(n != 24)
-```
-
-```{r}
-ggplot(data = cleanweather, aes(x=recdate, y=temperature2m) ) + geom_line()
-```
-
-```{r}
-cleanweather %>% filter(yyyy == 2010) %>% mutate(dayinyear = yday(recdate)) %>% 
-  ggplot(aes(x=hh, y=dayinyear, fill = temperature2m)) + geom_raster()
-
-```
-
-
-```{r}
-
-cleanweather %>% filter(temperature2m > 80)
-cleanweather %>% filter(windspeed < 0)
-cleanweather %>% filter(pressure < 0)
-cleanweather %>% filter(winddir < 0 | winddir > 360) # Recode 360s to 0s?
-
-```
-
-Something has gone wrong...  challenge is working out what.  Need to use read_table2() or read_table(guess_max = Inf)
-
+Although this has been quite a protracted
+episode it highlights some of the typical problems you will come accross when dealing with real-life data.  We've spent a lot of time on looking at how to work out what's gone wrong, and how to fix it, using a combination of testing and debugging.   It's quite normal to spend a lot of time on these aspects of programming; this is fine.
 
 
 ```{r, echo=FALSE}
