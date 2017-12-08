@@ -8,6 +8,7 @@ questions:
 - "How do I handle missing data?"
 - "How can I manipulate and create new variables in a data set?"
 - "How do I calculate summary statistics? FIXME - not yet covered"
+- "How do I use pipes to build analysis pipelines? FIXME - not yet covered"
 - "How can I plot my data?"
 - "How do I handle date data?"
 objectives:
@@ -15,7 +16,8 @@ objectives:
 keypoints:
 - "The tidyverse provdes an integrated set of packages that are useful for data analysis."
 - "Use `read_xxx()` to read in different types of data, e.g. `read_csv()` for comma separated data. Data are stored in tibbles"
-- "Functions in the `dplyr` package let us manipulate tibbles
+- "Functions in the `dplyr` package let us manipulate tibbles"
+- "We can join dplyr 'verbs' with pipes to perform more complex analyses"
 - "`ggplot2` lets us generate graphs."
 - "The `lubridate` package makes dealing with dates and times easier."
 source: Rmd
