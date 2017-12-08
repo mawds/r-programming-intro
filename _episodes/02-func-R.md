@@ -16,7 +16,6 @@ keypoints:
 - "Define a function using `name <- function(...args...) {...body...}`."
 - "Call a function using `name(...values...)`."
 - "R looks for variables in the current stack frame before looking for them at the top level."
-- "Use `help(thing)` to view help for something."
 - "Put comments at the beginning of functions to provide help for that function."
 - "Annotate your code!"
 - "Specify default values for arguments when defining a function using `name = value` in the argument list."

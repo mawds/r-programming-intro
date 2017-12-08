@@ -200,7 +200,6 @@ loadWeatherData <- function(infiles){
     
     missingvalues <- c(winddir = -999,
                        windspeed = -99.9, ## Some records use this as missing
-                       windspeed = -999.9, ## Others use this(!)
                        windsteadiness = -9,
                        pressure = -999.9,
                        temperature2m = -999.9,
@@ -271,39 +270,47 @@ summary(cleanweather)
 
 ~~~
      obs                 yyyy           mm                 dd           
- Length:350621      Min.   :1977   Length:350621      Length:350621     
- Class :character   1st Qu.:1987   Class :character   Class :character  
+ Length:341838      Min.   :1977   Length:341838      Length:341838     
+ Class :character   1st Qu.:1986   Class :character   Class :character  
  Mode  :character   Median :1996   Mode  :character   Mode  :character  
                     Mean   :1996                                        
                     3rd Qu.:2006                                        
-                    Max.   :2016                                        
+                    Max.   :2015                                        
                                                                         
-      hh               winddir        windspeed      windsteadiness 
- Length:350621      Min.   :  0.0   Min.   : 0.000   Min.   :  0.0  
- Class :character   1st Qu.:126.0   1st Qu.: 2.200   1st Qu.: 97.0  
- Mode  :character   Median :166.0   Median : 3.900   Median :100.0  
-                    Mean   :177.8   Mean   : 4.564   Mean   : 96.5  
-                    3rd Qu.:236.0   3rd Qu.: 6.300   3rd Qu.:100.0  
-                    Max.   :360.0   Max.   :24.800   Max.   :285.0  
-                    NA's   :11128   NA's   :11117    NA's   :12985  
+      hh               winddir        windspeed      windsteadiness  
+ Length:341838      Min.   :  0.0   Min.   : 0.000   Min.   :  0.00  
+ Class :character   1st Qu.:126.0   1st Qu.: 2.200   1st Qu.: 97.00  
+ Mode  :character   Median :166.0   Median : 3.900   Median :100.00  
+                    Mean   :177.7   Mean   : 4.566   Mean   : 96.56  
+                    3rd Qu.:236.0   3rd Qu.: 6.300   3rd Qu.:100.00  
+                    Max.   :360.0   Max.   :24.800   Max.   :285.00  
+                    NA's   :11124   NA's   :11114    NA's   :12981   
     pressure     temperature2m    temperature10m   temperaturetop  
  Min.   :666.1   Min.   :-5.500   Min.   :-3.90    Min.   :-3.60   
  1st Qu.:679.3   1st Qu.: 4.500   1st Qu.: 5.60    1st Qu.: 5.90   
- Median :680.5   Median : 7.000   Median : 7.60    Median : 7.80   
- Mean   :680.3   Mean   : 7.312   Mean   : 7.59    Mean   : 7.61   
+ Median :680.5   Median : 7.000   Median : 7.50    Median : 7.70   
+ Mean   :680.3   Mean   : 7.277   Mean   : 7.52    Mean   : 7.56   
  3rd Qu.:681.7   3rd Qu.:10.000   3rd Qu.: 9.50    3rd Qu.: 9.40   
  Max.   :686.4   Max.   :21.000   Max.   :18.40    Max.   :16.70   
- NA's   :9177    NA's   :10633    NA's   :163056   NA's   :159109  
+ NA's   :9174    NA's   :10630    NA's   :163053   NA's   :159106  
   relhumidity     precipitation       recdate                   
  Min.   :  1.00   Min.   :  0.00   Min.   :1977-01-01 00:00:00  
- 1st Qu.: 15.00   1st Qu.:  0.00   1st Qu.:1987-01-01 07:00:00  
- Median : 30.00   Median :  0.00   Median :1996-12-31 14:00:00  
- Mean   : 37.56   Mean   :  0.05   Mean   :1996-12-31 14:47:31  
- 3rd Qu.: 58.00   3rd Qu.:  0.00   3rd Qu.:2006-12-31 21:00:00  
- Max.   :101.00   Max.   :180.00   Max.   :2016-12-31 23:00:00  
- NA's   :29168    NA's   :94004                                 
+ 1st Qu.: 15.00   1st Qu.:  0.00   1st Qu.:1986-10-01 19:15:00  
+ Median : 30.00   Median :  0.00   Median :1996-07-01 14:30:00  
+ Mean   : 37.64   Mean   :  0.05   Mean   :1996-07-01 14:50:57  
+ 3rd Qu.: 58.00   3rd Qu.:  0.00   3rd Qu.:2006-04-01 09:45:00  
+ Max.   :101.00   Max.   :180.00   Max.   :2015-12-31 23:00:00  
+ NA's   :29157    NA's   :94003                                 
 ~~~
 {: .output}
+
+~~~
+cleanweather %>% 
+  ggplot(aes(x=recdate, y=windspeed)) + geom_line()
+~~~
+{: .r}
+
+<img src="../fig/rmd-05-multi-R-unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
 
 
 
@@ -313,7 +320,7 @@ cleanweather %>%
 ~~~
 {: .r}
 
-<img src="../fig/rmd-05-multi-R-unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
+<img src="../fig/rmd-05-multi-R-unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" style="display: block; margin: auto;" />
 
 
 ~~~
@@ -325,5 +332,5 @@ cleanweather %>%
 ~~~
 {: .r}
 
-<img src="../fig/rmd-05-multi-R-unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" style="display: block; margin: auto;" />
+<img src="../fig/rmd-05-multi-R-unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
 

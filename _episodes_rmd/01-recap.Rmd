@@ -3,15 +3,19 @@ title: "Introduction"
 teaching: 45
 exercises: 10
 questions:
-- "How do I load data into R?"
+- "How do I use RStudio?"
+- "How do I load data into R using readr?"
+- "How do I handle missing data?"
 - "How can I manipulate and create new variables in a data set?"
+- "How do I calculate summary statistics? FIXME - not yet covered"
 - "How can I plot my data?"
 - "How do I handle date data?"
 objectives:
 - "To recap the material covered in the Introdution to the Tidyverse course"
 keypoints:
 - "The tidyverse provdes an integrated set of packages that are useful for data analysis."
-- "Use `read_xxx()` to read in different types of data, e.g. `read_csv()` for comma separated data."
+- "Use `read_xxx()` to read in different types of data, e.g. `read_csv()` for comma separated data. Data are stored in tibbles"
+- "Functions in the `dplyr` package let us manipulate tibbles
 - "`ggplot2` lets us generate graphs."
 - "The `lubridate` package makes dealing with dates and times easier."
 source: Rmd

@@ -3,11 +3,13 @@ title: "Loading the weather data"
 teaching: 30
 exercises: 0
 questions:
-- "Example ?"
+- "How do we find (and fix) bugs in our code?"
 objectives:
-- "Example objective"
+- "To be familiar with debugging techniques and the RStudio debugger"
 keypoints:
-- "Example keypoint"
+- "We can use the `print()` function to work out what our code is doing"
+- "The debugger lets us set breakpoints within our functions, to inspect what is happening"
+
 ---
 
 ```{r, include = FALSE}
