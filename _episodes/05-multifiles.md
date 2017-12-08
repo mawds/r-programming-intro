@@ -199,7 +199,7 @@ loadWeatherData <- function(infiles){
     weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
     
     missingvalues <- c(winddir = -999,
-                       windspeed = -99.9, ## Some records use this as missing
+                       windspeed = -99.9, 
                        windsteadiness = -9,
                        pressure = -999.9,
                        temperature2m = -999.9,
@@ -325,7 +325,7 @@ cleanweather %>%
 
 ~~~
 cleanweather %>% 
-  filter(hh == "00") %>% 
+  filter(hh == "15") %>% 
   group_by(yyyy,mm) %>% 
   summarise(meantemp = mean(temperature2m, na.rm=TRUE)) %>% 
   ggplot(aes(x=mm,y=yyyy,fill=meantemp)) + geom_raster()
