@@ -237,3 +237,7 @@ cleanweather %>%
   ggplot(aes(x=mm,y=yyyy,fill=meantemp)) + geom_raster()
 ```
 
+
+```{r, echo=FALSE}
+save.image(file = "checkpoints/05end.RData")
+```

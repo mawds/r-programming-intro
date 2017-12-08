@@ -334,3 +334,5 @@ cleanweather %>%
 
 <img src="../fig/rmd-05-multi-R-unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
 
+
+
