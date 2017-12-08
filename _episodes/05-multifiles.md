@@ -200,6 +200,7 @@ loadWeatherData <- function(infiles){
     
     missingvalues <- c(winddir = -999,
                        windspeed = -99.9, ## Some records use this as missing
+                       windspeed = -999.9, ## Others use this(!)
                        windsteadiness = -9,
                        pressure = -999.9,
                        temperature2m = -999.9,
@@ -208,6 +209,7 @@ loadWeatherData <- function(infiles){
                        relhumidity = -99,
                        precipitation = -99)
     weather <- cleanfields(weather, missingvalues)
+    
     
     
     
@@ -276,14 +278,14 @@ summary(cleanweather)
                     3rd Qu.:2006                                        
                     Max.   :2016                                        
                                                                         
-      hh               winddir        windspeed        windsteadiness 
- Length:350621      Min.   :  0.0   Min.   :-999.900   Min.   :  0.0  
- Class :character   1st Qu.:126.0   1st Qu.:   2.200   1st Qu.: 97.0  
- Mode  :character   Median :166.0   Median :   3.900   Median :100.0  
-                    Mean   :177.8   Mean   :   4.555   Mean   : 96.5  
-                    3rd Qu.:236.0   3rd Qu.:   6.300   3rd Qu.:100.0  
-                    Max.   :360.0   Max.   :  24.800   Max.   :285.0  
-                    NA's   :11128   NA's   :11114      NA's   :12985  
+      hh               winddir        windspeed      windsteadiness 
+ Length:350621      Min.   :  0.0   Min.   : 0.000   Min.   :  0.0  
+ Class :character   1st Qu.:126.0   1st Qu.: 2.200   1st Qu.: 97.0  
+ Mode  :character   Median :166.0   Median : 3.900   Median :100.0  
+                    Mean   :177.8   Mean   : 4.564   Mean   : 96.5  
+                    3rd Qu.:236.0   3rd Qu.: 6.300   3rd Qu.:100.0  
+                    Max.   :360.0   Max.   :24.800   Max.   :285.0  
+                    NA's   :11128   NA's   :11117    NA's   :12985  
     pressure     temperature2m    temperature10m   temperaturetop  
  Min.   :666.1   Min.   :-5.500   Min.   :-3.90    Min.   :-3.60   
  1st Qu.:679.3   1st Qu.: 4.500   1st Qu.: 5.60    1st Qu.: 5.90   
@@ -304,4 +306,24 @@ summary(cleanweather)
 {: .output}
 
 
+
+~~~
+cleanweather %>% 
+  ggplot(aes(x=recdate, y=temperature2m)) + geom_line()
+~~~
+{: .r}
+
+<img src="../fig/rmd-05-multi-R-unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
+
+
+~~~
+cleanweather %>% 
+  filter(hh == "00") %>% 
+  group_by(yyyy,mm) %>% 
+  summarise(meantemp = mean(temperature2m, na.rm=TRUE)) %>% 
+  ggplot(aes(x=mm,y=yyyy,fill=meantemp)) + geom_raster()
+~~~
+{: .r}
+
+<img src="../fig/rmd-05-multi-R-unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" style="display: block; margin: auto;" />
 

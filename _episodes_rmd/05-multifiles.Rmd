@@ -174,6 +174,7 @@ loadWeatherData <- function(infiles){
     
     missingvalues <- c(winddir = -999,
                        windspeed = -99.9, ## Some records use this as missing
+                       windspeed = -999.9, ## Others use this(!)
                        windsteadiness = -9,
                        pressure = -999.9,
                        temperature2m = -999.9,
@@ -182,6 +183,7 @@ loadWeatherData <- function(infiles){
                        relhumidity = -99,
                        precipitation = -99)
     weather <- cleanfields(weather, missingvalues)
+    
     
     
     
@@ -218,6 +220,16 @@ summary(cleanweather)
 ```
 
 
-```{r, echo=FALSE}
-save.image(file = "checkpoints/05end.RData")
+```{r}
+cleanweather %>% 
+  ggplot(aes(x=recdate, y=temperature2m)) + geom_line()
 ```
+
+```{r}
+cleanweather %>% 
+  filter(hh == "00") %>% 
+  group_by(yyyy,mm) %>% 
+  summarise(meantemp = mean(temperature2m, na.rm=TRUE)) %>% 
+  ggplot(aes(x=mm,y=yyyy,fill=meantemp)) + geom_raster()
+```
+
