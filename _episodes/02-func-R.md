@@ -45,7 +45,7 @@ fahr_to_kelvin <- function(temp) {
   return(kelvin)
 }
 ~~~
-{: .r}
+{: .language-r}
 
 We define `fahr_to_kelvin` by assigning it to the output of `function`.
 The list of argument names are contained within parentheses.
@@ -71,7 +71,7 @@ Calling our own function is no different from calling any other function:
 # freezing point of water
 fahr_to_kelvin(32)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -86,7 +86,7 @@ fahr_to_kelvin(32)
 # boiling point of water
 fahr_to_kelvin(212)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -111,7 +111,7 @@ kelvin_to_celsius <- function(temp) {
 #absolute zero in Celsius
 kelvin_to_celsius(0)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -135,7 +135,7 @@ fahr_to_celsius <- function(temp) {
 # freezing point of water in Celsius
 fahr_to_celsius(32.0)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -160,7 +160,7 @@ Real-life functions will usually be larger than the ones shown here--typically h
 > # freezing point of water in Celsius
 > kelvin_to_celsius(fahr_to_kelvin(32.0))
 > ~~~
-> {: .r}
+> {: .language-r}
 > 
 > 
 > 
@@ -186,7 +186,7 @@ Real-life functions will usually be larger than the ones shown here--typically h
 >                    # with one element.
 > fence(best_practice, asterisk)
 > ~~~
-> {: .r}
+> {: .language-r}
 > 
 > 
 > 
@@ -214,7 +214,7 @@ Real-life functions will usually be larger than the ones shown here--typically h
 > dry_principle <- c("Don't", "repeat", "yourself", "or", "others")
 > outside(dry_principle)
 > ~~~
-> {: .r}
+> {: .language-r}
 > 
 > 
 > 
@@ -246,7 +246,7 @@ Real-life functions will usually be larger than the ones shown here--typically h
 >   return(output)
 > }
 > ~~~
-> {: .r}
+> {: .language-r}
 >
 > 1.  Given the above code was run, which value does `mySum(input_1 = 1, 3)` produce?
 >     1. 4
@@ -266,7 +266,7 @@ It's often useful to work with a smaller version of your data when developing a 
 ~~~
 co2small <- co2weekly[1:5,]
 ~~~
-{: .r}
+{: .language-r}
 
 Let's think about the tasks we need to perform, and how we might write functions to do them (or use existing functions to do them).
 
@@ -280,7 +280,7 @@ There are already functions in R to perform tasks 1 and 3.  We can select a colu
 ~~~
 co2small[,"co2Ppm"] # Which will return a tibble
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -301,7 +301,7 @@ co2small[,"co2Ppm"] # Which will return a tibble
 ~~~
 co2small$co2Ppm # which will return a vector
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -315,7 +315,7 @@ co2small$co2Ppm # which will return a vector
 ~~~
 co2small[["co2Ppm"]] # which will also return a vector
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -331,7 +331,7 @@ You might recall that R is vectorised.  This makes it easy to perform the same o
 wantedcolumn <- "co2Ppm"
 co2small[[wantedcolumn]]
 ~~~
-{: .r}
+{: .language-r}
 
 Similarly, we can add or replace a new column of data using the assignment operator, `<-`:
 
@@ -343,7 +343,7 @@ co2small[["co2Ppm"]] <- c(0,0,0,0,0)
 
 co2small %>% select(sampledate, co2Ppm, newcolumn)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -365,7 +365,7 @@ Before we go any further, let's  regenerate `co2small`, as we've overwritten som
 ~~~
 co2small <- co2weekly[1:5,]
 ~~~
-{: .r}
+{: .language-r}
 
 This just leaves task 2 to worry about.   We need to go through each element of a vector and change its value to `NA` `if` it is equal to `-999.99`.  We could do this using a loop to iterate over each element of the vector (we will discuss loops shortly), but this tends to be slow in R.  Instead, we can use the function `ifelse`, which we saw in the previous episode, to perform this transformation:
 
@@ -384,7 +384,7 @@ This just leaves task 2 to worry about.   We need to go through each element of 
 > >  return(outdata)
 > > }
 > > ~~~
-> > {: .r}
+> > {: .language-r}
 > > 
 > {: .solution}
 {: .challenge}
@@ -399,7 +399,7 @@ co2small[["co2OneYearAgo"]] <- cleanfield(co2small[["co2OneYearAgo"]])
 # etc..
 co2small
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -440,7 +440,7 @@ for (v in testdata) {
   print(paste("The variable v has value:",v))
 }
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -467,7 +467,7 @@ for (i in 1:length(testdata)) {
   
 }
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -499,7 +499,7 @@ for (i in 1:length(testdata)) {
 }
 print(testdata)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -517,7 +517,7 @@ As a recap, we could clean a single column of our data using:
 ~~~
 co2small[["co2Ppm"]] <- cleanfield(co2small[["co2Ppm"]])
 ~~~
-{: .r}
+{: .language-r}
 
 We can use a `for` loop to run our field cleaning function `cleanfield()` on more than one column at once
 
@@ -533,7 +533,7 @@ We can use a `for` loop to run our field cleaning function `cleanfield()` on mor
 > fieldsWithMissingData <- c("co2Ppm", "co2OneYearAgo", "co2TenYearsAgo", "co2Increase1800")
 > cleanfields(co2small, fieldsWithMissingData)
 > ~~~
-> {: .r}
+> {: .language-r}
 > should clean our data-file
 > 
 > > ## Solution
@@ -550,7 +550,7 @@ We can use a `for` loop to run our field cleaning function `cleanfield()` on mor
 > >  return(dataset) 
 > >}
 > >~~~
-> >{: .r}
+> >{: .language-r}
 > >
 > {: .solution}
 {: .challenge}
@@ -569,7 +569,7 @@ fieldsWithMissingData <- c("co2Ppm", "co2OneYearAgo", "co2TenYearsAgo", "co2Incr
 co2clean <- cleanfields(co2weekly, fieldsWithMissingData) 
 ggplot(data = co2clean, aes(x = sampledate, y = co2Ppm)) + geom_line() 
 ~~~
-{: .r}
+{: .language-r}
 
 <img src="../fig/rmd-02-func-R-unnamed-chunk-25-1.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" />
 
@@ -588,7 +588,7 @@ FIXME - renable eval when finished
 ~~~
 cleanfields(co2small, c("notAVariable"))
 ~~~
-{: .r}
+{: .language-r}
 
 We want the function to only run `if` all the variable names exist, and to stop otherwise.  To execute statements based on whether a condition is true or not, we use the `if` construct:
 
@@ -602,7 +602,7 @@ x <- 5
 
 x < 3
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -625,7 +625,7 @@ if (x < 3) {
   print("x is not less than 3")
 }
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -647,7 +647,7 @@ if (x < 3) {
   print("x is 3")
 }
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -663,7 +663,7 @@ Let's look at how we can use the `if` statement to check if all of our variable 
 ~~~
 names(co2small)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -680,7 +680,7 @@ And we have a vector of (one or more) variable names we wish to clean:
 ~~~
 fieldsWithMissingData
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -695,7 +695,7 @@ The `%in%` operator lets us test whether the values in one vector are contained 
 ~~~
 fieldsWithMissingData %in% names(co2small)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -710,7 +710,7 @@ We see that we obtain a `TRUE` for _each_ of the elements in `fieldsWithMissingD
 ~~~
 all( fieldsWithMissingData %in% names(co2small))
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -725,7 +725,7 @@ all( fieldsWithMissingData %in% names(co2small))
 # and to prove it works if we are missing a field:
 all( c(fieldsWithMissingData, "notHere") %in% names(co2small))
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -742,7 +742,7 @@ right hand side of the argument are TRUE:
 ~~~
 TRUE && TRUE
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -756,7 +756,7 @@ TRUE && TRUE
 ~~~
 TRUE && FALSE
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -770,7 +770,7 @@ TRUE && FALSE
 ~~~
 FALSE && TRUE
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -784,7 +784,7 @@ FALSE && TRUE
 ~~~
 FALSE && TRUE
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -799,7 +799,7 @@ FALSE && TRUE
 ~~~
 TRUE || TRUE
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -813,7 +813,7 @@ TRUE || TRUE
 ~~~
 TRUE || FALSE
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -827,7 +827,7 @@ TRUE || FALSE
 ~~~
 FALSE || TRUE
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -841,7 +841,7 @@ FALSE || TRUE
 ~~~
 FALSE || TRUE
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -856,7 +856,7 @@ The `xor(x,y)` function can be used to test if one (and only one) of the argumen
 ~~~
 xor(TRUE, TRUE)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -870,7 +870,7 @@ xor(TRUE, TRUE)
 ~~~
 xor(TRUE, FALSE)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -884,7 +884,7 @@ xor(TRUE, FALSE)
 ~~~
 xor(FALSE, TRUE)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -898,7 +898,7 @@ xor(FALSE, TRUE)
 ~~~
 xor(FALSE, FALSE)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -912,7 +912,7 @@ xor(FALSE, FALSE)
 ~~~
 !FALSE
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -926,7 +926,7 @@ xor(FALSE, FALSE)
 ~~~
 !TRUE
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -965,7 +965,7 @@ writing an `if` statement.  There are also versions which operate on _each_ elem
 > >   return(dataset) 
 > > }
 > > ~~~
-> > {: .r}
+> > {: .language-r}
 > > 
 > > Note that we don't need to use an `else` statement here, as `stop()` causes the function to abort. 
 > >

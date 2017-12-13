@@ -91,7 +91,7 @@ weather <- read_table("data/met_mlo_insitu_1_obop_hour_1977.txt",
                       )
 )
 ~~~
-{: .r}
+{: .language-r}
 
 > ## Challenge
 >
@@ -106,7 +106,7 @@ weather <- read_table("data/met_mlo_insitu_1_obop_hour_1977.txt",
 > > ~~~
 > > weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
 > > ~~~
-> > {: .r}
+> > {: .language-r}
 > {: .solution}
 {: .challenge}
 
@@ -129,7 +129,7 @@ can assign names to elements of a vector in R:
 missingvalues <- c(winddir = -999, windspeed = -999.9, temperature10m = -999.9)
 missingvalues
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -143,7 +143,7 @@ We can extract the names of the vector using the `names()` function:
 ~~~
 names(missingvalues)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -163,7 +163,7 @@ names(missingvalues)
 > names(myvec) <- c("a","b","c")
 > myvec
 > ~~~
-> {: .r}
+> {: .language-r}
 > 
 > 
 > 
@@ -197,7 +197,7 @@ cleanfields <- function(dataset, fieldlist){
   return our results
 }
 ~~~
-{: .r}
+{: .language-r}
 
 There are two things we will need to figure out:
 
@@ -215,7 +215,7 @@ nonames <- c("name1", "name2")
 
 names(withnames) # Will give us the names if there are any
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -229,7 +229,7 @@ names(withnames) # Will give us the names if there are any
 ~~~
 names(nonames) # Or NULL if there are not
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -247,7 +247,7 @@ x <- NULL
 # But NULL isn't TRUE (or FALSE)
 x == NULL
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -262,7 +262,7 @@ logical(0)
 # We need to use:
 is.null(NULL)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -318,7 +318,7 @@ is.null(NULL)
 > >   
 > > }
 > > ~~~
-> > {: .r}
+> > {: .language-r}
 > > 
 > > 
 > > 
@@ -371,7 +371,7 @@ vector
 > >   print(fieldlist[i])
 > > }
 > > ~~~
-> > {: .r}
+> > {: .language-r}
 > >  
 > > You will find it easier to use the second form, since we will need to refer to the positions of the 
 > > elements in our vector of missing values.
@@ -416,7 +416,7 @@ vector
 > >   
 > > }
 > > ~~~
-> > {: .r}
+> > {: .language-r}
 > > 
 > > We could write this more succinctly, for example using `dataset[[ variablenames[i] ]]` instead of defining the 
 > > `variablename` variable on each iteration of the `for` loop.  This is, however, less clear.
@@ -507,7 +507,7 @@ loadWeatherData <- function(infile){
 
 cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_1977.txt")
 ~~~
-{: .r}
+{: .language-r}
 
 ## Checking our load has worked
 
@@ -519,7 +519,7 @@ The summary shows that some variables, e.g. `winddir` have large, positive value
 ~~~
 summary(cleanweather)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -591,7 +591,7 @@ When we run the code again, by pressing <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>En
 > > ~~~
 > > summary(weather)
 > > ~~~
-> > {: .r}
+> > {: .language-r}
 > > 
 > > 
 > > 
@@ -635,7 +635,7 @@ When we run the code again, by pressing <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>En
 > > ~~~
 > > weather %>% filter(winddir == 999)
 > > ~~~
-> > {: .r}
+> > {: .language-r}
 > > 
 > > 
 > > 
@@ -665,7 +665,7 @@ When we run the code again, by pressing <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>En
 > > ~~~
 > > MLO 1977 02 17 18 -999 -99.9  -9  679.00    7.2 -999.9 -999.9  17 -99
 > > ~~~
-> > {: .r}
+> > {: .language-r}
 > > 
 > > The data look like they are correct; the "missing" values are negative; something has gone wrong with how we're reading in the data.
 > > 
@@ -736,7 +736,7 @@ loadWeatherData <- function(infile){
 cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_1977.txt")
 summary(cleanweather)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -845,7 +845,7 @@ This looks much better, with the exception of the windspeed data, which has `-99
 > > cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_1977.txt")
 > > summary(cleanweather)
 > > ~~~
-> > {: .r}
+> > {: .language-r}
 > > 
 > > 
 > > 

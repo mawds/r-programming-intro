@@ -27,7 +27,7 @@ For example, let's test that our `cleanfield()` function behaves as we expect:
 testvector <- c(1,2,-999.99)
 cleanfield(testvector)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -51,7 +51,7 @@ if( isTRUE(all.equal(cleanfield(testvector), expectedResults)) ){
   print("Test failed")
 }
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -89,7 +89,7 @@ test_that("Can clean multiple fields",{
   expect_equal(cleanedtibbleMultifield, cleanfields(testtibble, c("b","c")))
 })
 ~~~
-{: .r}
+{: .language-r}
 
 We can execute the tests by loading the `testthat` package, and running `test_file()`:
 
@@ -97,7 +97,7 @@ We can execute the tests by loading the `testthat` package, and running `test_fi
 ~~~
 library("testthat")
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -130,7 +130,7 @@ The following object is masked from 'package:purrr':
 ~~~
 test_file("tests/test_cleandata.R", env=.GlobalEnv)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -147,7 +147,7 @@ To show you what happens when a test fails:
 ~~~
 test_file("tests/test_fail.R")
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -186,7 +186,7 @@ DONE ======================================================================
 > >   
 > > })
 > > ~~~
-> > {: .r}
+> > {: .language-r}
 > {: .solution}
 {: .challenge}
 
@@ -197,7 +197,7 @@ DONE ======================================================================
 > ~~~
 > cleanfields(mydata, c("field1","field2","field1"))
 > ~~~
-> {: .r}
+> {: .language-r}
 > 
 > The function will still work, but the second pass through the data for the repeated field will have no effect.
 > The user probably didn't mean to repeat the field; perhaps they made a typing error and meant field3. 
@@ -222,7 +222,7 @@ DONE ======================================================================
 > >   expect_warning(cleanfields(testtibble, c("a","b","a")))
 > > })
 > > ~~~
-> > {: .r}
+> > {: .language-r}
 > > 
 > > These tests fail unless we modify our `cleanfields()` function:
 > > 
@@ -245,7 +245,7 @@ DONE ======================================================================
 > >   return(dataset) 
 > > }
 > > ~~~
-> > {: .r}
+> > {: .language-r}
 > {: .solution}
 {: .challenge}
 

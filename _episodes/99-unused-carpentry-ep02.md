@@ -34,7 +34,7 @@ center <- function(data, desired) {
   return(new_data)
 }
 ~~~
-{: .r}
+{: .language-r}
 
 We could test this on our actual data, but since we don't know what the values ought to be, it will be hard to tell if the result was correct.
 Instead, let's create a vector of 0s and then center that around 3.
@@ -45,7 +45,7 @@ This will make it simple to see if our function is working as expected:
 z <- c(0, 0, 0, 0)
 z
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -59,7 +59,7 @@ z
 ~~~
 center(z, 3)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -76,7 +76,7 @@ dat <- read.csv(file = "data/inflammation-01.csv", header = FALSE)
 centered <- center(dat[, 4], 0)
 head(centered)
 ~~~
-{: .r}
+{: .language-r}
 
 It's hard to tell from the default output whether the result is correct, but there are a few simple tests that will reassure us:
 
@@ -95,7 +95,7 @@ mean(centered)
 # centered max
 max(centered)
 ~~~
-{: .r}
+{: .language-r}
 
 That seems almost right: the original mean was about ` round(mean(dat[, 4]), 2)`, so the lower bound from zero is now about ` -round(mean(dat[, 4]), 2)`.
 The mean of the centered data is ` mean(centered)`.
@@ -108,7 +108,7 @@ sd(dat[, 4])
 # centered standard deviation
 sd(centered)
 ~~~
-{: .r}
+{: .language-r}
 
 Those values look the same, but we probably wouldn't notice if they were different in the sixth decimal place.
 Let's do this instead:
@@ -118,7 +118,7 @@ Let's do this instead:
 # difference in standard deviations before and after
 sd(dat[, 4]) - sd(centered)
 ~~~
-{: .r}
+{: .language-r}
 
 Sometimes, a very small difference can be detected due to rounding at very low decimal places.
 R has a useful function for comparing two objects allowing for rounding errors, `all.equal`:
@@ -127,7 +127,7 @@ R has a useful function for comparing two objects allowing for rounding errors, 
 ~~~
 all.equal(sd(dat[, 4]), sd(centered))
 ~~~
-{: .r}
+{: .language-r}
 
 It's still possible that our function is wrong, but it seems unlikely enough that we should probably get back to doing our analysis.
 We have one more task first, though: we should write some [documentation]({{ page.root }}/reference#documentation) for our function to remind ourselves later what it's for and how to use it.
@@ -144,7 +144,7 @@ center <- function(data, desired) {
   return(new_data)
 }
 ~~~
-{: .r}
+{: .language-r}
 
 > ## Writing Documentation
 >
@@ -225,7 +225,7 @@ In fact, we can pass the arguments to `read.csv` without naming them:
 ~~~
 dat <- read.csv("data/inflammation-01.csv", FALSE)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -248,7 +248,7 @@ However, the position of the arguments matters if they are not named.
 ~~~
 dat <- read.csv(header = FALSE, file = "data/inflammation-01.csv")
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -270,7 +270,7 @@ Error in file(file, "rt"): cannot open the connection
 ~~~
 dat <- read.csv(FALSE, "data/inflammation-01.csv")
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -291,7 +291,7 @@ center <- function(data, desired = 0) {
   return(new_data)
 }
 ~~~
-{: .r}
+{: .language-r}
 
 The key change is that the second argument is now written `desired = 0` instead of just `desired`.
 If we call the function with two arguments, it works as it did before:
@@ -301,7 +301,7 @@ If we call the function with two arguments, it works as it did before:
 test_data <- c(0, 0, 0, 0)
 center(test_data, 3)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -317,7 +317,7 @@ But we can also now call `center()` with just one argument, in which case `desir
 more_data <- 5 + test_data
 more_data
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -331,7 +331,7 @@ more_data
 ~~~
 center(more_data)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -355,7 +355,7 @@ display <- function(a = 1, b = 2, c = 3) {
 # no arguments
 display()
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -371,7 +371,7 @@ a b c
 # one argument
 display(55)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -387,7 +387,7 @@ display(55)
 # two arguments
 display(55, 66)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -403,7 +403,7 @@ display(55, 66)
 # three arguments
 display (55, 66, 77)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -421,7 +421,7 @@ We can override this behavior by naming the value as we pass it in:
 # only setting the value of c
 display(c = 77)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -450,7 +450,7 @@ With that in hand, let's look at the help for `read.csv()`:
 ~~~
 ?read.csv
 ~~~
-{: .r}
+{: .language-r}
 
 There's a lot of information there, but the most important part is the first couple of lines:
 
@@ -459,7 +459,7 @@ There's a lot of information there, but the most important part is the first cou
 read.csv(file, header = TRUE, sep = ",", quote = "\"",
          dec = ".", fill = TRUE, comment.char = "", ...)
 ~~~
-{: .r}
+{: .language-r}
 
 This tells us that `read.csv()` has one argument, `file`, that doesn't have a default value, and six others that do.
 Now we understand why the following gives an error:
@@ -468,7 +468,7 @@ Now we understand why the following gives an error:
 ~~~
 dat <- read.csv(FALSE, "data/inflammation-01.csv")
 ~~~
-{: .r}
+{: .language-r}
 
 
 

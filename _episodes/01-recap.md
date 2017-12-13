@@ -61,7 +61,7 @@ Although R contains functions to load data into it, we used the tidyverse equiva
 ~~~
 library(tidyverse)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -103,7 +103,7 @@ gapminder <- read_csv(file = "data/gapminder-FiveYearData.csv",
                         gdpPercap = col_double()
                       ) )
 ~~~
-{: .r}
+{: .language-r}
 
 We explicitly list the column type of each variable in order to improve the robustness of our code.
 
@@ -235,7 +235,7 @@ co2weekly <- read_table("data/co2_weekly_mlo.txt",
                     co2Increase1800 = col_double()
                   ))
 ~~~
-{: .r}
+{: .language-r}
 
 
 As with all the readr loading functions, we obtain a tibble, which we can view directly from Rstudio (using the environment pane, which by default is in the top right), or using the `print()` function:
@@ -244,7 +244,7 @@ As with all the readr loading functions, we obtain a tibble, which we can view d
 ~~~
 print(co2weekly) # use, e.g. n=100 to print more rows
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -278,7 +278,7 @@ missing data to `NA`. To do this, we'll use the `ifelse()` function:
 demodata <- 1:10
 ifelse(demodata == 5, demodata, NA)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -294,7 +294,7 @@ Let's unpick this to understand what the `ifelse()` function is doing;
 demodata <- 1:10
 demodata == 5
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -312,7 +312,7 @@ co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
                                  co2OneYearAgo = ifelse(co2OneYearAgo == -999.99, NA, co2OneYearAgo),
                                  co2TenYearsAgo = ifelse(co2TenYearsAgo == -999.99, NA, co2TenYearsAgo))
 ~~~
-{: .r}
+{: .language-r}
 
 This works, but there is a lot of repetition in our code.  This is bad for several reasons:
 
@@ -324,7 +324,7 @@ co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
                                  co2OneYearAgo = ifelse(co2OneYearAgo == -999.99, NA, co2OneYearAgo),
                                  co2TenYearsAgo = ifelse(co2TenYearsAgo == -999.99, NA, co2OneYearsAgo))
 ~~~
-{: .r}
+{: .language-r}
 
 or make a typing error for one of the variables:
 
@@ -335,7 +335,7 @@ co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
                                  co2OneYearAgo = ifelse(co2OneYearAgo == -999.99, NA, co2OneYearAgo),
                                  co2TenyearsAgo = ifelse(co2TenYearsAgo == -999.99, NA, co2TenYearsAgo))
 ~~~
-{: .r}
+{: .language-r}
 
 > ## Finding typing errors
 > Even if an error is reported when you run your code, errors like these can be very tricky to spot.
@@ -361,7 +361,7 @@ TODO more on date objects - why bother making them etc.
 ~~~
 library(lubridate)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -392,7 +392,7 @@ The following object is masked from 'package:base':
 ~~~
 dmy("1 November 2017")
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -406,7 +406,7 @@ dmy("1 November 2017")
 ~~~
 dmy("1 Jan 2018")
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -420,7 +420,7 @@ dmy("1 Jan 2018")
 ~~~
 dmy("1-12-2017")
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -434,7 +434,7 @@ dmy("1-12-2017")
 ~~~
 mdy("12-1-2017")
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -448,7 +448,7 @@ mdy("12-1-2017")
 ~~~
 dmy("13-1-2017")
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -463,7 +463,7 @@ dmy("13-1-2017")
 # But note:
 mdy("13-1-2017")
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -485,7 +485,7 @@ We need convert our `yyyy`, `mm` and `dd` fields into a string that looks like a
 ~~~
 paste("a", "b", "c")
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -500,7 +500,7 @@ Following the tidyverse approach of pipes (` %>% `)
 ~~~
 co2weekly %>% mutate(datestring = paste(yyyy, mm, dd)) %>%  select(yyyy, mm, dd, datestring)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -531,7 +531,7 @@ co2weekly %>% mutate(datestring = paste(yyyy, mm, dd)) %>%  select(yyyy, mm, dd,
 
 co2weekly %>% mutate(sampledate = ymd(paste(yyyy, mm, dd)))
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -559,7 +559,7 @@ co2weekly %>% mutate(sampledate = ymd(paste(yyyy, mm, dd)))
 ~~~
 co2weekly <- co2weekly %>% mutate(sampledate = ymd(paste(yyyy, mm, dd))) 
 ~~~
-{: .r}
+{: .language-r}
 
 
 ## Plotting
@@ -571,7 +571,7 @@ concentration against time for this data-set.  `ggplot2` is loaded as part of th
 ~~~
 ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line() 
 ~~~
-{: .r}
+{: .language-r}
 
 <img src="../fig/rmd-01-unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
 
@@ -596,7 +596,7 @@ ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line()
 > >       y = "CO2 parts per million",
 > >       title = "CO2 level") 
 > > ~~~
-> > {: .r}
+> > {: .language-r}
 > > 
 > > <img src="../fig/rmd-01-unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" style="display: block; margin: auto;" />
 > > 

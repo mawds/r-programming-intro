@@ -24,7 +24,7 @@ We already know how to iterate over a vector using a `for` loop.  Let's make an 
 ~~~
 weatherfiles <- c("data/met_mlo_insitu_1_obop_hour_1977.txt", "data/met_mlo_insitu_1_obop_hour_1978.txt", "data/met_mlo_insitu_1_obop_hour_1979.txt")
 ~~~
-{: .r}
+{: .language-r}
 
 This is what we want our function to do::
 
@@ -40,7 +40,7 @@ loadWeatherDataPseudoCode <- function(weatherfiles){
 
 loadWeatherDataPseudoCode(weatherfiles)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -121,14 +121,14 @@ loadWeatherData <- function(infiles){
   return(weather)
 }
 ~~~
-{: .r}
+{: .language-r}
 
 
 
 ~~~
 cleanweather <- loadWeatherData(weatherfiles)
 ~~~
-{: .r}
+{: .language-r}
 
 That looks like it's worked; but what does our `cleanweather` data set contain?
 
@@ -138,7 +138,7 @@ cleanweather %>%
   group_by(yyyy) %>% 
   count()  
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -217,7 +217,7 @@ loadWeatherData <- function(infiles){
   return(allweather)
 }
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -226,7 +226,7 @@ loadWeatherData <- function(infiles){
 ~~~
 cleanweather <- loadWeatherData(weatherfiles)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -235,7 +235,7 @@ cleanweather %>%
   group_by(yyyy) %>% 
   count()  
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -258,13 +258,13 @@ can use the `list.files()` function to generate the vector of filenames:
 weatherfiles <- list.files(path="./data", "met_mlo_ins*",full.names=TRUE)
 cleanweather <- loadWeatherData(weatherfiles)
 ~~~
-{: .r}
+{: .language-r}
 
 
 ~~~
 summary(cleanweather)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -308,7 +308,7 @@ summary(cleanweather)
 cleanweather %>% 
   ggplot(aes(x=recdate, y=windspeed)) + geom_line()
 ~~~
-{: .r}
+{: .language-r}
 
 <img src="../fig/rmd-05-multi-R-unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
 
@@ -318,7 +318,7 @@ cleanweather %>%
 cleanweather %>% 
   ggplot(aes(x=recdate, y=temperature2m)) + geom_line()
 ~~~
-{: .r}
+{: .language-r}
 
 <img src="../fig/rmd-05-multi-R-unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" style="display: block; margin: auto;" />
 
@@ -330,7 +330,7 @@ cleanweather %>%
   summarise(meantemp = mean(temperature2m, na.rm=TRUE)) %>% 
   ggplot(aes(x=mm,y=yyyy,fill=meantemp)) + geom_raster()
 ~~~
-{: .r}
+{: .language-r}
 
 <img src="../fig/rmd-05-multi-R-unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
 

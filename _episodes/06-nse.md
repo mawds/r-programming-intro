@@ -34,7 +34,7 @@ code in a function; this will let us easily repeat the calculation for other yea
 warmWindy <- cleanweather %>% 
   filter(windspeed >= 6, temperature2m >= 18)
 ~~~
-{: .r}
+{: .language-r}
 
 Let's put this code in a function; note that we change the input data to be the parameter we pass when we call
 the function (it's _really_ easy to forget to make these changes when you start making functions from existing code):
@@ -50,7 +50,7 @@ getWarmWindyObservations <- function(indata, windspeed = 6, temperature2m = 18){
   
 }
 ~~~
-{: .r}
+{: .language-r}
 
 But if we run this function, it doesn't do what we'd expect:
 
@@ -58,7 +58,7 @@ But if we run this function, it doesn't do what we'd expect:
 ~~~
 getWarmWindyObservations(cleanweather)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -90,7 +90,7 @@ Look at the line:
 ~~~
     filter(windspeed >= windspeed, temperature2m >= temperature2m) %>% 
 ~~~
-{: .r}
+{: .language-r}
 
 We passed the values of `windspeed` and `temperature2m` into the function when we called it.  R has no way of knowing we're referring to the function parameter's `windspeed` and `temperature2m` variables rather than the tibble's `windspeed` and `temperature2m` variables.     We run into this problem because of dplyr's "Non Standard Evaluation" (NSE); this means that the functions don't follow R's usual rules about how parameters are evaluated.  
 
@@ -116,7 +116,7 @@ getWarmWindyObservations <- function(indata, windspeed = 6, temperature2m = 18){
 
 warmWindy <- getWarmWindyObservations(cleanweather)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -133,7 +133,7 @@ We can use our parameters like normal variables in our function _except_ when we
 ~~~
     filter(windspeed >= UQ(windspeed), temperature2m >= UQ(temperature2m) ) %>% 
 ~~~
-{: .r}
+{: .language-r}
 
 When the filter function is evaluated it will see:
 
@@ -142,7 +142,7 @@ When the filter function is evaluated it will see:
 ~~~
     filter(windspeed >= 6, temperature2m >= 18 ) %>% 
 ~~~
-{: .r}
+{: .language-r}
 
 Modifying our function, we have:
 
@@ -158,7 +158,7 @@ getWarmWindyObservations <- function(indata, windspeed = 6, temperature2m = 18){
 }
 getWarmWindyObservations(cleanweather)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -198,7 +198,7 @@ Our function now works as expected.
 > 
 > greet("David")
 > ~~~
-> {: .r}
+> {: .language-r}
 > 
 > 
 > 
@@ -219,7 +219,7 @@ Our function now works as expected.
 > 
 > greet("David")
 > ~~~
-> {: .r}
+> {: .language-r}
 > 
 > 
 > 
@@ -238,7 +238,7 @@ year variable? Surely this should give an error?
 gap_noyear <- gapminder %>% select(-year)
 calc_GDP_and_filter(gap_noyear, 1997)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -253,7 +253,7 @@ As you can see, it doesn't; instead the `filter()` function will "fall through" 
 ~~~
     filter(1997 == 1997) %>% 
 ~~~
-{: .r}
+{: .language-r}
 
 which is always `TRUE`, so the filter won't do anything!
 
@@ -273,7 +273,7 @@ return(gdpgapfiltered)
 
 calc_GDP_and_filter(gapminder, 1997)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -300,7 +300,7 @@ calc_GDP_and_filter(gapminder, 1997)
 ~~~
 calc_GDP_and_filter(gap_noyear, 1997)
 ~~~
-{: .r}
+{: .language-r}
 
 
 
@@ -329,7 +329,7 @@ As you can see, we've also used the `.data` pronoun when calculating the GDP; if
 > > }
 > > calcGDPCountryYearFilter(gapminder, year=2007, country="United Kingdom")
 > > ~~~
-> > {: .r}
+> > {: .language-r}
 > > 
 > > 
 > > 
