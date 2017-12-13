@@ -60,8 +60,9 @@ workshop-check :
 .PHONY : lesson-check lesson-md lesson-files lesson-fixme lesson-watchrmd
 
 # RMarkdown files
-RMD_SRC = $(sort $(wildcard _episodes_rmd/??-*.Rmd))
-RMD_DST = $(patsubst _episodes_rmd/%.Rmd,_episodes/%.md,$(RMD_SRC))
+RMD_SRC = $(wildcard _episodes_rmd/??-*.Rmd)
+RMD_PP = $(patsubst _episodes_rmd/%.Rmd,_episodes_rmd/%.tmp,$(RMD_SRC))
+RMD_DST = $(patsubst _episodes_rmd/%.tmp,_episodes/%.md,$(RMD_PP))
 
 # Lesson source files in the order they appear in the navigation menu.
 MARKDOWN_SRC = \
@@ -89,9 +90,13 @@ lesson-md : ${RMD_DST}
 lesson-watchrmd:
 	@bin/watchRmd.sh &
 
-_episodes/%.md: _episodes_rmd/%.Rmd
+_episodes/%.md: _episodes_rmd/%.tmp
 	Rscript -e 'knitr::knit("$<","$@")'
-#	@bin/knit_lessons.sh $< $@
+
+# Format challenges and solutions
+# Without manually blockquoting them
+_episodes_rmd/%.tmp : _episodes_rmd/%.Rmd
+	bin/format_challenge.py $< $@
 
 ## lesson-check     : validate lesson Markdown.
 lesson-check :
@@ -100,10 +105,6 @@ lesson-check :
 ## lesson-check-all : validate lesson Markdown, checking line lengths and trailing whitespace.
 lesson-check-all :
 	@bin/lesson_check.py -s . -p ${PARSER} -l -w
-
-## lesson-figures   : re-generate inclusion displaying all figures.
-lesson-figures :
-	@bin/extract_figures.py -p ${PARSER} ${MARKDOWN_SRC} > _includes/all_figures.html
 
 ## unittest         : run unit tests on checking tools.
 unittest :
