@@ -265,7 +265,7 @@ As you can see, it doesn't; instead the `filter()` function will "fall through" 
 
 
 ~~~
-    filter(windspeed=windspeed) %>% 
+    filter(windspeed >= windspeed) %>% 
 ~~~
 {: .language-r}
 

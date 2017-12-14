@@ -173,7 +173,7 @@ getWarmWindyObservations(weather_nowind)
 As you can see, it doesn't; instead the `filter()` function will "fall through" to look for the `windspeed` variable in `filter()`'s _calling environment_,  This is the `getWarmWindyObservations()` environment, which does have a `windspeed` variable.  Since this is a standard R variable, it will be implicitly unquoted, so `filter()` will see:
 
 ```{r, eval=FALSE}
-    filter(windspeed=windspeed) %>% 
+    filter(windspeed >= windspeed) %>% 
 ```
 
 which is always `TRUE`, so the filter won't do anything!
