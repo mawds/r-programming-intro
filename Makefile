@@ -60,7 +60,7 @@ workshop-check :
 .PHONY : lesson-check lesson-md lesson-files lesson-fixme lesson-watchrmd
 
 # RMarkdown files
-RMD_SRC = $(wildcard _episodes_rmd/??-*.Rmd)
+RMD_SRC = $(sort $(wildcard _episodes_rmd/??-*.Rmd))
 RMD_PP = $(patsubst _episodes_rmd/%.Rmd,_episodes_rmd/%.tmp,$(RMD_SRC))
 RMD_DST = $(patsubst _episodes_rmd/%.tmp,_episodes/%.md,$(RMD_PP))
 
