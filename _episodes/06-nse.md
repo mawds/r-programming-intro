@@ -230,87 +230,101 @@ Our function now works as expected.
 > This means that the `person` variable is evaluated in an _unquoted_ environment, so its contents can be evaluated.
 {: .callout}
 
-There is one small issue that remains; how does filter _know_ that the first `year` in ``` filter(year == UQ(year) ) %>%  ``` refers to the `year` variable in the tibble?  What happens if we delete the 
-year variable? Surely this should give an error?
+There is one small issue that remains; how does filter _know_ that the first `windspeed` in ``` filter(windspeed >= UQ(windspeed), ...``` refers to the `windspeed` variable in the tibble? (and similarly for the `temperature2m` variable). What happens if we delete the  year variable? Surely this should give an error?
 
 
 ~~~
-gap_noyear <- gapminder %>% select(-year)
-calc_GDP_and_filter(gap_noyear, 1997)
+weather_nowind <- cleanweather %>% select(-windspeed)
+getWarmWindyObservations(weather_nowind)
 ~~~
 {: .language-r}
 
 
 
 ~~~
-Error in calc_GDP_and_filter(gap_noyear, 1997): could not find function "calc_GDP_and_filter"
+# A tibble: 211 x 14
+     obs  yyyy    mm    dd    hh winddir windsteadiness pressure
+   <chr> <int> <chr> <chr> <chr>   <int>          <int>    <dbl>
+ 1   MLO  1979    08    01    22     125            100    681.3
+ 2   MLO  1980    06    11    00      26            100    681.0
+ 3   MLO  1981    05    23    01      NA             NA    682.0
+ 4   MLO  1981    06    19    20     218            100    682.4
+ 5   MLO  1981    06    19    21     207            100    682.4
+ 6   MLO  1981    06    19    22      39            100    682.0
+ 7   MLO  1981    06    19    23      28            100    681.7
+ 8   MLO  1981    06    20    00      29            100    681.7
+ 9   MLO  1981    06    20    01      33            100    681.3
+10   MLO  1981    07    06    21     145            100    683.4
+# ... with 201 more rows, and 6 more variables: temperature2m <dbl>,
+#   temperature10m <dbl>, temperaturetop <dbl>, relhumidity <int>,
+#   precipitation <int>, recdate <dttm>
 ~~~
-{: .error}
+{: .output}
 
-As you can see, it doesn't; instead the `filter()` function will "fall through" to look for the `year` variable in `filter()`'s _calling environment_,  This is the `calc_GDP_and_filter()` environment, which does have a `year` variable.  Since this is a standard R variable, it will be implicitly unquoted, so `filter()` will see:
+As you can see, it doesn't; instead the `filter()` function will "fall through" to look for the `windspeed` variable in `filter()`'s _calling environment_,  This is the `getWarmWindyObservations()` environment, which does have a `windspeed` variable.  Since this is a standard R variable, it will be implicitly unquoted, so `filter()` will see:
 
 
 ~~~
-    filter(1997 == 1997) %>% 
+    filter(windspeed=windspeed) %>% 
 ~~~
 {: .language-r}
 
 which is always `TRUE`, so the filter won't do anything!
 
-We need a way of telling the function that the first `year` "belongs" to the data.  We can do this with the `.data` pronoun:
+We need a way of telling the function that the first `windspeed` "belongs" to the data.  We can do this with the `.data` pronoun:
 
 
 ~~~
-calc_GDP_and_filter <- function(dat, year){
+getWarmWindyObservations <- function(indata, windspeed = 6, temperature2m = 18){
   
-gdpgapfiltered <- dat %>%
-    filter(.data$year == UQ(year) ) %>% 
-    mutate(gdp = .data$gdpPercap * .data$pop)
-
-return(gdpgapfiltered)
+  warmWindy <- indata %>% 
+    filter(.data$windspeed >= UQ(windspeed), .data$temperature2m >= UQ(temperature2m))
+  
+  return(warmWindy)
   
 }
-
-calc_GDP_and_filter(gapminder, 1997)
+getWarmWindyObservations(cleanweather)
 ~~~
 {: .language-r}
 
 
 
 ~~~
-# A tibble: 142 x 7
-       country  year       pop continent lifeExp  gdpPercap          gdp
-         <chr> <int>     <dbl>     <chr>   <dbl>      <dbl>        <dbl>
- 1 Afghanistan  1997  22227415      Asia  41.763   635.3414  14121995875
- 2     Albania  1997   3428038    Europe  72.950  3193.0546  10945912519
- 3     Algeria  1997  29072015    Africa  69.152  4797.2951 139467033682
- 4      Angola  1997   9875024    Africa  40.963  2277.1409  22486820881
- 5   Argentina  1997  36203463  Americas  73.275 10967.2820 397053586287
- 6   Australia  1997  18565243   Oceania  78.830 26997.9366 501223252921
- 7     Austria  1997   8069876    Europe  77.510 29095.9207 234800471832
- 8     Bahrain  1997    598561      Asia  73.925 20292.0168  12146009862
- 9  Bangladesh  1997 123315288      Asia  59.412   972.7700 119957417048
-10     Belgium  1997  10199787    Europe  77.530 27561.1966 281118335091
-# ... with 132 more rows
+# A tibble: 97 x 15
+     obs  yyyy    mm    dd    hh winddir windspeed windsteadiness pressure
+   <chr> <int> <chr> <chr> <chr>   <int>     <dbl>          <int>    <dbl>
+ 1   MLO  1979    08    01    22     125       7.6            100    681.3
+ 2   MLO  1981    07    06    23     130       7.2            100    683.0
+ 3   MLO  1981    07    07    00     126       7.6            100    683.4
+ 4   MLO  1981    07    08    22      33       6.3            100    683.7
+ 5   MLO  1981    08    18    23      26       6.7            100    683.0
+ 6   MLO  1982    07    02    22      92       6.3            100    683.0
+ 7   MLO  1982    07    02    23      76       6.7            100    682.7
+ 8   MLO  1983    01    24    23     239       9.8            100    680.3
+ 9   MLO  1983    08    25    23      33       7.2            100    684.4
+10   MLO  1983    08    26    21      10       8.0            100    685.4
+# ... with 87 more rows, and 6 more variables: temperature2m <dbl>,
+#   temperature10m <dbl>, temperaturetop <dbl>, relhumidity <int>,
+#   precipitation <int>, recdate <dttm>
 ~~~
 {: .output}
 
 
 
 ~~~
-calc_GDP_and_filter(gap_noyear, 1997)
+getWarmWindyObservations(weather_nowind)
 ~~~
 {: .language-r}
 
 
 
 ~~~
-Error in filter_impl(.data, quo): Evaluation error: Column `year`: not found in data.
+Error in filter_impl(.data, quo): Evaluation error: Column `windspeed`: not found in data.
 ~~~
 {: .error}
 
 
-As you can see, we've also used the `.data` pronoun when calculating the GDP; if our tibble was missing either the `gdpPercap` or `pop` variables, R would search in the calling environment (i.e. the `calc_GDP_and_filter()` function).  As the variables aren't found there it would look in the `calc_GDP_and_filter()`'s calling environment, and so on.  If it finds variables matching these names, they would be used instead, giving an incorrect result; if they cannot be found we will get an error.  Using the `.data` pronoun makes our source of the data clear, and prevents this risk.
+As you can see, we've also used the `.data` pronoun when calculating the GDP; if our tibble was missing either the `windspeed` or `temperature2m` variables, R would search in the calling environment (i.e. the `getWarmWindyObservations()` function).  As the variables aren't found there it would look in the `getWarmWindyObservations()`'s calling environment, and so on.  If it finds variables matching these names, they would be used instead, giving an incorrect result; if they cannot be found we will get an error.  Using the `.data` pronoun makes our source of the data clear, and prevents this risk.
 
 > ## Challenge:  Filtering by country name and year
 >
@@ -358,7 +372,7 @@ As you can see, we've also used the `.data` pronoun when calculating the GDP; if
 
 
 In this episode we've introduced the idea of writing your own functions, and talked about the
-complications caused by non standard evaluation.   The forthcoming Research IT course "Programming in R" will cover writing, testing and documenting functions in much more detail.  We will notify participants of this course when it is available to book.
+complications caused by non standard evaluation.   
 
 [roxygen2]: http://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html
 [testthat]: http://r-pkgs.had.co.nz/tests.html

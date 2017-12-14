@@ -163,42 +163,39 @@ Our function now works as expected.
 > This means that the `person` variable is evaluated in an _unquoted_ environment, so its contents can be evaluated.
 {: .callout}
 
-There is one small issue that remains; how does filter _know_ that the first `year` in ``` filter(year == UQ(year) ) %>%  ``` refers to the `year` variable in the tibble?  What happens if we delete the 
-year variable? Surely this should give an error?
+There is one small issue that remains; how does filter _know_ that the first `windspeed` in ``` filter(windspeed >= UQ(windspeed), ...``` refers to the `windspeed` variable in the tibble? (and similarly for the `temperature2m` variable). What happens if we delete the  year variable? Surely this should give an error?
 
 ```{r}
-gap_noyear <- gapminder %>% select(-year)
-calc_GDP_and_filter(gap_noyear, 1997)
+weather_nowind <- cleanweather %>% select(-windspeed)
+getWarmWindyObservations(weather_nowind)
 ```
 
-As you can see, it doesn't; instead the `filter()` function will "fall through" to look for the `year` variable in `filter()`'s _calling environment_,  This is the `calc_GDP_and_filter()` environment, which does have a `year` variable.  Since this is a standard R variable, it will be implicitly unquoted, so `filter()` will see:
+As you can see, it doesn't; instead the `filter()` function will "fall through" to look for the `windspeed` variable in `filter()`'s _calling environment_,  This is the `getWarmWindyObservations()` environment, which does have a `windspeed` variable.  Since this is a standard R variable, it will be implicitly unquoted, so `filter()` will see:
 
 ```{r, eval=FALSE}
-    filter(1997 == 1997) %>% 
+    filter(windspeed=windspeed) %>% 
 ```
 
 which is always `TRUE`, so the filter won't do anything!
 
-We need a way of telling the function that the first `year` "belongs" to the data.  We can do this with the `.data` pronoun:
+We need a way of telling the function that the first `windspeed` "belongs" to the data.  We can do this with the `.data` pronoun:
 
 ```{r}
-calc_GDP_and_filter <- function(dat, year){
+getWarmWindyObservations <- function(indata, windspeed = 6, temperature2m = 18){
   
-gdpgapfiltered <- dat %>%
-    filter(.data$year == UQ(year) ) %>% 
-    mutate(gdp = .data$gdpPercap * .data$pop)
-
-return(gdpgapfiltered)
+  warmWindy <- indata %>% 
+    filter(.data$windspeed >= UQ(windspeed), .data$temperature2m >= UQ(temperature2m))
+  
+  return(warmWindy)
   
 }
-
-calc_GDP_and_filter(gapminder, 1997)
-calc_GDP_and_filter(gap_noyear, 1997)
+getWarmWindyObservations(cleanweather)
+getWarmWindyObservations(weather_nowind)
 
 ```                 
 
 
-As you can see, we've also used the `.data` pronoun when calculating the GDP; if our tibble was missing either the `gdpPercap` or `pop` variables, R would search in the calling environment (i.e. the `calc_GDP_and_filter()` function).  As the variables aren't found there it would look in the `calc_GDP_and_filter()`'s calling environment, and so on.  If it finds variables matching these names, they would be used instead, giving an incorrect result; if they cannot be found we will get an error.  Using the `.data` pronoun makes our source of the data clear, and prevents this risk.
+As you can see, we've also used the `.data` pronoun when calculating the GDP; if our tibble was missing either the `windspeed` or `temperature2m` variables, R would search in the calling environment (i.e. the `getWarmWindyObservations()` function).  As the variables aren't found there it would look in the `getWarmWindyObservations()`'s calling environment, and so on.  If it finds variables matching these names, they would be used instead, giving an incorrect result; if they cannot be found we will get an error.  Using the `.data` pronoun makes our source of the data clear, and prevents this risk.
 
 > ## Challenge:  Filtering by country name and year
 >
@@ -234,7 +231,7 @@ As you can see, we've also used the `.data` pronoun when calculating the GDP; if
 
 
 In this episode we've introduced the idea of writing your own functions, and talked about the
-complications caused by non standard evaluation.   The forthcoming Research IT course "Programming in R" will cover writing, testing and documenting functions in much more detail.  We will notify participants of this course when it is available to book.
+complications caused by non standard evaluation.   
 
 [roxygen2]: http://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html
 [testthat]: http://r-pkgs.had.co.nz/tests.html
