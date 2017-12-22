@@ -1,5 +1,5 @@
 ---
-title: "Introduction"
+title: "Introduction and recap"
 teaching: 45
 exercises: 10
 questions:
@@ -30,8 +30,7 @@ knitr_fig_path("01-")
 
 ## Introduction 
 
-Today's course uses at historic CO2 and temperature data as an example.  The focus of the course is using R for programming.  In the "Data Analysis Using R" course we covered:
-
+Today's course uses at historic CO2 and temperature data as an example.  The focus of the course is using R for programming.  In the [Data Analysis Using R](https://uomresearchit.github.io/r-tidyverse-intro/) course we covered:
 
   *  Introduction to R and RStudio
   *  Getting help
@@ -42,11 +41,11 @@ Today's course uses at historic CO2 and temperature data as an example.  The foc
 
 This episode briefly recaps these topics.  We will use the data introduced in this section in the remainder of the course.
 
-The "Data Analysis Using R" course almost exclusively used the tidyverse.  This is a collection of packages that have been designed to work well together, and which provide an integrated way of performing data analyses.  They also hide some of the complexity underlying "base" R.    When we come to program with R, we will need to explore some of this complexity.
+The "Data Analysis Using R" course made extensive use of the tidyverse.  This is a collection of packages that have been designed to work well together, and which provide an integrated way of performing data analyses.  They also hide some of the complexity underlying "base" R.    When we come to program with R, we will need to explore some of this complexity.
 
 ##  Getting started with R
 
-RStudio is a widely used integrated development environment for R.
+RStudio is a widely used integrated development environment for R. We will use RStudio for the remainder of today's lesson.
 
 Cover:
 
@@ -58,7 +57,7 @@ Cover:
 
 ## Loading data into R
 
-Although R contains functions to load data into it, we used the tidyverse equivalents in the previous course.   We loaded CSV data using the `read_csv()` function.  For example, to load the `gapminder` data we used:
+Although R contains functions to load data into it, we used the tidyverse equivalents in the previous course.   We loaded CSV data using the `read_csv()` function.  For example, to load the `gapminder` data we used in the [R for data analysis course](https://uomresearchit.github.io/r-tidyverse-intro/):
 
 ```{r}
 library(tidyverse)
@@ -76,8 +75,6 @@ gapminder <- read_csv(file = "data/gapminder-FiveYearData.csv",
 
 We explicitly list the column type of each variable in order to improve the robustness of our code.
 
-FIXME - add callout noting difference between `read_csv()` and `read.csv()`
-
 > ## Guessing column types
 >
 > You don't need to type all the column types out by hand.  If you run `read_csv()` without
@@ -85,6 +82,17 @@ FIXME - add callout noting difference between `read_csv()` and `read.csv()`
 > this list can be copy and pasted into your script, and modified if required.
 > 
 {: .callout}
+
+> ## read.csv() vs read_csv()
+>
+> R comes with a function `read.csv()` that will load CSV files.  `read_csv()` is part of the `readr` package,
+> which is part of the tidyverse.  We use `read_csv()` because it doesn't automatically convert strings to factors,
+> has a more robust way of specifying the type of data in each columns, and because it is quicker at reading files than
+> `read.csv()`.  `read.csv()` returns a data frame; in contrast `read_csv()` returns a tibble.  This is the tidyverse's 
+> equivalent of a data frame.   Tibbles behave similarly to data frames, but handle some of the annoyances with them.  For 
+> full details see `vignette("tibble")`
+{: .callout}
+
 
 Let's take a look at the CO2 data we will be using in this lesson:
 
