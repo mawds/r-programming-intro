@@ -16,5 +16,5 @@ The course is currently under development.
 > * Know how to plot data.
 >
 > The Research IT course [R for data analysis](https://uomresearchit.github.io/r-tidyverse-intro/) covers these prerequisites, using the [tidyverse](https://www.tidyverse.org).  
-> We will be using the tidyverse in parts of this course, so familiarity with its main packages (readr, ggplot, dlpyr) would be useful.
+> We will be using the tidyverse in parts of this course, so familiarity with its main packages (readr, ggplot, dplyr) would be useful.
 {: .prereq}
