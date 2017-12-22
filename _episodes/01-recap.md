@@ -250,7 +250,7 @@ As with all the readr loading functions, we obtain a tibble, which we can view d
 
 
 ~~~
-print(co2weekly) # use, e.g. n=100 to print more rows
+print(co2weekly) # use, e.g. n=100 to print more rows, width = to with of output if it won't all fit on screen
 ~~~
 {: .language-r}
 

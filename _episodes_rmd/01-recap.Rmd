@@ -216,7 +216,7 @@ co2weekly <- read_table("data/co2_weekly_mlo.txt",
 As with all the readr loading functions, we obtain a tibble, which we can view directly from Rstudio (using the environment pane, which by default is in the top right), or using the `print()` function:
 
 ```{r}
-print(co2weekly) # use, e.g. n=100 to print more rows
+print(co2weekly) # use, e.g. n=100 to print more rows, width = to with of output if it won't all fit on screen
 ```
 
 In contrast to the gapminder data we used previously, it looks like we will need to clean the data-set before we use it for further analysis.  
