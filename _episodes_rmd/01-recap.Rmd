@@ -278,8 +278,36 @@ This works, but there is a lot of repetition in our code.  This is bad for sever
 
  2. It could get very tedious; we could have hundreds of fields that we needed to recode it the same way.
 
-This illustrates why functions are so useful.  For now, let's leave the `-999.99`s in the data, and deal with them
-properly in the next episode.
+## Manipulating data with dplyr
+
+We can use dplyr "verbs" and the pipe operator, `%>%` to construct analyses.  Think of the pipe character as meaning "and then".
+
+For example, if we wanted to calculate the average CO2 levels between 1980 and 2000, we could write:
+
+```{r}
+co2clean %>% 
+  filter(between(yyyy, 1980, 2000)) %>% 
+  group_by(yyyy) %>%
+  summarize(avgco2 = mean(co2Ppm, na.rm = TRUE))
+```
+
+We can read this as "Take co2clean *and then* filter yyyy between 1980 and 2000 *and then* group by yyyy *and then* summarise, taking the mean co2ppm".
+
+> ## Non tidyverse
+>  
+> If you're unfamilar with the tidyverse, you may want to tackle this problem using something like this:
+>
+>
+> ```{r, eval=FALSE}
+> 
+> co2myyears <- co2clean[co2clean$yyyy >= 1980 & co2clean$yyyy <= 2000, ]
+> aggregate(co2myyears[,"co2Ppm"], list(co2myyears$yyyy), mean, na.rm=TRUE)
+> ```
+> 
+> This is fine.  Although it is slightly shorter than the tidyverse approach, it is (in my opinion) much less clear
+> what's happening.  We also need to make a temporary data.frame to separate our filtering and aggregation operations.
+{: .callout}
+
 
 ## Dealing with Dates
 
@@ -310,7 +338,7 @@ paste("a", "b", "c")
 
 ```
 
-Following the tidyverse approach of pipes (` %>% `)
+
 
 ```{r}
 co2weekly %>% mutate(datestring = paste(yyyy, mm, dd)) %>%  select(yyyy, mm, dd, datestring)

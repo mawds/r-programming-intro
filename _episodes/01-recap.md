@@ -355,8 +355,59 @@ This works, but there is a lot of repetition in our code.  This is bad for sever
 
  2. It could get very tedious; we could have hundreds of fields that we needed to recode it the same way.
 
-This illustrates why functions are so useful.  For now, let's leave the `-999.99`s in the data, and deal with them
-properly in the next episode.
+## Manipulating data with dplyr
+
+We can use dplyr "verbs" and the pipe operator, `%>%` to construct analyses.  Think of the pipe character as meaning "and then".
+
+For example, if we wanted to calculate the average CO2 levels between 1980 and 2000, we could write:
+
+
+~~~
+co2clean %>% 
+  filter(between(yyyy, 1980, 2000)) %>% 
+  group_by(yyyy) %>%
+  summarize(avgco2 = mean(co2Ppm, na.rm = TRUE))
+~~~
+{: .language-r}
+
+
+
+~~~
+# A tibble: 21 x 2
+    yyyy   avgco2
+   <int>    <dbl>
+ 1  1980 338.7562
+ 2  1981 340.1204
+ 3  1982 341.3012
+ 4  1983 343.0737
+ 5  1984 344.4873
+ 6  1985 346.1263
+ 7  1986 347.4348
+ 8  1987 349.2138
+ 9  1988 351.5740
+10  1989 353.1292
+# ... with 11 more rows
+~~~
+{: .output}
+
+We can read this as "Take co2clean *and then* filter yyyy between 1980 and 2000 *and then* group by yyyy *and then* summarise, taking the mean co2ppm".
+
+> ## Non tidyverse
+>  
+> If you're unfamilar with the tidyverse, you may want to tackle this problem using something like this:
+>
+>
+> 
+> ~~~
+> co2myyears <- co2clean[co2clean$yyyy >= 1980 & co2clean$yyyy <= 2000, ]
+> aggregate(co2myyears[,"co2Ppm"], list(co2myyears$yyyy), mean, na.rm=TRUE)
+> ~~~
+> {: .language-r}
+> 
+> This is fine.  Although it is slightly shorter than the tidyverse approach, it is (in my opinion) much less clear
+> what's happening.  We also need to make a temporary data.frame to separate our filtering and aggregation operations.
+{: .callout}
+
 
 ## Dealing with Dates
 
@@ -503,7 +554,7 @@ paste("a", "b", "c")
 ~~~
 {: .output}
 
-Following the tidyverse approach of pipes (` %>% `)
+
 
 
 ~~~
@@ -582,7 +633,7 @@ ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line()
 ~~~
 {: .language-r}
 
-<img src="../fig/rmd-01-unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
+<img src="../fig/rmd-01-unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
 
 
 
@@ -607,7 +658,7 @@ ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line()
 > > ~~~
 > > {: .language-r}
 > > 
-> > <img src="../fig/rmd-01-unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" style="display: block; margin: auto;" />
+> > <img src="../fig/rmd-01-unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" style="display: block; margin: auto;" />
 > > 
 > {: .solution}
 {: .challenge}
