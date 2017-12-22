@@ -15,7 +15,8 @@ objectives:
 - "To recap the material covered in the Introdution to the Tidyverse course"
 keypoints:
 - "The tidyverse provdes an integrated set of packages that are useful for data analysis."
-- "Use `read_xxx()` to read in different types of data, e.g. `read_csv()` for comma separated data. Data are stored in tibbles"
+- "Use `read_xxx()` to read in different types of data, e.g. `read_csv()` for comma separated data. The output of a `read_xxx()` functionis a tibble."
+- "Tibbles are used for storing tabular data.  They are the tidyverse's take on a data.frame"
 - "Functions in the `dplyr` package let us manipulate tibbles"
 - "We can join dplyr 'verbs' with pipes to perform more complex analyses"
 - "`ggplot2` lets us generate graphs."
