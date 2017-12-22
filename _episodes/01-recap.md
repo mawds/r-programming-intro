@@ -324,33 +324,33 @@ co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
 
 This works, but there is a lot of repetition in our code.  This is bad for several reasons:
 
- 1. It's error prone (and the errors we introduce are often very hard to spot and debug).  For example, we might mismatch variables:
+1. It's error prone (and the errors we introduce are often very hard to spot and debug).  For example, we might mismatch variables:
+
+    
+    ~~~
+    co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
+                                     co2OneYearAgo = ifelse(co2OneYearAgo == -999.99, NA, co2OneYearAgo),
+                                     co2TenYearsAgo = ifelse(co2TenYearsAgo == -999.99, NA, co2OneYearsAgo))
+    ~~~
+    {: .language-r}
+
+    or make a typing error for one of the variables:
 
 
-~~~
-co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
-                                 co2OneYearAgo = ifelse(co2OneYearAgo == -999.99, NA, co2OneYearAgo),
-                                 co2TenYearsAgo = ifelse(co2TenYearsAgo == -999.99, NA, co2OneYearsAgo))
-~~~
-{: .language-r}
-
-or make a typing error for one of the variables:
-
-
-
-~~~
-co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
+    
+    ~~~
+    co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
                                  co2OneYearAgo = ifelse(co2OneYearAgo == -999.99, NA, co2OneYearAgo),
                                  co2TenyearsAgo = ifelse(co2TenYearsAgo == -999.99, NA, co2TenYearsAgo))
-~~~
-{: .language-r}
+    ~~~
+    {: .language-r}
 
-> ## Finding typing errors
-> Even if an error is reported when you run your code, errors like these can be very tricky to spot.
-> If you select a variable name in RStudio (a shortcut for this is to double-click the variable name),
-> it will highlight the other places in your code where the 
-> variable is used.  This can make it easier to spot where a variable has been mistyped.
-{: .callout}
+    > ## Finding typing errors
+    > Even if an error is reported when you run your code, errors like these can be very tricky to spot.
+    > If you select a variable name in RStudio (a shortcut for this is to double-click the variable name),
+    > it will highlight the other places in your code where the 
+    > variable is used.  This can make it easier to spot where a variable has been mistyped.
+    {: .callout}
 
  2. It could get very tedious; we could have hundreds of fields that we needed to recode it the same way.
 
