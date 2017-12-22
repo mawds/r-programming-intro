@@ -328,57 +328,57 @@ Error in filter_impl(.data, quo): Evaluation error: Column `windspeed`: not foun
 
 As you can see, we've also used the `.data` pronoun when getting the warm and windy observations. This tells R that the `windspeed` and `temperature2m` variables are in the tibble that we're working on, and prevents R looking into the calling environment. If the variables aren't found in the data, we get an error. 
 
-## Challenge: Calculating the average wind speed per day
-
-Create a new function that will take a tibble containing weather data, and two parameters,
-`fromyear` and `toyear`.   The function should filter the data to include only data between the two years
-specified, and calculate the average wind speed per day for these data points.
-
-Hint:  The `between()` function in dplyr may be useful.
-
-## Solution
-
-
-~~~
-averageWindSpeed <- function(indata, fromyear, toyear){
-  
-  avgwind <- indata %>% 
-    filter(between(.data$yyyy, UQ(fromyear), UQ(toyear))) %>% 
-    group_by(.data$yyyy, .data$mm, .data$dd) %>% 
-    summarise(avgwindspeed = mean(windspeed))
-  
-  return(avgwind)
-}
-
-averageWindSpeed(cleanweather, 1980, 1981)
-~~~
-{: .language-r}
-
-
-
-~~~
-# A tibble: 731 x 4
-# Groups:   yyyy, mm [?]
-    yyyy    mm    dd avgwindspeed
-   <int> <chr> <chr>        <dbl>
- 1  1980    01    01     7.133333
- 2  1980    01    02     4.025000
- 3  1980    01    03           NA
- 4  1980    01    04     2.966667
- 5  1980    01    05     3.795833
- 6  1980    01    06     6.033333
- 7  1980    01    07     9.183333
- 8  1980    01    08    13.158333
- 9  1980    01    09           NA
-10  1980    01    10           NA
-# ... with 721 more rows
-~~~
-{: .output}
-
-Note that we use `UQ()` when we evaluate `fromyear` and `toyear`, and use the `.data` pronoun to make it clear which variables 
-should be in our data.
-
-{: .solution}
+> ## Challenge: Calculating the average wind speed per day
+> 
+> Create a new function that will take a tibble containing weather data, and two parameters,
+> `fromyear` and `toyear`.   The function should filter the data to include only data between the two years
+> specified, and calculate the average wind speed per day for these data points.
+> 
+> Hint:  The `between()` function in dplyr may be useful.
+> 
+> > ## Solution
+> > 
+> > 
+> > ~~~
+> > averageWindSpeed <- function(indata, fromyear, toyear){
+> >   
+> >   avgwind <- indata %>% 
+> >     filter(between(.data$yyyy, UQ(fromyear), UQ(toyear))) %>% 
+> >     group_by(.data$yyyy, .data$mm, .data$dd) %>% 
+> >     summarise(avgwindspeed = mean(windspeed))
+> >   
+> >   return(avgwind)
+> > }
+> > 
+> > averageWindSpeed(cleanweather, 1980, 1981)
+> > ~~~
+> > {: .language-r}
+> > 
+> > 
+> > 
+> > ~~~
+> > # A tibble: 731 x 4
+> > # Groups:   yyyy, mm [?]
+> >     yyyy    mm    dd avgwindspeed
+> >    <int> <chr> <chr>        <dbl>
+> >  1  1980    01    01     7.133333
+> >  2  1980    01    02     4.025000
+> >  3  1980    01    03           NA
+> >  4  1980    01    04     2.966667
+> >  5  1980    01    05     3.795833
+> >  6  1980    01    06     6.033333
+> >  7  1980    01    07     9.183333
+> >  8  1980    01    08    13.158333
+> >  9  1980    01    09           NA
+> > 10  1980    01    10           NA
+> > # ... with 721 more rows
+> > ~~~
+> > {: .output}
+> > 
+> > Note that we use `UQ()` when we evaluate `fromyear` and `toyear`, and use the `.data` pronoun to make it clear which variables 
+> > should be in our data.
+> > 
+> {: .solution}
 {: .challenge}
 
 
