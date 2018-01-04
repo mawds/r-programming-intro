@@ -413,9 +413,7 @@ We can read this as "Take co2clean *and then* filter yyyy between 1980 and 2000 
 
 Although we didn't cover them in the Introduction to Data Analysis course, it's worth spending a little time on dealing with date data.  It would be useful to combine the fields `yyyy`, `mm`, `dd` into a "proper" date.   The `lubridate` package, which is part of the tidyverse offers lots of functions that make dealing with dates easier.   The `lubridate` package isn't loaded by default when we use `library("tidyverse")`.
 
-Lubridate comes with several functions to process strings that look like dates (e.g. "1 November 2017") into date objects.
-
-TODO more on date objects - why bother making them etc.
+Lubridate comes with several functions to process strings that look like dates (e.g. "1 November 2017") into date objects.  For more information on Lubridate, see the package vignette (`vignette("lubridate")`). It makes it easier to compare date ranges, convert between time-zones and add date ranges.
 
 
 ~~~
