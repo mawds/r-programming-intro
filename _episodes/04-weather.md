@@ -184,8 +184,8 @@ if we break anything, this should be revealed in the tests we have written.
 In pseudo-code, this is what we want to do:
 
 
+```
 
-~~~
 cleanfields <- function(dataset, fieldlist){
   
   if( fieldstoclean doesn't have names ){
@@ -196,8 +196,8 @@ cleanfields <- function(dataset, fieldlist){
 
   return our results
 }
-~~~
-{: .language-r}
+
+```
 
 There are two things we will need to figure out:
 

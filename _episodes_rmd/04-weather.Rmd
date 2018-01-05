@@ -161,7 +161,7 @@ if we break anything, this should be revealed in the tests we have written.
 In pseudo-code, this is what we want to do:
 
 
-```{r, eval = FALSE}
+```
 
 cleanfields <- function(dataset, fieldlist){
   
