@@ -6,7 +6,10 @@ MAKEFILES=Makefile $(wildcard *.mk)
 JEKYLL=jekyll
 PARSER=bin/markdown_ast.rb
 DST=_site
-
+# Command to run an Rscript
+# Set this to Rscript -e if you don't want to build 
+# in Dockerised environment
+RSCRIPT=docker run --rm --user "$$UID" -v "$$PWD":"$$PWD"  -w="$$PWD" -ti rg11  Rscript -e
 # Controls
 .PHONY : commands clean files
 .NOTPARALLEL:
@@ -55,7 +58,7 @@ workshop-check :
 	@bin/workshop_check.py .
 
 ## ----------------------------------------
-## Commands specific to lesson websites.
+## Command specific to lesson websites.
 
 .PHONY : lesson-check lesson-md lesson-files lesson-fixme lesson-watchrmd
 
@@ -91,7 +94,7 @@ lesson-watchrmd:
 	@bin/watchRmd.sh &
 
 _episodes/%.md: _episodes_rmd/%.tmp
-	Rscript -e 'knitr::knit("$<","$@")'
+	${RSCRIPT} 'knitr::knit("$<","$@")'
 
 # Format challenges and solutions
 # Without manually blockquoting them
