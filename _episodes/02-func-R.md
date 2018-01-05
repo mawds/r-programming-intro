@@ -583,12 +583,18 @@ This suggests that our function is behaving as we expect, for this data-set.  In
 At the moment our `cleanfields()` function doesn't test the variables we want to clean exist.  This causes it
 to exit with an unhelpful error message if we try and clean a field that doesn't exist:
 
-FIXME - renable eval when finished
 
 ~~~
 cleanfields(co2small, c("notAVariable"))
 ~~~
 {: .language-r}
+
+
+
+~~~
+Error in `[[<-.data.frame`(`*tmp*`, f, value = logical(0)): replacement has 0 rows, data has 5
+~~~
+{: .error}
 
 We want the function to only run `if` all the variable names exist, and to stop otherwise.  To execute statements based on whether a condition is true or not, we use the `if` construct:
 

@@ -418,8 +418,7 @@ This suggests that our function is behaving as we expect, for this data-set.  In
 At the moment our `cleanfields()` function doesn't test the variables we want to clean exist.  This causes it
 to exit with an unhelpful error message if we try and clean a field that doesn't exist:
 
-FIXME - renable eval when finished
-```{r, eval=FALSE}
+```{r}
 cleanfields(co2small, c("notAVariable"))
 ```
 
