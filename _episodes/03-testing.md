@@ -78,16 +78,13 @@ Writing such tests is cumbersome.  The R package `testthat` makes it easy for us
 > 
 {: .callout}
 
-FIXME - pre-process
-
-For now let's put our tests in a separate file.  In this file we'll load the `testthat` package.  An example of a file containing tests is included in the data you downloaded at the start of the course.
-
-
+For now let's put our tests in a separate file.  In this file we'll load the `testthat` package.  An example of a file containing tests is included in the data you downloaded at the start of the course, and is shown below:
 
 
 ~~~
-context("Cleaning fields")
+context("Cleaning fields") # We group tests for similar functionality into contexts
 
+# Note the position of {} 
 test_that("Can clean a field", {
   
   testvector <- c(1,2,-999.99)
