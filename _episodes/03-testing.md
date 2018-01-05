@@ -61,7 +61,28 @@ if( isTRUE(all.equal(cleanfield(testvector), expectedResults)) ){
 {: .output}
 
 
-Writing such tests is cumbersome.  The R package `testthat` makes it easy for us to write and run tests to verify our function behaves as we'd like.  If you put your functions in a package (see, for example, FIXME), it integrates well with the development process.  For now let's put our tests in a separate file.  In this file we'll load the `testthat` package.  An example of a file containing tests is included in the data you downloaded at the start of the course.
+Writing such tests is cumbersome.  The R package `testthat` makes it easy for us to write and run tests to verify our function behaves as we'd like.  If you put your functions in a package (see, for example, FIXME), it integrates well with the development process. 
+
+> ## Installing testthat
+> 
+> Testthat is not installed on the university teaching machines.  It can be installed like any
+> other R pacakge on CRAN, using:
+> 
+> 
+> ~~~
+> install.packages("testthat")
+> ~~~
+> {: .language-r}
+> 
+> By default, this will install the package to a folder on your "P" drive.
+> 
+{: .callout}
+
+FIXME - pre-process
+
+For now let's put our tests in a separate file.  In this file we'll load the `testthat` package.  An example of a file containing tests is included in the data you downloaded at the start of the course.
+
+
 
 
 ~~~
@@ -93,39 +114,10 @@ test_that("Can clean multiple fields",{
 
 We can execute the tests by loading the `testthat` package, and running `test_file()`:
 
-
 ~~~
 library("testthat")
 ~~~
 {: .language-r}
-
-
-
-~~~
-
-Attaching package: 'testthat'
-~~~
-{: .output}
-
-
-
-~~~
-The following object is masked from 'package:dplyr':
-
-    matches
-~~~
-{: .output}
-
-
-
-~~~
-The following object is masked from 'package:purrr':
-
-    is_null
-~~~
-{: .output}
-
-
 
 ~~~
 test_file("tests/test_cleandata.R", env=.GlobalEnv)
@@ -137,7 +129,7 @@ test_file("tests/test_cleandata.R", env=.GlobalEnv)
 ~~~
 Cleaning fields: .......
 
-DONE ======================================================================
+══ DONE ═══════════════════════════════════════════════════════════════════
 ~~~
 {: .output}
 
@@ -154,15 +146,14 @@ test_file("tests/test_fail.R")
 ~~~
 Cleaning fields: 1
 
-Failed --------------------------------------------------------------------
-1. Failure: Can clean a field (@test_fail.R#8) ----------------------------
+══ Failed ═════════════════════════════════════════════════════════════════
+── 1. Failure: Can clean a field (@test_fail.R#8)  ────────────────────────
 c(2, 3, NA) not equal to cleanfield(testvector).
 2/3 mismatches (average diff: 1)
 [1] 2 - 1 == 1
 [2] 3 - 2 == 1
 
-
-DONE ======================================================================
+══ DONE ═══════════════════════════════════════════════════════════════════
 ~~~
 {: .output}
 

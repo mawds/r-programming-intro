@@ -20,6 +20,8 @@ knitr_fig_path("03-testing-R-")
 ```{r, echo=FALSE, message=FALSE}
 library(tidyverse)
 library(lubridate)
+library(testthat)
+options(testthat.default_reporter = "summary") # Default reporter doesn't display well in webpage 
 load("checkpoints/02end.RData")
 ```
 
@@ -53,11 +55,27 @@ if( isTRUE(all.equal(cleanfield(testvector), expectedResults)) ){
 ```
 
 
-Writing such tests is cumbersome.  The R package `testthat` makes it easy for us to write and run tests to verify our function behaves as we'd like.  If you put your functions in a package (see, for example, FIXME), it integrates well with the development process.  For now let's put our tests in a separate file.  In this file we'll load the `testthat` package.  An example of a file containing tests is included in the data you downloaded at the start of the course.
+Writing such tests is cumbersome.  The R package `testthat` makes it easy for us to write and run tests to verify our function behaves as we'd like.  If you put your functions in a package (see, for example, FIXME), it integrates well with the development process. 
+
+## Installing testthat
+
+Testthat is not installed on the university teaching machines.  It can be installed like any
+other R pacakge on CRAN, using:
 
 ```{r, eval=FALSE}
-context("Cleaning fields")
+install.packages("testthat")
+```
 
+By default, this will install the package to a folder on your "P" drive.
+
+{: .callout}
+
+For now let's put our tests in a separate file.  In this file we'll load the `testthat` package.  An example of a file containing tests is included in the data you downloaded at the start of the course, and is shown below:
+
+```{r, eval=FALSE}
+context("Cleaning fields") # We group tests for similar functionality into contexts
+
+# Note the position of {} 
 test_that("Can clean a field", {
   
   testvector <- c(1,2,-999.99)
@@ -83,9 +101,10 @@ test_that("Can clean multiple fields",{
 ```
 
 We can execute the tests by loading the `testthat` package, and running `test_file()`:
-
-```{r}
+```{r, eval=FALSE}
 library("testthat")
+```
+```{r}
 test_file("tests/test_cleandata.R", env=.GlobalEnv)
 ```
 
