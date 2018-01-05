@@ -5,5 +5,7 @@
 .sass-cache
 __pycache__
 _site
+<<<<<<< HEAD
 .Rproj.user
 .Rhistory
+_episodes_rmd/*.tmp
