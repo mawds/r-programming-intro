@@ -26,14 +26,279 @@ weatherfiles <- c("data/met_mlo_insitu_1_obop_hour_1977.txt", "data/met_mlo_insi
 ~~~
 {: .language-r}
 
-This is what we want our function to do::
+We need to load each file in, and then combine them all into a single file, and then clean them.
+
+One approach to this might be to load each file in, and then append it to a master data-set.   This will work, but is actually quite slow, since the R will have to take a copy of the entire master data set each time we add more data to it.
+
+A more efficient way of performing the task is to make a list of tibbles, and then combine these in a single step after we've loaded all of the data.
+
+## Lists
+
+We have previously encountered vectors, which we can create using the `c()` function:
+
+
+~~~
+c(1,2,4,8)
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] 1 2 4 8
+~~~
+{: .output}
+
+
+
+~~~
+c("a", "b", "c")
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] "a" "b" "c"
+~~~
+{: .output}
+
+All of the elements of a vector must be the same data type; R will make this so if we try and make a vector with different data types:
+
+
+~~~
+c(1, "a", 2, 3)
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] "1" "a" "2" "3"
+~~~
+{: .output}
+
+We can think of a _list_ as a generalisation of this; each element of the list can contain pretty much any other object.  We make a list with the `list()` function:
+
+
+~~~
+mylist <- list(1, "a", 2, c(1,2,3))
+mylist
+~~~
+{: .language-r}
+
+
+
+~~~
+[[1]]
+[1] 1
+
+[[2]]
+[1] "a"
+
+[[3]]
+[1] 2
+
+[[4]]
+[1] 1 2 3
+~~~
+{: .output}
+This has created a list; the first element contains the number 1, the second the letter "a", the third contains the number 3 and the 4th element contains a vector, which contains the values 1,2 and 3.
+
+We can use the subsetting operator, `[]` on the list in the same way we would a vector. This will return another list:
+
+
+~~~
+mylist[2]
+~~~
+{: .language-r}
+
+
+
+~~~
+[[1]]
+[1] "a"
+~~~
+{: .output}
+
+
+
+~~~
+mylist[2:3]
+~~~
+{: .language-r}
+
+
+
+~~~
+[[1]]
+[1] "a"
+
+[[2]]
+[1] 2
+~~~
+{: .output}
+
+To refer to the contents of a list element we use the `[[]]` operator.  In contrast to the `[]` operator, this takes a single value:
+
+
+~~~
+mylist[[1]]
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] 1
+~~~
+{: .output}
+
+
+
+~~~
+mylist[[4]]
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] 1 2 3
+~~~
+{: .output}
+But note we cannot use, e.g.:
+
+
+~~~
+mylist[[1:2]]
+~~~
+{: .language-r}
+
+
+
+~~~
+Error in mylist[[1:2]]: subscript out of bounds
+~~~
+{: .error}
+Since this would return more than one element.
+
+There is another way of manipulating lists, which is to name its elements:
+
+
+~~~
+weatherlist <- list(temperature = 2.5, windspeed = 4, winddir = "N")
+~~~
+{: .language-r}
+
+We can still refer to the list elements by number
+
+~~~
+weatherlist[1:2]
+~~~
+{: .language-r}
+
+
+
+~~~
+$temperature
+[1] 2.5
+
+$windspeed
+[1] 4
+~~~
+{: .output}
+We can also refer to them by name:
+
+
+~~~
+# This will return a list
+weatherlist[c("windspeed", "winddir")]
+~~~
+{: .language-r}
+
+
+
+~~~
+$windspeed
+[1] 4
+
+$winddir
+[1] "N"
+~~~
+{: .output}
+
+
+
+~~~
+# As will this
+weatherlist[c("windspeed")]
+~~~
+{: .language-r}
+
+
+
+~~~
+$windspeed
+[1] 4
+~~~
+{: .output}
+
+
+
+~~~
+## We use [[]] to access the data itself:
+weatherlist[["windspeed"]]
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] 4
+~~~
+{: .output}
+
+We can also return the contents of a list element with the `$` operator:
+
+
+~~~
+weatherlist$windspeed
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] 4
+~~~
+{: .output}
+
+One useful feature of the `[[]]` operator is that we can define the element we want in a variable:
+
+
+~~~
+myvar <- "windspeed"
+weatherlist[[myvar]]
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] 4
+~~~
+{: .output}
+
+We cannot do this with the `$` operator.
+
+This is what we want our function to do:
 
 
 ~~~
 loadWeatherDataPseudoCode <- function(weatherfiles){
   for (f in weatherfiles) {
     print(paste("Load in data for file", f))
-    print("Append the data to the data we've already loaded")
   }
   print("return the tibble containing all the data")
 }
@@ -46,22 +311,19 @@ loadWeatherDataPseudoCode(weatherfiles)
 
 ~~~
 [1] "Load in data for file data/met_mlo_insitu_1_obop_hour_1977.txt"
-[1] "Append the data to the data we've already loaded"
 [1] "Load in data for file data/met_mlo_insitu_1_obop_hour_1978.txt"
-[1] "Append the data to the data we've already loaded"
 [1] "Load in data for file data/met_mlo_insitu_1_obop_hour_1979.txt"
-[1] "Append the data to the data we've already loaded"
 [1] "return the tibble containing all the data"
 ~~~
 {: .output}
 
-## Create a new function or modify an existing one?
-
-We could decide to create a new function which would call `loadWeatherData()` for each file,
-rather than modifying our existing function.  There are pros and cons to extending the existing
-function, or creating a new one.  MORE HERE - ease of debugging vs single file is just file vector 
-with length 1
-
+> ## Create a new function or modify an existing one?
+> 
+> We could decide to create a new function which would call `loadWeatherData()` for each file,
+> rather than modifying our existing function.  There are pros and cons to extending the existing
+> function, or creating a new one.  MORE HERE - ease of debugging vs single file is just file vector 
+> with length 1
+> 
 {: .callout}
 
 
@@ -310,7 +572,7 @@ cleanweather %>%
 ~~~
 {: .language-r}
 
-<img src="../fig/rmd-05-multi-R-unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
+<img src="../fig/rmd-05-multi-R-unnamed-chunk-24-1.png" title="plot of chunk unnamed-chunk-24" alt="plot of chunk unnamed-chunk-24" style="display: block; margin: auto;" />
 
 
 
@@ -320,7 +582,7 @@ cleanweather %>%
 ~~~
 {: .language-r}
 
-<img src="../fig/rmd-05-multi-R-unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" style="display: block; margin: auto;" />
+<img src="../fig/rmd-05-multi-R-unnamed-chunk-25-1.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" />
 
 
 ~~~
@@ -332,7 +594,7 @@ cleanweather %>%
 ~~~
 {: .language-r}
 
-<img src="../fig/rmd-05-multi-R-unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
+<img src="../fig/rmd-05-multi-R-unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" style="display: block; margin: auto;" />
 
 
 
