@@ -476,14 +476,6 @@ loadWeatherDataPseudoCode(weatherfiles)
 
 ```
 
-> ## Create a new function or modify an existing one?
-> 
-> We could decide to create a new function which would call `loadWeatherData()` for each file,
-> rather than modifying our existing function.  There are pros and cons to extending the existing
-> function, or creating a new one.  MORE HERE - ease of debugging vs single file is just file vector 
-> with length 1
-> 
-{: .callout}
 
 > ## Challenge 
 > 
@@ -545,7 +537,7 @@ cleanweather <- loadMultipleWeatherData(weatherfiles)
 ~~~
 {: .language-r}
 
-Sense check:
+We can sense check our load by checking that the number of observations in each year is (roughly - don't forget leap years) the same.
 
 
 ~~~
@@ -576,6 +568,7 @@ cleanweather %>%
 ~~~
 {: .output}
 
+And by checking the summary statistics for any unusual values:
 
 
 ~~~
@@ -620,5 +613,10 @@ summary(cleanweather)
  NA's   :29157    NA's   :94003                                 
 ~~~
 {: .output}
+
+## Summary
+
+In this episode we've written a function to load in more than 1 weather data file at once, and to return a tibble containing all of the loaded data.   
+
 
 
