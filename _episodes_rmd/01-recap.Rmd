@@ -3,16 +3,16 @@ title: "Introduction and recap"
 teaching: 45
 exercises: 10
 questions:
-- "How do I use RStudio?"
+- "How do I use R Studio?"
 - "How do I load data into R using readr?"
 - "How do I handle missing data?"
 - "How can I manipulate and create new variables in a data set?"
-- "How do I calculate summary statistics? FIXME - not yet covered"
-- "How do I use pipes to build analysis pipelines? FIXME - not yet covered"
+- "How do I use pipes to build analysis pipelines?"
 - "How can I plot my data?"
 - "How do I handle date data?"
 objectives:
 - "To recap the material covered in the Introdution to the Tidyverse course"
+- "To introduce handling dates and times"
 keypoints:
 - "The tidyverse provdes an integrated set of packages that are useful for data analysis."
 - "Use `read_xxx()` to read in different types of data, e.g. `read_csv()` for comma separated data. The output of a `read_xxx()` functionis a tibble."
@@ -33,27 +33,41 @@ knitr_fig_path("01-")
 
 Today's course uses at historic CO2 and temperature data as an example.  The focus of the course is using R for programming.  In the [Data Analysis Using R](https://uomresearchit.github.io/r-tidyverse-intro/) course we covered:
 
-  *  Introduction to R and RStudio
+  *  Introduction to R and R Studio
   *  Getting help
   *  Loading data into R
   *  Transforming and cleaning data
   *  Plotting data
   *  Finding and using packages
 
-This episode briefly recaps these topics.  We will use the data introduced in this section in the remainder of the course.
+This episode briefly recaps some of these topics.  We will use the data introduced in this section in the remainder of the course.
 
 The "Data Analysis Using R" course made extensive use of the tidyverse.  This is a collection of packages that have been designed to work well together, and which provide an integrated way of performing data analyses.  They also hide some of the complexity underlying "base" R.    When we come to program with R, we will need to explore some of this complexity.
 
 ##  Getting started with R
 
-RStudio is a widely used integrated development environment for R. We will use RStudio for the remainder of today's lesson.
+R Studio is a widely used integrated development environment for R. We will use R Studio for the remainder of today's lesson.  This course assumes you already have some familiarity with R (the [Research IT](http://www.itservices.manchester.ac.uk/research/) course, [Data Analysis Using R](https://uomresearchit.github.io/r-tidyverse-intro/) covers the necessary material).   As a refresher we will briefly go through the process of loading and plotting some data.  We will also introduce some of the data structures and functions that we will be using in the rest of the course.
 
-Cover:
+We will be using R Studio in the course; it provides a much nicer environment for using R than the default command line version.  R Studio lets us use _projects_ to keep our data and analysis scripts together.
 
-* Rstudio windows
-* Getting help
-* Writing scripts
-* Running code / scripts
+## Challenge: Creating a new project
+
+Create a new project for today's course.  If you are using a university PC, we suggest you make this within the `C:\work` directory on your machine's local disk, and copy your work to your P drive at lunchtime and at the end of the day.  This is in case access to the P drive is temporarily lost during the course.
+
+Within your project director create `src` and `data` folders.  Download and decompress the data at FIXME, and copy it to the `data` folder within your project that we have just created.
+
+{: .challenge}
+
+
+> ## Version Control
+> 
+> It is always a good idea to use version control with your projects.  
+> This makes it easy to undo changes to your code, scripts and documents, and to collaborate with others. 
+> We don't cover version control in this course, however [Research IT offers a course on using git](http://app.manchester.ac.uk/RGIT)
+> (logon required). [Git](https://git-scm.com/) is a popular version control system, 
+> that integrates well with R Studio.  Git makes collaboration with others easy when it is used in 
+> conjunction with [github](https://www.github.com).
+{: .callout}
 
 
 ## Loading data into R
@@ -178,15 +192,18 @@ The `read_csv()` function is designed to read comma separated files (like the ga
 going to work for the CO2 data.  There are two different approaches we can use:
 
 * We can make sure of the fact that each variable starts in the same column in each row; this data is 
- called "fixed width", and can read with `read_fwf()`
+ called "fixed width", and can read with `read_fwf()`.  If we consult the help file for this, fixed width data is described as "painful to parse because you need to describe the length of every field".
  * We can use the fact that there is at least one space between each variable.  The data is tabular, so we use `read_table()`.
  
-TODO compare pros and cons - blank missing data will break the latter, but easier to implement the former
+
+## Command completion
+
+Functions in the tidyverse are named systematically.  Suppose we know that `read_csv()` exists, but we're not sure what an appropriate function to read our file in is called.  We can type `read_` and press tab; this will suggest a list of other functions starting `read_`; we can scroll through these with the arrow keys (and preview their help files) to help direct us to the correct function.
+
+{: .callout}
 
 We also have to deal with the text at the start of the file.  Fortunately the documentation text is 
-preceeded with a `#` character on each row.  This can serve as a _comment_ character; just like in R.  The readr `read_xxx()` functions allow us to specify a character to treat as a comment using the `comment="#"` option.
-
-
+preceded with a `#` character on each row.  This is a _comment_ character; just like in R.  The readr `read_xxx()` functions allow us to specify a character to treat as a comment using the `comment="#"` option.
 
 ```{r}
 co2weekly <- read_table("data/co2_weekly_mlo.txt",
@@ -214,7 +231,7 @@ co2weekly <- read_table("data/co2_weekly_mlo.txt",
 ```
 
 
-As with all the readr loading functions, we obtain a tibble, which we can view directly from Rstudio (using the environment pane, which by default is in the top right), or using the `print()` function:
+As with all the readr loading functions, we obtain a tibble, which we can view directly from R Studio (using the environment pane, which by default is in the top right), or using the `print()` function:
 
 ```{r}
 print(co2weekly) # use, e.g. n=100 to print more rows, width = to with of output if it won't all fit on screen
@@ -240,7 +257,6 @@ demodata == 5
 ```
 
 The first argument of `ifelse()` evaluates to a logical vector. If the ith element of the vector is `TRUE`, `ifelse()` will output the ith element of the 2nd argument (so the ith element of `demodata` in this example).  If the element is FALSE the ith element of the 3rd argument will be replaced.  But the 3rd argument is only a single value...what's going on here?  You may remember that R `recycles` vectors if they are too short. This is what happens here; as the 3rd argument in our example consists of a single value, it will be output for all elements that are  `FALSE`
-
 
 ```{r}
 co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
@@ -271,12 +287,12 @@ This works, but there is a lot of repetition in our code.  This is bad for sever
 
     > ## Finding typing errors
     > Even if an error is reported when you run your code, errors like these can be very tricky to spot.
-    > If you select a variable name in RStudio (a shortcut for this is to double-click the variable name),
+    > If you select a variable name in R Studio (a shortcut for this is to double-click the variable name),
     > it will highlight the other places in your code where the 
     > variable is used.  This can make it easier to spot where a variable has been mistyped.
     {: .callout}
 
- 2. It could get very tedious; we could have hundreds of fields that we needed to recode it the same way.
+ 2. It could get very tedious; we could have hundreds of fields that we needed to recode in the same way.
 
 ## Manipulating data with dplyr
 
@@ -295,12 +311,13 @@ We can read this as "Take co2clean *and then* filter yyyy between 1980 and 2000 
 
 > ## Non tidyverse
 >  
-> If you're unfamilar with the tidyverse, you may want to tackle this problem using something like this:
+> If you're unfamilar with the tidyverse, you tackle this problem using something like this:
 >
 >
 > ```{r, eval=FALSE}
 > 
 > co2myyears <- co2clean[co2clean$yyyy >= 1980 & co2clean$yyyy <= 2000, ]
+> 
 > aggregate(co2myyears[,"co2Ppm"], list(co2myyears$yyyy), mean, na.rm=TRUE)
 > ```
 > 
