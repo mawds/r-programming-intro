@@ -8,10 +8,9 @@ questions:
 - "How do I handle missing data?"
 - "How can I manipulate and create new variables in a data set?"
 - "How do I use pipes to build analysis pipelines?"
-- "How can I plot my data?"
 - "How do I handle date data?"
 objectives:
-- "To recap the material covered in the Introdution to the Tidyverse course"
+- "To recap some of the material covered in the Introdution to the Tidyverse course"
 - "To introduce handling dates and times"
 keypoints:
 - "The tidyverse provdes an integrated set of packages that are useful for data analysis."
@@ -19,7 +18,6 @@ keypoints:
 - "Tibbles are used for storing tabular data.  They are the tidyverse's take on a data.frame"
 - "Functions in the `dplyr` package let us manipulate tibbles"
 - "We can join dplyr 'verbs' with pipes to perform more complex analyses"
-- "`ggplot2` lets us generate graphs."
 - "The `lubridate` package makes dealing with dates and times easier."
 source: Rmd
 ---
@@ -294,6 +292,9 @@ This works, but there is a lot of repetition in our code.  This is bad for sever
 
  2. It could get very tedious; we could have hundreds of fields that we needed to recode in the same way.
 
+To deal with this issue we can write a _function_; we will discuss this in the next episode.
+
+
 ## Manipulating data with dplyr
 
 We can use dplyr "verbs" and the pipe operator, `%>%` to construct analyses.  Think of the pipe character as meaning "and then".
@@ -366,41 +367,6 @@ co2weekly %>% mutate(sampledate = ymd(paste(yyyy, mm, dd)))
 co2weekly <- co2weekly %>% mutate(sampledate = ymd(paste(yyyy, mm, dd))) 
 
 ```
-
-
-## Plotting
-
-We used `ggplot2` to produce graphs in the previous course.  As a recap, let's plot CO_2
-concentration against time for this data-set.  `ggplot2` is loaded as part of the tidyverse.
-
-```{r}
-ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) + geom_line() 
-```
-
-
-
-> ## Challenge:  Improving the graph
-> The graph is dominated by the missing data. Dealing with this properly is the subject of the
-> next episode.  Before we do this, use the ggplot cheat-sheet to work out how to
-> alter the y axis of the plot to better display the data.  Alter the axis labels to something
-> more informative, and give the graph a title.
-> 
-> > ## Solution
-> >
-> > ```{r}
-> > ggplot(data = co2weekly, aes(x = sampledate, y = co2Ppm)) +
-> >  geom_line() +
-> >  coord_cartesian(ylim = c(300,450))  +
-> >  # scale_y_continuous(limits = c(300,450))  could also use this - note how data outside
-> >  # the plot area are handled.
-> >  labs(x = "Sample date",
-> >       y = "CO2 parts per million",
-> >       title = "CO2 level") 
-> >```
-> > 
-> {: .solution}
-{: .challenge}
-
 
 
 
