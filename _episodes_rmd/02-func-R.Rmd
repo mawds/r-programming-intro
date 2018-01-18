@@ -37,9 +37,15 @@ load("checkpoints/01end.RData")
 
 
 In the previous episode we loaded in the CO2 data and recoded the missing values to `NA`.    In this
-episode we will recode the missing values using a function.
+episode we will recode the missing values using a function.   We mentioned in the previous episode that there were several disadvantages to the approach we adopted there, of writing separate code for each of the 
+variables we needed to recode:
 
-Before we write a function to recode the missing values, let's illustrate writing a simple function to convert temperatures: 
+1. There was repetition in the code; this means more typing, which means more potential to make mistakes (such as cutting and pasting the code, but forgetting to replace all references to a variable, or mistyping a variable)
+2. It is difficult to extend the code; if we get data with differently named variables we'd need to start from scratch.   Even if we were confident our original code worked, we couldn't be sure we'd not introduced errors when we converted it to use different variable names.
+
+The solution to these problems is to use a _function_.  A function will take 0 or more inputs, do stuff, and (usually) return an output.    You've already been using functions (such as `mutate()`) in R.  In this episode we show you how to write your own.
+
+Before we dive in and write a function to recode the missing values, let's illustrate by writing a simple function to convert temperatures: 
 
 ### Defining a Function
 
@@ -80,9 +86,13 @@ fahr_to_kelvin(212)
 
 We've successfully called the function that we defined, and we have access to the value that we returned.
 
-### Composing Functions
+## Challenge: Writing a function
 
-Now that we've seen how to turn Fahrenheit into Kelvin, let's write another function to turn Kelvin into Celsius:
+Write a function to convert Kelvin to Celsius.  The formula to do this is:
+
+$$\mbox{Celsisus} = \mbox{Kelvin} - 273.15$$
+
+## Solution: Writing a function
 
 ```{r}
 kelvin_to_celsius <- function(temp) {
@@ -94,9 +104,13 @@ kelvin_to_celsius <- function(temp) {
 kelvin_to_celsius(0)
 ```
 
+{: .solution}
+{: .challenge}
+
+
 What about converting Fahrenheit to Celsius?
 We could write out the formula, but we don't need to.
-Instead, we can [compose]({{ page.root }}/reference/#function-composition) the two functions we have already created:
+Instead, we can combine the two functions we have created:
 
 ```{r}
 fahr_to_celsius <- function(temp) {
@@ -126,80 +140,66 @@ Real-life functions will usually be larger than the ones shown here--typically h
 > ```
 {: .callout}
 
-> ## Create a Function
->
-> The `c` function lets us concatenate elements of a vector.
-> e.g. `x <- c("A", "B", "C")` creates a vector `x` with three elements.
-> Furthermore, we can extend that vector again using `c`, e.g. `y <- c(x, "D")` creates a vector `y` with four elements.
-> Write a function called `fence` that takes two vectors as arguments, called
-> `original` and `wrapper`, and returns a new vector that has the wrapper vector
-> at the beginning and end of the original:
->
-> ```{r, echo=-1}
-> fence <- function(original, wrapper) {
->    answer <- c(wrapper, original, wrapper)
->    return(answer)
-> }
-> best_practice <- c("Write", "programs", "for", "people", "not", "computers")
-> asterisk <- "***"  # R interprets a variable with a single value as a vector
->                    # with one element.
-> fence(best_practice, asterisk)
-> ```
->
-> > ## Solution
-> > ~~~
-> > fence <- function(original, wrapper) {
-> >   answer <- c(wrapper, original, wrapper)
-> >   return(answer)
-> > }
-> > ~~~
-> > {: .r}
-> {: .solution}
->
-> If the variable `v` refers to a vector, then `v[1]` is the vector's first element and `v[length(v)]` is its last (the function `length` returns the number of elements in a vector).
-> Write a function called `outside` that returns a vector made up of just the first and last elements of its input:
->
-> ```{r, echo=-1}
-> outside <- function(v) {
->   first <- v[1]
->    last <- v[length(v)]
->    answer <- c(first, last)
->    return(answer)
-> }
-> dry_principle <- c("Don't", "repeat", "yourself", "or", "others")
-> outside(dry_principle)
-> ```
-{: .challenge}
-
 > ## The Call Stack
 >
 > For a deeper understanding of how functions work,
 > you'll need to learn how they create their own environments and call other functions.
 > Function calls are managed via the call stack.
 > For more details on the call stack,
-> have a look at the [supplementary material]({{ page.root }}/14-supp-call-stack/).
+> have a look at the [supplementary material]({{ page.root }}/14-supp-call-stack/). FIXME - original lessson
 {: .callout}
 
-> ## Named Variables and the Scope of Variables
->
->  + Functions can accept arguments explicitly assigned to a variable name in
->    in the function call `functionName(variable = value)`, as well as arguments by
->    order:
-> ```{r}
-> input_1 = 20
-> mySum <- function(input_1, input_2 = 10) {
->   output <- input_1 + input_2
->   return(output)
-> }
-> ```
->
-> 1.  Given the above code was run, which value does `mySum(input_1 = 1, 3)` produce?
->     1. 4
->     2. 11
->     3. 23
->     4. 30
-> 2.  If `mySum(3)` returns 13, why does `mySum(input_2 = 3)` return an error?
-{: .challenge}
+## Passing parameters
+
+We refer to the values we pass into a function as the function's parameters. The temperature conversion functions we have written all take a single parameter.  We can pass more than
+one parameter to a function.  There are two ways of specifying passing the parameters; by name or by position.  We can also specify the default value of a parameter when we define the function.
+
+```{r}
+add_some <- function(invar, some=2){
+  # Add the value of some to invar
+  outvar = invar + some
+  return(outvar)
+}
+
+add_some(3) # Will use the default value of some
+add_some(3,3) # Specify some by position
+add_some(3, some = 4) # Specify some by name
+
+```
+
+Parameters without a default value are mandatory; you will get an error if you try and
+call a function without specifying them (either by name or position).
+
+## Variable scope 
+
+If we define a variable _within_ our function, then it is only available to that
+function, and will disappear when the function exit.
+
+What if we try and use a variable within our function that does not exist?  (either by creating it within the function, or by passing it in as a parameter). In this situation R will look into the _calling environment_ for the variable, and use that instead:
+
+```{r}
+y <- 2
+
+testfunction <- function(x){
+  print(x)
+  print(y) # y isn't defined in the function, so R will look elsewhere
+  
+}
+
+testfunction(3)
+
+rm(y) # Delete y
+
+testfunction(3) # R can't find y *anywhere*, so we get an error.
+```
+
+There are limited situations where this is useful.  In general you should avoid referring
+to variables outside of your function; keeping everything self contained within the
+function makes your code more modular (which makes it easier to reuse functions), and 
+easier to debug.
+
+What if we have the same variable name defined within and outside of the function?
+In this case the function will use the variable as defined within the function.
 
 ## Handling missing values
 
@@ -276,6 +276,7 @@ cleanfield <- function(indata, missingvalue = -999.99){
 }
 ```
 
+
 We can use the `cleanfield()` function to clean each of our variables in turn.  For example:
 ```{r}
 co2small[["co2Ppm"]] <- cleanfield(co2small[["co2Ppm"]])
@@ -316,24 +317,46 @@ Often we want to alter the values of elements in the array as we loop over them.
 a slightly different approach:
 
 ```{r}
-for (i in 1:length(testdata)) {
+for (i in seq_along(testdata)) {
   print(paste("Element number", i, "of the vector is", testdata[i]))
   
 }
 
 ```
 
-> ## Making your code robust
->
-> In the example above we could have written `for (i in 1:6)`, since this is the length
-> of the testdata vector.    By using `length(testdata)` our code will be able to handle
-> any length of the `testdata` vector.  This makes the code more generalisable and robust
+## Making your code robust
+In the example above we could have written `for (i in 1:length(testdata))`.  Since `length(testdata)` is `6`, this will generate the sequence:
+```{r}
+1:6
+```
+Which is what we want to iterate over; the indices of the vector `testdata`.
+
+What happens if `testdata` is empty though (i.e. the vector has no elements)?
+
+```{r}
+emptyvector <- vector()
+length(emptyvector)
+# So the code 1:length(emptyvector) generates:
+1:length(emptyvector)
+
+# seq_along() returns an integer vector of length 0
+seq_along(emptyvector)
+
+# So the body of the loop will never execute:
+for (i in seq_along(emptyvector)) {
+  print("Nothing to see here")
+}
+  
+```
+
+Using `seq_along()` makes our code robust against the situation where our vector is empty.
+
 {: .callout}
 
 By setting up the loop this way we can assign new values to the elements of `testtdata`.  For example, to multiply each element by 2, we could use:
 
 ```{r}
-for (i in 1:length(testdata)) {
+for (i in seq_along(testdata)) {
   
   testdata[i] <- testdata[i] * 2
   
@@ -405,13 +428,10 @@ Let's run our function on our main data-set, and plot the results to  verify it 
 ```{r}
 fieldsWithMissingData <- c("co2Ppm", "co2OneYearAgo", "co2TenYearsAgo", "co2Increase1800")
 co2clean <- cleanfields(co2weekly, fieldsWithMissingData) 
-ggplot(data = co2clean, aes(x = sampledate, y = co2Ppm)) + geom_line() 
+summary(co2clean)
 ```
 
-The `-999.99`s that were visible on the plot in episode 1 have now been removed.  `NA`s are shown as gaps in the 
-line plotted by `geom_line()`
-
-This suggests that our function is behaving as we expect, for this data-set.  In the next episode we'll look at how to formalise this testing process.
+The summary shows us that we don't have any negative co2 values, and that we have `NA` values instead.  This suggests that our function is behaving as we expect.  In the next episode we'll look at how to formalise this testing process.
 
 ## Conditional execution
 
@@ -457,7 +477,6 @@ if (x < 3) {
   print("x is 3")
 }
 ```
-
 
 Let's look at how we can use the `if` statement to check if all of our variable names exist in the data-set we're cleaning.  We can use the `names()` function to print a vector of variable names:
 
