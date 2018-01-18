@@ -25,10 +25,10 @@ options(testthat.default_reporter = "summary") # Default reporter doesn't displa
 load("checkpoints/02end.RData")
 ```
 
-At the end of the previous episode we verified that our `cleanfields()` function worked on one of the variables by plotting a graph of the cleaned data.  This showed that all the `-999.9` values had been recoded to `NA`.
+At the end of the previous episode we verified that our `cleanfields()` function worked on one of the variables using the `summary()` function.  This showed that all the `-999.9` values had been recoded to `NA`.
 
-We can (and should) adopt a more formal approach to testing the functionality of our function by writing *unit tests*.   These let us test *specific* elements of our function's functionality.    If we need to modify our function the unit tests let us confirm that our change hasn't broken any of the function's existing functionality.
-
+We can (and should) adopt a more formal approach to testing the functionality of our function by writing *unit tests*.   These let us test *specific* elements of our function's functionality.    If we need to modify our function the unit tests let us confirm that our change hasn't broken any of the function's existing functionality; this is really powerful - if we test our code, we *know* we can modify it without fear of 
+breaking it.
 
 For example, let's test that our `cleanfield()` function behaves as we expect:
 
@@ -38,24 +38,14 @@ cleanfield(testvector)
 
 ```
 
-The power of testing comes when we write code to *check* that the function has behaved as expected.  For example:
+The power of testing comes when we write code to *check* that the function has behaved as expected.  We would need to write code to check that the `cleanfield()` function had
+produced the vector `c(1,2,NA)`.
 
-FIXME - this is a horrid example, as it takes us down the rabbit-hole of dealing with `NA`s in logic tests
-and the all.equal() wrinkle
+Writing such tests is cumbersome. We may also want to test things besides equality. For
+example, if we pass invalid data into a function we would want to check we obtained an
+error.   
 
-```{r}
-expectedResults <- c(1,2,NA)
-
-if( isTRUE(all.equal(cleanfield(testvector), expectedResults)) ){
-  print("Test passed")
-} else {
-  print("Test failed")
-}
-
-```
-
-
-Writing such tests is cumbersome.  The R package `testthat` makes it easy for us to write and run tests to verify our function behaves as we'd like.  If you put your functions in a package (see, for example, FIXME), it integrates well with the development process. 
+The R package `testthat` makes it easy for us to write and run tests to verify our function behaves as we'd like.  If you put your functions in a package (see, for example, FIXME), it integrates well with the package development process. 
 
 ## Installing testthat
 
@@ -66,11 +56,14 @@ other R pacakge on CRAN, using:
 install.packages("testthat")
 ```
 
-By default, this will install the package to a folder on your "P" drive.
+By default, this will install the package to your personal package directory.  On
+the university machines, this is at `P:\R\win-library\3.4`.
 
 {: .callout}
 
-For now let's put our tests in a separate file.  In this file we'll load the `testthat` package.  An example of a file containing tests is included in the data you downloaded at the start of the course, and is shown below:
+For now let's put our tests in a separate file.  It is good practice to keep
+your tests in a separate directory, `tests`.  Make a directory in your project folder
+called `tests`, and copy the example test file that was included in the data you downloaded at the start of the course. The file is shown below:
 
 ```{r, eval=FALSE}
 context("Cleaning fields") # We group tests for similar functionality into contexts
@@ -105,10 +98,12 @@ We can execute the tests by loading the `testthat` package, and running `test_fi
 library("testthat")
 ```
 ```{r}
-test_file("tests/test_cleandata.R", env=.GlobalEnv)
+test_file("tests/test_cleandata.R")
 ```
 
-To show you what happens when a test fails:
+`tests/test_fail.R` contains a test which expects the result of cleaning the field to
+be `c(2,3,NA)` (not `c(1,2,NA)`). If a test fails we get an informative error message, 
+which shows where in the file the failure occured (the number after the `#` is the line number of the file), and an indication of what the failure was:
 
 ```{r}
 test_file("tests/test_fail.R")
