@@ -146,7 +146,11 @@ c(2, 3, NA) not equal to cleanfield(testvector).
 > 
 > The `test_cleandata.R` file doesn't test whether the code we wrote to check variable names exist
 > works properly.  Modify the file where indicated to test this functionality.  You may find the `expect_error()` 
-> function useful.
+> function useful. 
+> 
+> Note that all the expectations start `expect_`; if you're unsure of the exact name of the 
+> expectation you want (or unsure of exactly what you want to test), you can use R Studio's command
+> completion popup to look through the list.
 > 
 > > ## Solution
 > > 
