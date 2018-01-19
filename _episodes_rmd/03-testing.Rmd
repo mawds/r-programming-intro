@@ -144,11 +144,11 @@ test_file("tests/test_fail.R")
 > ```
 > 
 > The function will still work, but the second pass through the data for the repeated field will have no effect.
-> The user probably didn't mean to repeat the field; perhaps they made a typing error and meant field3. 
+> The user probably didn't mean to repeat the field; maybe they made a typing error and meant field3. 
 > 
-> Write a test to expect a warning if a variable name is repeated.  Run your tests, and check that the test failure is reported.
+> Write a test to expect a warning if a variable name is repeated.  Run your tests, and check that the test failure (i.e. the lack of warning) is reported.
 > 
-> Then modify your function so that the test passes.   Developing code in this way is referred to as test driven development. FIXME - provide a link to good resource.  Ask Rob?
+> Then modify your function to return a warning so that the test passes.   Developing code in this way is referred to as test driven development. FIXME - provide a link to good resource.  Ask Rob?
 > 
 > Hint:  There are a number of ways of checking whether a vector contains duplicated elements.  `unique()` returns only the unique elements of a vector.  You could compare the length of this vector to the original vector.  `anyDuplicated()` returns the index of the first duplicated element in a vector, or 0 if there are no duplicate elements.
 > 
