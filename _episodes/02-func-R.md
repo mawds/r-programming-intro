@@ -250,8 +250,8 @@ call a function without specifying them (either by name or position).
 
 ## Variable scope 
 
-If we define a variable _within_ our function, then it is only available to that
-function, and will disappear when the function exit.
+If we define a variable _within_ our function, then it is only defined within the 
+function, and will no longer be defined when the function exits.
 
 What if we try and use a variable within our function that does not exist?  (either by creating it within the function, or by passing it in as a parameter). In this situation R will look into the _calling environment_ for the variable, and use that instead:
 
