@@ -3,4 +3,15 @@ layout: page
 title: Setup
 permalink: /setup/
 ---
-FIXME
+
+## Software
+
+If you are using a university PC your machine will already have all the required software installed, with the exception of the `testthat` package.  We will install this together at the appropriate point in the class.  This will be installed on your P drive, so make sure you have at least 5MB free on this. 
+
+If you are using your own machine, you should install [R](https://www.stats.bris.ac.uk/R/), and [R Studio Desktop](https://www.rstudio.com/products/rstudio/download/) for your operating system.  Both are available for Windows, Mac and Linux systems.  You will also need to install the `tidyverse` library.  This can be done using the command ```install.packages("tidyverse")```.   
+
+
+## Data
+
+We will be using some example data, and some pre-written code in the class.  This can be downloaded from [here]({{ page.root }}/data/data.zip).  We will explain where to copy the zip file's contents in the first episode.
+

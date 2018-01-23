@@ -47,10 +47,28 @@ We will be using R Studio in the course; it provides a much nicer environment fo
 
 > ## Challenge: Creating a new project
 > 
-> Create a new project for today's course.  If you are using a university PC, we suggest you make this within the `C:\work` directory on your machine's local disk, and copy your work to your P drive at lunchtime and at the end of the day.  This is in case access to the P drive is temporarily lost during the course.
+> Create a new project for today's course.  It is up to you what you call the project, (`r-course` would be a sensible option), but please avoid putting spaces in the project name.  If you are using a university PC, we suggest you make this within the `C:\work` directory on your machine's local disk, and copy your work to your P drive at lunchtime and at the end of the day.  This is in case access to the P drive is temporarily lost during the course.
 > 
-> Within your project director create `src` and `data` folders.  Download and decompress the data at FIXME, and copy it to the `data` folder within your project that we have just created.
+> Within your project director create a folder called `src`.  We will use this to store the R scripts that you write.  Download the course data from [here]({{ page.root }}/data/data.zip).  The zip file contains `data` and `tests` folders.  Copy these (and their contents) to the project directory. 
 > 
+> > ## Solution: Creating a new project
+> > 
+> > Your project directory should look like this:
+> > 
+> > ![](../fig/01-project.png)
+> > 
+> > The `src` directory should be empty.
+> > 
+> > The `data` directory should contain the required data files:
+> > 
+> > ![](../fig/01-data.png)
+> > 
+> > The `tests` directory should contain some `.R` files; we will use these later.
+> > 
+> > ![](../fig/01-tests.png)
+> > 
+> > If your directories do not look like this, _please_ use your red sticky to get help from one of the helpers.
+> {: .solution}
 {: .challenge}
 
 
