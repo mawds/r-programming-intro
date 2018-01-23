@@ -15,7 +15,11 @@ keypoints:
 
 
 
-In the previous episodes we showed how to create functions, and test that they are working.  In this episode we will use these ideas, and expand on them to load the weather data that you downloaded at the start of the course.  
+In the previous episodes we showed how to create functions, and test that they are working.  In this episode we will use these ideas, and expand on them to load the weather data that you downloaded at the start of the course. We'll use the process of loading the data to build on the programming constructs (such as `for` loops and `if...else`) statements that we've introduced so far.   
+
+We'll also spend some time on how to debug your program.  Although this may seem somewhat pessimistic, the
+reality is that nobody's code works first time.  By learning about the tools needed to debug our code we
+can save ourselves a great deal of time and frustration.
 
 The `data` directory contains a series of files, which contain hourly weather observations from an observatory.  Let's work through the process of how to load all these files into a single (large) data-set.  There is a file, `met_README` that explains the file naming convention and the format of the data in the files. Take a look at the README file, and at one of the files containing the weather data.
 
