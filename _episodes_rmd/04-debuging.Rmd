@@ -1,5 +1,5 @@
 ---
-title: "Loading the weather data"
+title: "Debugging code"
 teaching: 30
 exercises: 0
 questions:
@@ -12,9 +12,17 @@ keypoints:
 
 ---
 
+```{r, include = FALSE}
+source("../bin/chunk-options.R")
+knitr_fig_path("04-weather-R-")
 
+```
 
-
+```{r, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(lubridate)
+load("checkpoints/03end.RData")
+```
 In the previous episodes we showed how to create functions, and test that they are working.  In this episode we will use these ideas, and expand on them to load the weather data that you downloaded at the start of the course. We'll use the process of loading the data to build on the programming constructs (such as `for` loops and `if...else`) statements that we've introduced so far.   
 
 We'll also spend some time on how to debug your program.  Although this may seem somewhat pessimistic, the
@@ -30,7 +38,7 @@ which suggests we can use `read_table()` to load a file.  The missing data value
 >
 > With the person sat next to you, discuss the process we will need to go through to load and clean all of the 
 > files, and output a single tibble containing all their contents.  Don't worry if you don't know how to 
-> do all of these tasks in R; the important thing is to thinkg about how we might break the process down into
+> do all of these tasks in R; the important thing is to think about how we might break the process down into
 > smaller chunks.  We can then write a function for each of these chunks, to produce our finished loading process. 
 > You may realise that we already have functions that (almost) do what we need for some of these tasks.
 > 
@@ -49,6 +57,8 @@ which suggests we can use `read_table()` to load a file.  The missing data value
 > > * It would be a good idea to validate the data.  For example, precipitation should be `>=0`, the wind direction 
 > > should be between 0 and 359 degrees.
 > >
+> > We will also need to know how combine the weather files that we have loaded into a single file.
+> >
 > {: .solution}
 {: .challenge}
 
@@ -60,8 +70,7 @@ this command to save typing):
 
 FIXME? Get participants to generate col_types and check sensible guesses?
 
-
-~~~
+```{r}
 weather <- read_table("data/met_mlo_insitu_1_obop_hour_1977.txt",
                       col_names = c("obs",
                                     "yyyy",
@@ -94,8 +103,8 @@ weather <- read_table("data/met_mlo_insitu_1_obop_hour_1977.txt",
                         precipitation = col_integer()
                       )
 )
-~~~
-{: .language-r}
+
+```
 
 > ## Challenge
 >
@@ -106,11 +115,9 @@ weather <- read_table("data/met_mlo_insitu_1_obop_hour_1977.txt",
 > Hint: Look at the help file for `lubridate`'s `ymd_h()` function
 > 
 > > ## Solution
-> > 
-> > ~~~
+> > ```{r}
 > > weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
-> > ~~~
-> > {: .language-r}
+> > ```
 > {: .solution}
 {: .challenge}
 
@@ -128,54 +135,26 @@ should treat as missing.
 One way of doing this is to provide a named vector of missing values.  We
 can assign names to elements of a vector in R:
 
-
-~~~
+```{r}
 missingvalues <- c(winddir = -999, windspeed = -999.9, temperature10m = -999.9)
 missingvalues
-~~~
-{: .language-r}
 
-
-
-~~~
-       winddir      windspeed temperature10m 
-        -999.0         -999.9         -999.9 
-~~~
-{: .output}
+```
 We can extract the names of the vector using the `names()` function:
-
-~~~
+```{r}
 names(missingvalues)
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] "winddir"        "windspeed"      "temperature10m"
-~~~
-{: .output}
+```
 
 
 > ## More on `names()`
 > 
 > In addition to getting the names of an object, we can also use the `names()` function to set the names of an object:
 > 
-> 
-> ~~~
+> ```{r}
 > myvec <- c(1,2,3)
 > names(myvec) <- c("a","b","c")
 > myvec
-> ~~~
-> {: .language-r}
-> 
-> 
-> 
-> ~~~
-> a b c 
-> 1 2 3 
-> ~~~
-> {: .output}
+> ```
 {: .callout}
 
 
@@ -212,68 +191,26 @@ There are two things we will need to figure out:
 We used the `names()` function to extract the names of a named vector.  Let's look at how we can use
 this to generate a condition that evaluates to `TRUE` or `FALSE` depending on whether a vector has names:
 
-
-~~~
+```{r}
 withnames <- c(name1 = 1, name2 = 2.2)
 nonames <- c("name1", "name2")
 
 names(withnames) # Will give us the names if there are any
-~~~
-{: .language-r}
 
-
-
-~~~
-[1] "name1" "name2"
-~~~
-{: .output}
-
-
-
-~~~
 names(nonames) # Or NULL if there are not
-~~~
-{: .language-r}
-
-
-
-~~~
-NULL
-~~~
-{: .output}
+```
 
 This gets us most of the way there; but there is a problem.  Usually we can test if values are equal to each other using
 `==` ( or `all.equal()` if we're dealing with floating point numbers).  This doesn't work for "special" values, like `NULL`, `NA`
 and `Inf`:
+```{r}
 
-~~~
 x <- NULL
 # But NULL isn't TRUE (or FALSE)
 x == NULL
-~~~
-{: .language-r}
-
-
-
-~~~
-logical(0)
-~~~
-{: .output}
-
-
-
-~~~
 # We need to use:
 is.null(NULL)
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] TRUE
-~~~
-{: .output}
+```
 
 > ## Indenting your code
 > 
@@ -297,8 +234,9 @@ is.null(NULL)
 > 
 > 
 > > ## Solution
+> > ```{r}
 > > 
-> > ~~~
+> > 
 > > function(dataset, fieldlist) {
 > >   if (is.null(names(fieldlist))) {
 > >     if (!all(fieldlist %in% names(dataset))) {
@@ -321,36 +259,8 @@ is.null(NULL)
 > >   return(dataset)
 > >   
 > > }
-> > ~~~
-> > {: .language-r}
 > > 
-> > 
-> > 
-> > ~~~
-> > function(dataset, fieldlist) {
-> >   if (is.null(names(fieldlist))) {
-> >     if (!all(fieldlist %in% names(dataset))) {
-> >       stop("Attempting to clean variables that do not exist in the dataset")
-> >     }
-> >     
-> >     if (anyDuplicated(fieldlist) != 0) {
-> >       warning("Duplicated variable names specified")
-> >     }
-> >     
-> >     
-> >     for (f in fieldlist) {
-> >       dataset[[f]] <- cleanfield(dataset[[f]])
-> >     }
-> >     
-> >   } else {
-> >     stop("Not yet implemented")
-> >   }
-> >   
-> >   return(dataset)
-> >   
-> > }
-> > ~~~
-> > {: .output}
+> > ```
 > {: .solution}
 {: .challenge}
 
@@ -365,8 +275,7 @@ vector
 > 
 > > ## Hint - for loops:
 > >There were two different approaches to using `for`:
-> > 
-> > ~~~
+> > ```{r, eval=FALSE}
 > > for(field in fieldlist){
 > >   print(field)
 > > }
@@ -374,8 +283,7 @@ vector
 > > for(i in 1:length(fieldlist)){
 > >   print(fieldlist[i])
 > > }
-> > ~~~
-> > {: .language-r}
+> > ```
 > >  
 > > You will find it easier to use the second form, since we will need to refer to the positions of the 
 > > elements in our vector of missing values.
@@ -385,8 +293,8 @@ vector
 > > 
 > > One way of solving this challenge is: 
 > > 
+> > ```{r}
 > > 
-> > ~~~
 > > cleanfields <- function(dataset, fieldlist){
 > >   
 > >   if ( is.null(names(fieldlist)) ) {
@@ -419,8 +327,8 @@ vector
 > >   return(dataset) 
 > >   
 > > }
-> > ~~~
-> > {: .language-r}
+> > 
+> > ```
 > > 
 > > We could write this more succinctly, for example using `dataset[[ variablenames[i] ]]` instead of defining the 
 > > `variablename` variable on each iteration of the `for` loop.  This is, however, less clear.
@@ -440,7 +348,40 @@ vector
 > {: .solution }
 {: .challenge }
 
-
+```{r, include=FALSE}
+cleanfields <- function(dataset, fieldlist){
+  
+  if ( is.null(names(fieldlist)) ) {
+    
+    if ( !all(fieldlist %in% names(dataset)) ) {
+      stop("Attempting to clean variables that do not exist in the dataset")
+    }
+    
+    if ( anyDuplicated(fieldlist) != 0 ) {
+      warning("Duplicated variable names specified")
+    }
+    
+    for (f in fieldlist) {
+      dataset[[f]] <- cleanfield(dataset[[f]])
+    }
+    
+  } else {
+    
+    variablenames <- names(fieldlist) 
+    for (i in 1:length(fieldlist)) {
+      
+      variablename <- variablenames[i] 
+      missingval <- fieldlist[i] 
+      
+      dataset[[ variablename ]] <- cleanfield(dataset[[ variablename ]], missingvalue = missingval)
+      
+    } 
+  }
+  
+  return(dataset) 
+  
+}
+```
 
 
 ## Processing a file
@@ -454,8 +395,7 @@ We now have all the elements we need to load and process a file.  We can:
 Let's combine these functions into a single function.  This will take a single argument; the name of the file
 it is to read.  
 
-
-~~~
+```{r}
 loadWeatherData <- function(infile){
   # Load in a weather data file
   
@@ -510,8 +450,7 @@ loadWeatherData <- function(infile){
 }
 
 cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_1977.txt")
-~~~
-{: .language-r}
+```
 
 ## Checking our load has worked
 
@@ -519,49 +458,9 @@ The `summary()` function will show us summary statistics for each variable in a 
 check that our data looks reasonable:
 The summary shows that some variables, e.g. `winddir` have large, positive values:
 
-
-~~~
+```{r}
 summary(cleanweather)
-~~~
-{: .language-r}
-
-
-
-~~~
-     obs                 yyyy           mm                 dd           
- Length:8760        Min.   :1977   Length:8760        Length:8760       
- Class :character   1st Qu.:1977   Class :character   Class :character  
- Mode  :character   Median :1977   Mode  :character   Mode  :character  
-                    Mean   :1977                                        
-                    3rd Qu.:1977                                        
-                    Max.   :1977                                        
-                                                                        
-      hh               winddir        windspeed     windsteadiness
- Length:8760        Min.   :  0.0   Min.   : 0.00   Min.   :100   
- Class :character   1st Qu.:120.0   1st Qu.: 2.70   1st Qu.:100   
- Mode  :character   Median :170.0   Median : 4.50   Median :100   
-                    Mean   :229.9   Mean   :11.78   Mean   :100   
-                    3rd Qu.:270.0   3rd Qu.: 7.60   3rd Qu.:100   
-                    Max.   :999.0   Max.   :99.90   Max.   :100   
-                                                    NA's   :823   
-    pressure     temperature2m    temperature10m temperaturetop
- Min.   :673.9   Min.   :-4.400   Mode:logical   Mode:logical  
- 1st Qu.:679.3   1st Qu.: 4.100   NA's:8760      NA's:8760     
- Median :680.7   Median : 6.700                                
- Mean   :680.5   Mean   : 7.669                                
- 3rd Qu.:681.7   3rd Qu.:10.000                                
- Max.   :685.1   Max.   :99.900                                
- NA's   :18                                                    
-  relhumidity     precipitation     recdate                   
- Min.   :  7.00   Mode:logical   Min.   :1977-01-01 00:00:00  
- 1st Qu.: 20.00   NA's:8760      1st Qu.:1977-04-02 05:45:00  
- Median : 34.00                  Median :1977-07-02 11:30:00  
- Mean   : 40.79                  Mean   :1977-07-02 11:30:00  
- 3rd Qu.: 58.00                  3rd Qu.:1977-10-01 17:15:00  
- Max.   :100.00                  Max.   :1977-12-31 23:00:00  
- NA's   :118                                                  
-~~~
-{: .output}
+```
 
 It looks like the cleaning process hasn't worked properly!   We've tested our `cleanfields()` function, so we can be reasonably confident that is working properly (it's possible that something has gone wrong that we *haven't* tested for).  So what's going on?
 ## Hunting bugs
@@ -589,87 +488,62 @@ When we run the code again, by pressing <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>En
 > >  Within the debugger, setting a breakpoint as described in the text, 
 > >  we obtain:
 > > 
+> > ```{r, include = FALSE}
+> > # Silently read in data as it will appear in the debugger (i.e. no cleaning)
 > > 
+> >   weather <- read_table("data/met_mlo_insitu_1_obop_hour_1977.txt",
+> >                         col_names = c("obs",
+> >                                       "yyyy",
+> >                                       "mm",
+> >                                       "dd",
+> >                                       "hh",
+> >                                       "winddir",
+> >                                       "windspeed",
+> >                                       "windsteadiness",
+> >                                       "pressure",
+> >                                       "temperature2m",
+> >                                       "temperature10m",
+> >                                       "temperaturetop",
+> >                                       "relhumidity",
+> >                                       "precipitation" ),
+> >                         col_types = cols(
+> >                           obs = col_character(),
+> >                           yyyy = col_integer(),
+> >                           mm = col_character(),
+> >                           dd = col_character(),
+> >                           hh = col_character(),
+> >                           winddir = col_integer(),
+> >                           windspeed = col_double(),
+> >                           windsteadiness = col_integer(),
+> >                           pressure = col_double(),
+> >                           temperature2m = col_double(),
+> >                           temperature10m = col_double(),
+> >                           temperaturetop = col_double(),
+> >                           relhumidity = col_integer(),
+> >                           precipitation = col_integer()
+> >                         )
+> >   )
+> >   
+> >   
+> > ```
 > > 
-> > 
-> > ~~~
+> > ```{r}
 > > summary(weather)
-> > ~~~
-> > {: .language-r}
-> > 
-> > 
-> > 
-> > ~~~
-> >      obs                 yyyy           mm                 dd           
-> >  Length:8760        Min.   :1977   Length:8760        Length:8760       
-> >  Class :character   1st Qu.:1977   Class :character   Class :character  
-> >  Mode  :character   Median :1977   Mode  :character   Mode  :character  
-> >                     Mean   :1977                                        
-> >                     3rd Qu.:1977                                        
-> >                     Max.   :1977                                        
-> >       hh               winddir        windspeed     windsteadiness  
-> >  Length:8760        Min.   :  0.0   Min.   : 0.00   Min.   : -9.00  
-> >  Class :character   1st Qu.:120.0   1st Qu.: 2.70   1st Qu.:100.00  
-> >  Mode  :character   Median :170.0   Median : 4.50   Median :100.00  
-> >                     Mean   :229.9   Mean   :11.78   Mean   : 89.76  
-> >                     3rd Qu.:270.0   3rd Qu.: 7.60   3rd Qu.:100.00  
-> >                     Max.   :999.0   Max.   :99.90   Max.   :100.00  
-> >     pressure      temperature2m    temperature10m   temperaturetop  
-> >  Min.   :-999.9   Min.   :-4.400   Min.   :-999.9   Min.   :-999.9  
-> >  1st Qu.: 679.3   1st Qu.: 4.100   1st Qu.:-999.9   1st Qu.:-999.9  
-> >  Median : 680.7   Median : 6.700   Median :-999.9   Median :-999.9  
-> >  Mean   : 677.1   Mean   : 7.669   Mean   :-999.9   Mean   :-999.9  
-> >  3rd Qu.: 681.7   3rd Qu.:10.000   3rd Qu.:-999.9   3rd Qu.:-999.9  
-> >  Max.   : 685.1   Max.   :99.900   Max.   :-999.9   Max.   :-999.9  
-> >   relhumidity    precipitation
-> >  Min.   :-99.0   Min.   :-99  
-> >  1st Qu.: 19.0   1st Qu.:-99  
-> >  Median : 34.0   Median :-99  
-> >  Mean   : 38.9   Mean   :-99  
-> >  3rd Qu.: 58.0   3rd Qu.:-99  
-> >  Max.   :100.0   Max.   :-99  
-> > ~~~
-> > {: .output}
+> > ```
 > > 
 > > As we're looking at the data _before_ cleaning it, we see the large negative values that are used to represent missing data.
 > > We also see that some variables have the large positive values we saw before.  This suggests the problem is with our loading of the data, or the data itself. We can find a problematic record
 > > by filtering the tibble:
 > > 
-> > 
-> > ~~~
+> > ```{r}
 > > weather %>% filter(winddir == 999)
-> > ~~~
-> > {: .language-r}
-> > 
-> > 
-> > 
-> > ~~~
-> > # A tibble: 631 x 14
-> >      obs  yyyy    mm    dd    hh winddir windspeed windsteadiness pressure
-> >    <chr> <int> <chr> <chr> <chr>   <int>     <dbl>          <int>    <dbl>
-> >  1   MLO  1977    02    17    18     999      99.9             -9    679.0
-> >  2   MLO  1977    02    18    05     999      99.9             -9    678.6
-> >  3   MLO  1977    02    18    08     999      99.9             -9    680.3
-> >  4   MLO  1977    02    18    14     999      99.9             -9    678.6
-> >  5   MLO  1977    02    20    04     999      99.9             -9    682.0
-> >  6   MLO  1977    02    20    05     999      99.9             -9    682.4
-> >  7   MLO  1977    02    20    06     999      99.9             -9    682.7
-> >  8   MLO  1977    02    20    07     999      99.9             -9    682.7
-> >  9   MLO  1977    02    20    08     999      99.9             -9    682.7
-> > 10   MLO  1977    02    20    09     999      99.9             -9    682.7
-> > # ... with 621 more rows, and 5 more variables: temperature2m <dbl>,
-> > #   temperature10m <dbl>, temperaturetop <dbl>, relhumidity <int>,
-> > #   precipitation <int>
-> > ~~~
-> > {: .output}
+> > ```
 > > 
 > > Let's look at the data file:
 > > 
-> > 
-> > ~~~
+> > ```{r eval=FALSE}
 > > MLO 1977 02 17 18 -999 -99.9  -9  679.00    7.2 -999.9 -999.9  17 -99
-> > ~~~
-> > {: .language-r}
+> > ```
 > > 
 > > The data look like they are correct; the "missing" values are negative; something has gone wrong with how we're reading in the data.
 > > 
@@ -682,8 +556,7 @@ Take a look a the help file for `read_table()` - it shows that there is also a f
 
 Let's try this:
 
-
-~~~
+```{r}
 loadWeatherData <- function(infile){
   # Load in a weather data file
   
@@ -739,46 +612,7 @@ loadWeatherData <- function(infile){
 
 cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_1977.txt")
 summary(cleanweather)
-~~~
-{: .language-r}
-
-
-
-~~~
-     obs                 yyyy           mm                 dd           
- Length:8760        Min.   :1977   Length:8760        Length:8760       
- Class :character   1st Qu.:1977   Class :character   Class :character  
- Mode  :character   Median :1977   Mode  :character   Mode  :character  
-                    Mean   :1977                                        
-                    3rd Qu.:1977                                        
-                    Max.   :1977                                        
-                                                                        
-      hh               winddir        windspeed       windsteadiness
- Length:8760        Min.   :  0.0   Min.   :-99.900   Min.   :100   
- Class :character   1st Qu.:110.0   1st Qu.:  2.200   1st Qu.:100   
- Mode  :character   Median :160.0   Median :  4.000   Median :100   
-                    Mean   :170.2   Mean   : -2.615   Mean   :100   
-                    3rd Qu.:230.0   3rd Qu.:  6.300   3rd Qu.:100   
-                    Max.   :360.0   Max.   : 19.200   Max.   :100   
-                    NA's   :631                       NA's   :823   
-    pressure     temperature2m    temperature10m temperaturetop
- Min.   :673.9   Min.   :-4.400   Mode:logical   Mode:logical  
- 1st Qu.:679.3   1st Qu.: 4.000   NA's:8760      NA's:8760     
- Median :680.7   Median : 6.700                                
- Mean   :680.5   Mean   : 6.926                                
- 3rd Qu.:681.7   3rd Qu.: 9.600                                
- Max.   :685.1   Max.   :17.400                                
- NA's   :18      NA's   :70                                    
-  relhumidity     precipitation     recdate                   
- Min.   :  7.00   Mode:logical   Min.   :1977-01-01 00:00:00  
- 1st Qu.: 20.00   NA's:8760      1st Qu.:1977-04-02 05:45:00  
- Median : 34.00                  Median :1977-07-02 11:30:00  
- Mean   : 40.79                  Mean   :1977-07-02 11:30:00  
- 3rd Qu.: 58.00                  3rd Qu.:1977-10-01 17:15:00  
- Max.   :100.00                  Max.   :1977-12-31 23:00:00  
- NA's   :118                                                  
-~~~
-{: .output}
+```
 
 This looks much better, with the exception of the windspeed data, which has `-99.9` as its minimum.  If we check back to the original data, it looks like they are using this as their "missing" value for windspeed, and not `-999.9` as it says in the README.
 
@@ -791,8 +625,7 @@ This looks much better, with the exception of the windspeed data, which has `-99
 > 
 > > ## Solution
 > > 
-> > 
-> > ~~~
+> > ```{r}
 > > loadWeatherData <- function(infile){
 > >   # Load in a weather data file
 > >   
@@ -848,46 +681,7 @@ This looks much better, with the exception of the windspeed data, which has `-99
 > > 
 > > cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_1977.txt")
 > > summary(cleanweather)
-> > ~~~
-> > {: .language-r}
-> > 
-> > 
-> > 
-> > ~~~
-> >      obs                 yyyy           mm                 dd           
-> >  Length:8760        Min.   :1977   Length:8760        Length:8760       
-> >  Class :character   1st Qu.:1977   Class :character   Class :character  
-> >  Mode  :character   Median :1977   Mode  :character   Mode  :character  
-> >                     Mean   :1977                                        
-> >                     3rd Qu.:1977                                        
-> >                     Max.   :1977                                        
-> >                                                                         
-> >       hh               winddir        windspeed      windsteadiness
-> >  Length:8760        Min.   :  0.0   Min.   : 0.000   Min.   :100   
-> >  Class :character   1st Qu.:110.0   1st Qu.: 2.700   1st Qu.:100   
-> >  Mode  :character   Median :160.0   Median : 4.000   Median :100   
-> >                     Mean   :170.2   Mean   : 4.937   Mean   :100   
-> >                     3rd Qu.:230.0   3rd Qu.: 6.700   3rd Qu.:100   
-> >                     Max.   :360.0   Max.   :19.200   Max.   :100   
-> >                     NA's   :631     NA's   :631      NA's   :823   
-> >     pressure     temperature2m    temperature10m temperaturetop
-> >  Min.   :673.9   Min.   :-4.400   Mode:logical   Mode:logical  
-> >  1st Qu.:679.3   1st Qu.: 4.000   NA's:8760      NA's:8760     
-> >  Median :680.7   Median : 6.700                                
-> >  Mean   :680.5   Mean   : 6.926                                
-> >  3rd Qu.:681.7   3rd Qu.: 9.600                                
-> >  Max.   :685.1   Max.   :17.400                                
-> >  NA's   :18      NA's   :70                                    
-> >   relhumidity     precipitation     recdate                   
-> >  Min.   :  7.00   Mode:logical   Min.   :1977-01-01 00:00:00  
-> >  1st Qu.: 20.00   NA's:8760      1st Qu.:1977-04-02 05:45:00  
-> >  Median : 34.00                  Median :1977-07-02 11:30:00  
-> >  Mean   : 40.79                  Mean   :1977-07-02 11:30:00  
-> >  3rd Qu.: 58.00                  3rd Qu.:1977-10-01 17:15:00  
-> >  Max.   :100.00                  Max.   :1977-12-31 23:00:00  
-> >  NA's   :118                                                  
-> > ~~~
-> > {: .output}
+> > ```
 > > 
 > {: .solution }
 {: .challenge } 
@@ -899,4 +693,6 @@ Although this has been quite a protracted
 episode it highlights some of the typical problems you will come accross when dealing with real-life data.  We've spent a lot of time on looking at how to work out what's gone wrong, and how to fix it, using a combination of testing and debugging.   It's quite normal to spend a lot of time on these aspects of programming; this is fine.
 
 
-
+```{r, echo=FALSE}
+save.image(file = "checkpoints/04end.RData")
+```
