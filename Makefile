@@ -10,6 +10,12 @@ DST=_site
 # Set this to Rscript -e if you don't want to build 
 # in Dockerised environment
 RSCRIPT=docker run --rm --user "$$UID" -v "$$PWD":"$$PWD"  -w="$$PWD" -ti rg11  Rscript -e
+DATAFILES=$(wildcard _episodes_rmd/data/*)
+UNITTESTFILES=$(wildcard _episodes_rmd/tests/*.R)
+# This is used in the substitutions to get relative paths in
+# the data zip file:
+RMDDIR=_episodes_rmd/
+
 # Controls
 .PHONY : commands clean files
 .NOTPARALLEL:
@@ -20,7 +26,7 @@ commands :
 	@grep -h -E '^##' ${MAKEFILES} | sed -e 's/## //g'
 
 ## serve-rmd        : run a local server, updating Rmd file automatically
-serve-rmd: lesson-md lesson-watchrmd serve
+serve-rmd: lesson-md lesson-watchrmd serve data
 
 ## serve            : run a local server.
 serve : lesson-md
@@ -56,6 +62,13 @@ clear-rmd :
 ## workshop-check   : check workshop homepage.
 workshop-check :
 	@bin/workshop_check.py .
+
+## data             : generate the course data download
+data: data/data.zip
+
+data/data.zip:	${DATAFILES} ${UNITTESTFILES}
+	cd ${RMDDIR} && zip -u ../$@ $(subst ${RMDDIR},,$^)
+
 
 ## ----------------------------------------
 ## Command specific to lesson websites.
