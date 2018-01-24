@@ -139,6 +139,7 @@ c(2, 3, NA) not equal to cleanfield(testvector).
 [2] 3 - 2 == 1
 
 ══ DONE ═══════════════════════════════════════════════════════════════════
+No-one is perfect!
 ~~~
 {: .output}
 
@@ -208,7 +209,7 @@ c(2, 3, NA) not equal to cleanfield(testvector).
 > > 
 > > 
 > > ~~~
-> > cleanfields <- function(dataset, fieldlist){
+> > cleanfields <- function(dataset, fieldlist, ...){
 > >   
 > >   if ( !all(fieldlist %in% names(dataset)) ) {
 > >     stop("Attempting to clean variables that do not exist in the dataset")
@@ -219,7 +220,7 @@ c(2, 3, NA) not equal to cleanfield(testvector).
 > >   }
 > >   
 > >   for (f in fieldlist) {
-> >     dataset[[f]] <- cleanfield(dataset[[f]])
+> >     dataset[[f]] <- cleanfield(dataset[[f]], ...)
 > >   }
 > >   
 > >   return(dataset) 

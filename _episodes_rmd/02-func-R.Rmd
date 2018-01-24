@@ -177,7 +177,8 @@ function, and will no longer be defined when the function exits.
 
 What if we try and use a variable within our function that does not exist?  (either by creating it within the function, or by passing it in as a parameter). In this situation R will look into the _calling environment_ for the variable, and use that instead.  This means that it will look at the variables that were defined when the function was called:
 
-```{r}
+FIXME Reanable when finished
+```{r, eval=FALSE}
 y <- 2
 
 testfunction <- function(x){
@@ -418,6 +419,60 @@ cleanfields <- function(dataset, fieldlist){
 }
 
 ```
+
+## Passing arguments to other functions
+
+When we wrote our function, `cleanfield()`, to clean a single field of data, we provided the `missingvalue` argument to let the user override the default value.    In writing our `cleanfields()` function, we have lost the ability to change the value that represents missing data.  We can do this using a special argument to
+the functions, `...` (three dots).  This lets us pass arguments on to other functions.
+
+To illustrate how this works, let's modify the cleanfields function:
+
+
+```{r}
+# Clean multiple fields of data
+cleanfields <- function(dataset, fieldlist, ...){
+  
+  for (f in fieldlist) {
+    dataset[[f]] <- cleanfield(dataset[[f]], ...)
+  }
+  
+  return(dataset) 
+}
+
+```
+
+We have added `...` to the argument list for the `cleanfield()` and `cleandfields()` functions.
+
+We can use our function in exactly the same way as before:
+```{r}
+cleanfields(co2weekly, c("co2OneYearAgo", "co2TenYearsAgo"))
+
+```
+But if we want to override the value that represents missing (say, we wanted to treat `days=6` as missing):
+
+```{r}
+cleanfields(co2weekly, "days", missingvalue = 6)
+```
+
+## Other uses for `...`
+
+`...` is also used when we want to pass an arbitrary number of arguments to a function. We've seen examples of this such as the `c()` function:
+
+```{r, eval=FALSE}
+c(1)
+c(1,2)
+c(1,2,3)
+```
+
+We don't cover it in this course, but you can examine the aguments that are contained in the `...` parameter
+by converting it to a list within your function:
+```{r, eval=FALSE}
+ellipsisArguments <- list(...)
+```
+
+This lets us write functions that are very flexible.
+
+{: .callout}
 
 
 

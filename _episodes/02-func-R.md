@@ -255,6 +255,7 @@ function, and will no longer be defined when the function exits.
 
 What if we try and use a variable within our function that does not exist?  (either by creating it within the function, or by passing it in as a parameter). In this situation R will look into the _calling environment_ for the variable, and use that instead.  This means that it will look at the variables that were defined when the function was called:
 
+FIXME Reanable when finished
 
 ~~~
 y <- 2
@@ -266,39 +267,12 @@ testfunction <- function(x){
 }
 
 testfunction(3)
-~~~
-{: .language-r}
 
-
-
-~~~
-[1] 3
-[1] 2
-~~~
-{: .output}
-
-
-
-~~~
 rm(y) # Delete y
 
 testfunction(3) # R can't find y *anywhere*, so we get an error.
 ~~~
 {: .language-r}
-
-
-
-~~~
-[1] 3
-~~~
-{: .output}
-
-
-
-~~~
-Error in print(y): object 'y' not found
-~~~
-{: .error}
 
 There are limited situations where this is useful.  In general you should avoid referring
 to variables outside of your function; keeping everything self contained within the
@@ -678,6 +652,110 @@ We can use a `for` loop to run our field cleaning function `cleanfield()` on mor
 {: .challenge}
 
 
+
+## Passing arguments to other functions
+
+When we wrote our function, `cleanfield()`, to clean a single field of data, we provided the `missingvalue` argument to let the user override the default value.    In writing our `cleanfields()` function, we have lost the ability to change the value that represents missing data.  We can do this using a special argument to
+the functions, `...` (three dots).  This lets us pass arguments on to other functions.
+
+To illustrate how this works, let's modify the cleanfields function:
+
+
+
+~~~
+# Clean multiple fields of data
+cleanfields <- function(dataset, fieldlist, ...){
+  
+  for (f in fieldlist) {
+    dataset[[f]] <- cleanfield(dataset[[f]], ...)
+  }
+  
+  return(dataset) 
+}
+~~~
+{: .language-r}
+
+We have added `...` to the argument list for the `cleanfield()` and `cleandfields()` functions.
+
+We can use our function in exactly the same way as before:
+
+~~~
+cleanfields(co2weekly, c("co2OneYearAgo", "co2TenYearsAgo"))
+~~~
+{: .language-r}
+
+
+
+~~~
+# A tibble: 2,233 x 10
+    yyyy    mm    dd  decYear co2Ppm  days co2OneYearAgo co2TenYearsAgo
+   <int> <int> <int>    <dbl>  <dbl> <int>         <dbl>          <dbl>
+ 1  1974     5    19 1974.380 333.34     6            NA             NA
+ 2  1974     5    26 1974.399 332.95     6            NA             NA
+ 3  1974     6     2 1974.418 332.32     5            NA             NA
+ 4  1974     6     9 1974.437 332.18     7            NA             NA
+ 5  1974     6    16 1974.456 332.37     7            NA             NA
+ 6  1974     6    23 1974.475 331.59     6            NA             NA
+ 7  1974     6    30 1974.495 331.68     6            NA             NA
+ 8  1974     7     7 1974.514 331.44     6            NA             NA
+ 9  1974     7    14 1974.533 330.85     5            NA             NA
+10  1974     7    21 1974.552 330.76     7            NA             NA
+# ... with 2,223 more rows, and 2 more variables: co2Increase1800 <dbl>,
+#   sampledate <date>
+~~~
+{: .output}
+But if we want to override the value that represents missing (say, we wanted to treat `days=6` as missing):
+
+
+~~~
+cleanfields(co2weekly, "days", missingvalue = 6)
+~~~
+{: .language-r}
+
+
+
+~~~
+# A tibble: 2,233 x 10
+    yyyy    mm    dd  decYear co2Ppm  days co2OneYearAgo co2TenYearsAgo
+   <int> <int> <int>    <dbl>  <dbl> <int>         <dbl>          <dbl>
+ 1  1974     5    19 1974.380 333.34    NA       -999.99        -999.99
+ 2  1974     5    26 1974.399 332.95    NA       -999.99        -999.99
+ 3  1974     6     2 1974.418 332.32     5       -999.99        -999.99
+ 4  1974     6     9 1974.437 332.18     7       -999.99        -999.99
+ 5  1974     6    16 1974.456 332.37     7       -999.99        -999.99
+ 6  1974     6    23 1974.475 331.59    NA       -999.99        -999.99
+ 7  1974     6    30 1974.495 331.68    NA       -999.99        -999.99
+ 8  1974     7     7 1974.514 331.44    NA       -999.99        -999.99
+ 9  1974     7    14 1974.533 330.85     5       -999.99        -999.99
+10  1974     7    21 1974.552 330.76     7       -999.99        -999.99
+# ... with 2,223 more rows, and 2 more variables: co2Increase1800 <dbl>,
+#   sampledate <date>
+~~~
+{: .output}
+
+> ## Other uses for `...`
+> 
+> `...` is also used when we want to pass an arbitrary number of arguments to a function. We've seen examples of this such as the `c()` function:
+> 
+> 
+> ~~~
+> c(1)
+> c(1,2)
+> c(1,2,3)
+> ~~~
+> {: .language-r}
+> 
+> We don't cover it in this course, but you can examine the aguments that are contained in the `...` parameter
+> by converting it to a list within your function:
+> 
+> ~~~
+> ellipsisArguments <- list(...)
+> ~~~
+> {: .language-r}
+> 
+> This lets us write functions that are very flexible.
+> 
+{: .callout}
 
 
 

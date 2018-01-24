@@ -171,7 +171,7 @@ test_file("tests/test_fail.R")
 > > These tests fail unless we modify our `cleanfields()` function:
 > > 
 > > ```{r}
-> > cleanfields <- function(dataset, fieldlist){
+> > cleanfields <- function(dataset, fieldlist, ...){
 > >   
 > >   if ( !all(fieldlist %in% names(dataset)) ) {
 > >     stop("Attempting to clean variables that do not exist in the dataset")
@@ -182,7 +182,7 @@ test_file("tests/test_fail.R")
 > >   }
 > >   
 > >   for (f in fieldlist) {
-> >     dataset[[f]] <- cleanfield(dataset[[f]])
+> >     dataset[[f]] <- cleanfield(dataset[[f]], ...)
 > >   }
 > >   
 > >   return(dataset) 
