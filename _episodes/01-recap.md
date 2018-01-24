@@ -26,7 +26,9 @@ source: Rmd
 
 ## Introduction 
 
-Today's course uses at historic CO2 and temperature data as an example.  The focus of the course is using R for programming.  In the [Data Analysis Using R](https://uomresearchit.github.io/r-tidyverse-intro/) course we covered:
+The aim of this course is to teach you programming techniques using R.  We use the example of loading and analysing historic CO2 and temperature data to illustrate these techniques.  We spend more time than is usual on dealing with _problems_.   Many tutorials assume everything works first time, and don't explain how to debug and test your code.   The reality is that we all spend a great deal of time dealing with imperfectly formatted data and bugs.  By explaining how to debug and deal with these issues efficiently you will save time and frustration.
+
+The other University of Manchester R course,  [Data Analysis Using R](https://uomresearchit.github.io/r-tidyverse-intro/) covers:
 
   *  Introduction to R and R Studio
   *  Getting help
@@ -41,13 +43,13 @@ The "Data Analysis Using R" course made extensive use of the tidyverse.  This is
 
 ##  Getting started with R
 
-R Studio is a widely used integrated development environment for R. We will use R Studio for the remainder of today's lesson.  This course assumes you already have some familiarity with R (the [Research IT](http://www.itservices.manchester.ac.uk/research/) course, [Data Analysis Using R](https://uomresearchit.github.io/r-tidyverse-intro/) covers the necessary material).   As a refresher we will briefly go through the process of loading and plotting some data.  We will also introduce some of the data structures and functions that we will be using in the rest of the course.
+R Studio is a widely used integrated development environment for R. We will use R Studio for the remainder of today's lesson.  This course assumes you already have some familiarity with R (the [Research IT](http://www.itservices.manchester.ac.uk/research/) course, [Data Analysis Using R](https://uomresearchit.github.io/r-tidyverse-intro/) covers the necessary material).   As a refresher we will briefly go through the process of loading and manipulating some data.  We will also introduce some of the data structures and functions that we will be using in the rest of the course.
 
 We will be using R Studio in the course; it provides a much nicer environment for using R than the default command line version.  R Studio lets us use _projects_ to keep our data and analysis scripts together.
 
 > ## Challenge: Creating a new project
 > 
-> Create a new project for today's course.  It is up to you what you call the project, (`r-course` would be a sensible option), but please avoid putting spaces in the project name.  If you are using a university PC, we suggest you make this within the `C:\work` directory on your machine's local disk, and copy your work to your P drive at lunchtime and at the end of the day.  This is in case access to the P drive is temporarily lost during the course.
+> Create a new project for today's course.  It is up to you what you call the project, (`r-course` would be a sensible option), but avoid putting spaces in the project name.  If you are using a university PC, we suggest you make this within the `C:\work` directory on your machine's local disk, and copy your work to your P drive at lunchtime and at the end of the day.  This is in case access to the P drive is temporarily lost during the course.
 > 
 > Within your project director create a folder called `src`.  We will use this to store the R scripts that you write.  Download the course data from [here]({{ page.root }}/data/data.zip).  The zip file contains `data` and `tests` folders.  Copy these (and their contents) to the project directory. 
 > 
@@ -68,6 +70,9 @@ We will be using R Studio in the course; it provides a much nicer environment fo
 > > ![](../fig/01-tests.png)
 > > 
 > > If your directories do not look like this, _please_ use your red sticky to get help from one of the helpers.
+> > 
+> > When you create a new project R Studio should set your working directory to the project's directory. The current working directory is shown in grey above the console.  If this is not the case please get help from one of the helpers.
+> > 
 > {: .solution}
 {: .challenge}
 
@@ -156,7 +161,7 @@ We explicitly list the column type of each variable in order to improve the robu
 {: .callout}
 
 
-Let's take a look at the CO2 data we will be using in this lesson:
+Let's take a look at the CO2 data we will be using in this episode:
 
 ```
 # --------------------------------------------------------------------
@@ -219,15 +224,16 @@ Let's take a look at the CO2 data we will be using in this lesson:
 
 > ## Different file formats
 >
+> In the previous R course we made extensive use of the gapminder data.
 > Compare the format of the co2 data (`co2_weekly_mlo.txt`) and the gapminder data (`gapminder-FiveYearData.csv`).
-> What differences do you notice?
+> What differences in the files' formats do you notice?
 > 
 > > ## Solution
 > > 
 > > The main differences are:
 > > * The co2 data contains documentation and licencing information at its start.  These rows
 > >   are prefixed with the # symbol.
-> > * The gapminder data contains variables names in its first row (remember we cannot start an R
+> > * The gapminder data contains variable names in its first row (remember we cannot start an R
 > >   variable with a number, and including spaces needs special tricks (and is generally a bad idea)).  The co2 data doesn't 
 > >   contain variable names in a nice format.
 > > * In the gapminder data each value is separated by a single comma.  In the co2 data, the values
@@ -655,6 +661,7 @@ co2weekly <- co2weekly %>% mutate(sampledate = ymd(paste(yyyy, mm, dd)))
 ~~~
 {: .language-r}
 
-
+Both handling the dates and cleaning the data are thing we are going to want to do whenever we load data 
+from this source.  If we include both processes in a function, we can _reuse_ our code for different files, and avoid the risk of forgetting to perform one or other of the parts of the process.
 
 
