@@ -23,16 +23,18 @@ library(tidyverse)
 library(lubridate)
 load("checkpoints/03end.RData")
 ```
-In the previous episodes we showed how to create functions, and test that they are working.  In this episode we will use these ideas, and expand on them to load the weather data that you downloaded at the start of the course. We'll use the process of loading the data to build on the programming constructs (such as `for` loops and `if...else`) statements that we've introduced so far.   
+In the previous episodes we showed how to create functions, and test that they are working.  In this episode we will use these ideas, and expand on them to load the weather data that you downloaded at the start of the course.   In your project's `data` folder you will see that there are a series of weather data files, named
+`met_mlo_insitu_1_obop_hour_ddd.txt`, where `dddd` is the year.  There is also a file, `met_README` which explains the format of the data files. Section 5.3 of this file contains information for the files we will be loading.    Take a look at this section now.  In contrast to the CO2 data, where all missing data was represented by `-999.99`, it looks like the missing value for some fields in the weather data are different.  
+
+Fortunately, we used the `...` argument in our `cleanfields()` function so that we can override the default for the `missingvalue` argument.
+
+The file `src/loadweather.R` file contains a function that takes a filename as its input argument and loads the weather data contained in that file.  FIXME - screenshots and zip file. It also generates a field containing the date and time of each observation, stored as a `datetime`.  It returns a tibble containing the loaded weather data.  During this episode we will modify the function to clean the data.  
+
+In the next episode we will write a function to load multiple years of weather data.  
 
 We'll also spend some time on how to debug your program.  Although this may seem somewhat pessimistic, the
 reality is that nobody's code works first time.  By learning about the tools needed to debug our code we
 can save ourselves a great deal of time and frustration.
-
-The `data` directory contains a series of files, which contain hourly weather observations from an observatory.  Let's work through the process of how to load all these files into a single (large) data-set.  There is a file, `met_README` that explains the file naming convention and the format of the data in the files. Take a look at the README file, and at one of the files containing the weather data.
-
-The README file explains that the "Fields in each line are delimited by whitespace." This is the same as the CO2 data,
-which suggests we can use `read_table()` to load a file.  The missing data value in the CO2 data was all `-999.99`. The README file states that the missing data for some fields are different from this (for example, the missing value for wind direction is `-999`).
 
 ## Challenge: What do we need to do?
 
@@ -62,344 +64,18 @@ We will also need to know how combine the weather files that we have loaded into
 {: .solution}
 {: .challenge}
 
-## Getting started
-
-Let's load one of the weather files into R, using the `read_table()` function, as we already know how to do this.
-We'll use the following command, so that we are all using the same variable names (you should copy and paste
-this command to save typing):
-
-FIXME? Get participants to generate col_types and check sensible guesses?
-
-```{r}
-weather <- read_table("data/met_mlo_insitu_1_obop_hour_1977.txt",
-                      col_names = c("obs",
-                                    "yyyy",
-                                    "mm",
-                                    "dd",
-                                    "hh",
-                                    "winddir",
-                                    "windspeed",
-                                    "windsteadiness",
-                                    "pressure",
-                                    "temperature2m",
-                                    "temperature10m",
-                                    "temperaturetop",
-                                    "relhumidity",
-                                    "precipitation" ),
-                      col_types = cols(
-                        obs = col_character(),
-                        yyyy = col_integer(),
-                        mm = col_character(),
-                        dd = col_character(),
-                        hh = col_character(),
-                        winddir = col_integer(),
-                        windspeed = col_double(),
-                        windsteadiness = col_integer(),
-                        pressure = col_double(),
-                        temperature2m = col_double(),
-                        temperature10m = col_double(),
-                        temperaturetop = col_double(),
-                        relhumidity = col_integer(),
-                        precipitation = col_integer()
-                      )
-)
-
-```
-
-## Challenge
-
-Create a new field, `recdate` that contains the date and hour of the observation, stored
-as a `datetime` (this is a special type of data that will let us handle the date and time
-in a similar way to the dates we used with the CO2 data).  
-
-Hint: Look at the help file for `lubridate`'s `ymd_h()` function
-
-## Solution
-```{r}
-weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
-```
-{: .solution}
-{: .challenge}
-
-
-## An improved field cleaning function
-
-In contrast to the CO2 data, the value used to represent missing data depends on the 
-field.   Let's modify our `cleanfields()` function so that we can (optionally) specify
-the missing value we want to use for each field.
-
-We will need to provide a
-way of giving the function a list of variable names *and* the value that we
-should treat as missing.
-
-One way of doing this is to provide a named vector of missing values.  We
-can assign names to elements of a vector in R:
-
-```{r}
-missingvalues <- c(winddir = -999, windspeed = -999.9, temperature10m = -999.9)
-missingvalues
-
-```
-We can extract the names of the vector using the `names()` function:
-```{r}
-names(missingvalues)
-```
-
-
-> ## More on `names()`
-> 
-> In addition to getting the names of an object, we can also use the `names()` function to set the names of an object:
-> 
-> ```{r}
-> myvec <- c(1,2,3)
-> names(myvec) <- c("a","b","c")
-> myvec
-> ```
-{: .callout}
-
-
-Let's modify our function so that it calls `cleanfield()` with its default `missingvalue` argument if our vector of fields
-to clean doesn't have names, and calls `cleanfield()` with the appropriate missing value if we have specified names.
-
-As we have already written tests to check that `cleanfields()` works properly, we can modify our function knowing that
-if we break anything, this should be revealed in the tests we have written.  
-
-In pseudo-code, this is what we want to do:
-
-
-```
-
-cleanfields <- function(dataset, fieldlist){
-  
-  if( fieldstoclean doesn't have names ){
-    run existing code
-  } else {
-    clean the fields according to the values passed and their names
-  }
-
-  return our results
-}
-
-```
-
-There are two things we will need to figure out:
-
-1. How to test whether `fieldstoclean` has names
-2. How to write the code that will be executed if `fieldstoclean` has names
-
-
-We used the `names()` function to extract the names of a named vector.  Let's look at how we can use
-this to generate a condition that evaluates to `TRUE` or `FALSE` depending on whether a vector has names:
-
-```{r}
-withnames <- c(name1 = 1, name2 = 2.2)
-nonames <- c("name1", "name2")
-
-names(withnames) # Will give us the names if there are any
-
-names(nonames) # Or NULL if there are not
-```
-
-This gets us most of the way there; but there is a problem.  Usually we can test if values are equal to each other using
-`==` ( or `all.equal()` if we're dealing with floating point numbers).  This doesn't work for "special" values, like `NULL`, `NA`
-and `Inf`:
-```{r}
-
-x <- NULL
-# But NULL isn't TRUE (or FALSE)
-x == NULL
-# We need to use:
-is.null(NULL)
-```
-
-> ## Indenting your code
-> 
-> As our code becomes more complex, keeping it tidy becomes increasingly important.  One way of doing this is
-> by indenting your code, so that everything at the same "level", e.g. everything that will be executed `if` a condition is
-> true, has the same indent. RStudio performs this indentation for you automatically.  You may find it gets out of sync
-> as you edit and move your blocks of code around.  To re-indent your code, select it and press <kbd>Ctrl</kbd>+<kbd>I</kbd>.
-> 
-> RStudio will highlight the other half of quotes, brackets, and braces which can be very helpful if you forget to close a string, function or block of code.
-> 
-{: .callout}
-
-## Challenge:  Testing whether we have names
-
-Modify your `cleanfields()` function to test whether `fieldlist` has  names.  If it does not
-you should use your existing code to clean the fields.  If it does have names you should
-stop the function (we will write the code to clean the data when we have names and values in the 
-next challenge)
-
-When you have written your function, you should test it still works using the tests we wrote earlier.
-
-## Solution
-```{r}
-
-
-function(dataset, fieldlist) {
-  if (is.null(names(fieldlist))) {
-    if (!all(fieldlist %in% names(dataset))) {
-      stop("Attempting to clean variables that do not exist in the dataset")
-    }
-    
-    if (anyDuplicated(fieldlist) != 0) {
-      warning("Duplicated variable names specified")
-    }
-    
-    
-    for (f in fieldlist) {
-      dataset[[f]] <- cleanfield(dataset[[f]])
-    }
-    
-  } else {
-    stop("Not yet implemented")
-  }
-  
-  return(dataset)
-  
-}
-
-```
-{: .solution}
-{: .challenge}
-
-
-We should now write the final part of the function.   We will need to loop over each element of the named `fieldlist`
-vector 
-
 
 ## Challenge: Cleaning the weather data
 
-Modify your function to implement the missing functionality.
-
-## Hint - for loops:
-
-There were two different approaches to using `for`:
-```{r, eval=FALSE}
-for(field in fieldlist){
-  print(field)
-}
-
-for(i in 1:seq_along(fieldlist)){
-  print(fieldlist[i])
-}
-```
- 
-You will find it easier to use the second form, since we will need to refer to the positions of the 
-elements in our vector of missing values.
-
-{: .solution}
-
+Modify the provided `loadWeatherData()` function to clean the data fields, using the values to represent
+missing data provided in `met_README`.  Hint:  You will need to call `cleanfields()` once for each distinct
+mising value.  
 ## Solution
 
-One way of solving this challenge is: 
-
 ```{r}
 
-cleanfields <- function(dataset, fieldlist){
-  
-  if ( is.null(names(fieldlist)) ) {
-    
-    if ( !all(fieldlist %in% names(dataset)) ) {
-      stop("Attempting to clean variables that do not exist in the dataset")
-    }
-    
-    if ( anyDuplicated(fieldlist) != 0 ) {
-      warning("Duplicated variable names specified")
-    }
-    
-    for (f in fieldlist) {
-      dataset[[f]] <- cleanfield(dataset[[f]])
-    }
-    
-  } else {
-    
-    variablenames <- names(fieldlist) 
-    for (i in 1:seq_along(fieldlist)) {
-      
-      variablename <- variablenames[i] 
-      missingval <- fieldlist[i] 
-      
-      dataset[[ variablename ]] <- cleanfield(dataset[[ variablename ]], missingvalue = missingval)
-      
-    } 
-  }
-  
-  return(dataset) 
-  
-}
-
-```
-
-We could write this more succinctly, for example using `dataset[[ variablenames[i] ]]` instead of defining the 
-`variablename` variable on each iteration of the `for` loop.  This is, however, less clear.
-
-One thing you may notice is that we don't now test whether the variables exist if we're using 
-our new approach to cleaning the data.  This is not ideal; if there was more time we would 
-write a test for this, and then modify the code implement the required functionality.
-
-As the function is written, this would mean we would be testing for variable names in two places, 
-which isn't ideal - there would then be places for our code to go wrong.  A better approach might be 
-to test whether our input variable has names.  If it does not, we could generate a named vector with the 
-default missing value.  
-
-Because we've written tests for our function, we can modify it confidently, knowing that if we break anything
-the tests will tell us.
-
-{: .solution}
-{: .challenge}
-
-```{r, include=FALSE}
-cleanfields <- function(dataset, fieldlist){
-  
-  if ( is.null(names(fieldlist)) ) {
-    
-    if ( !all(fieldlist %in% names(dataset)) ) {
-      stop("Attempting to clean variables that do not exist in the dataset")
-    }
-    
-    if ( anyDuplicated(fieldlist) != 0 ) {
-      warning("Duplicated variable names specified")
-    }
-    
-    for (f in fieldlist) {
-      dataset[[f]] <- cleanfield(dataset[[f]])
-    }
-    
-  } else {
-    
-    variablenames <- names(fieldlist) 
-    for (i in 1:length(fieldlist)) {
-      
-      variablename <- variablenames[i] 
-      missingval <- fieldlist[i] 
-      
-      dataset[[ variablename ]] <- cleanfield(dataset[[ variablename ]], missingvalue = missingval)
-      
-    } 
-  }
-  
-  return(dataset) 
-  
-}
-```
-
-
-## Processing a file
-
-We now have all the elements we need to load and process a file.  We can:
-
-* Load a file using `read_table()`
-* Make the datetime field, using `ymd_h()`
-* Clean the data using `cleandataset()`
-
-Let's combine these functions into a single function.  This will take a single argument; the name of the file
-it is to read.  
-
-```{r}
 loadWeatherData <- function(infile){
-  # Load in a weather data file
-  
+  # Load the weather data stored in infile to a tibble, and return it
   weather <- read_table(infile,
                         col_names = c("obs",
                                       "yyyy",
@@ -433,25 +109,29 @@ loadWeatherData <- function(infile){
                         )
   )
   
-  
+  #  Generate recdate field
   weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
   
-  missingvalues <- c(winddir = -999,
-                     windspeed = -999.9,
-                     windsteadiness = -9,
-                     pressure = -999.9,
-                     temperature2m = -999.9,
-                     temperature10m = -999.9,
-                     temperaturetop = -999.9,
-                     relhumidity = -99,
-                     precipitation = -99)
-  weather <- cleanfields(weather, missingvalues)
+  # Clean missing values, using values specified in met_README
+  weather <- cleanfields(weather, c("windspeed", "pressure", "temperature2m",
+                                    "temperature10m", "temperaturetop"), missingvalue = -999.9)
+  weather <- cleanfields(weather, "winddir", missingvalue = -999)
+  weather <- cleanfields(weather, "windsteadiness", missingvalue = -9)
+  weather <- cleanfields(weather, c("relhumidity", "precipitation"), missingvalue = -99)
   
   return(weather)
+  
 }
 
 cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_1977.txt")
 ```
+
+There is some repetition in our code; we call the `cleanfields()` function four times.  This isn't ideal,
+but as the function is written we can only pass one value that represents missing at a time.
+
+{: .solution}
+{: .challenge}
+
 
 ## Checking our load has worked
 
@@ -463,7 +143,8 @@ The summary shows that some variables, e.g. `winddir` have large, positive value
 summary(cleanweather)
 ```
 
-It looks like the cleaning process hasn't worked properly!   We've tested our `cleanfields()` function, so we can be reasonably confident that is working properly (it's possible that something has gone wrong that we *haven't* tested for).  So what's going on?
+It looks like the cleaning process hasn't worked properly!   We've tested our `cleanfields()` function, so we can be reasonably confident that is working properly (although it's possible that something has gone wrong that we *haven't* tested for).  So what's going on?
+
 ## Hunting bugs
 
 Hunting a bug down can be very difficult.   They're often "obvious" once you've found them (it's often the case that the more "obvious" the bug the longer it takes to find).  There are a number of techniques we can use to help us:
@@ -533,7 +214,7 @@ summary(weather)
 ```
 
 As we're looking at the data _before_ cleaning it, we see the large negative values that are used to represent missing data.
-We also see that some variables have the large positive values we saw before.  This suggests the problem is with our loading of the data, or the data itself. We can find a problematic record
+We also see that some variables have the large positive values we saw before, such as the maximum value of `winddir` being 999.  We *know* that this is incorrect, since it represents a direction in degrees, and so should be <=360.  This suggests the problem is with our loading of the data, or the data itself. We can find a problematic record
 by filtering the tibble:
 
 ```{r}
@@ -558,9 +239,9 @@ Take a look a the help file for `read_table()` - it shows that there is also a f
 Let's try this:
 
 ```{r}
+
 loadWeatherData <- function(infile){
-  # Load in a weather data file
-  
+  # Load the weather data stored in infile to a tibble, and return it
   weather <- read_table2(infile,
                         col_names = c("obs",
                                       "yyyy",
@@ -594,21 +275,18 @@ loadWeatherData <- function(infile){
                         )
   )
   
-  
+  #  Generate recdate field
   weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
   
-  missingvalues <- c(winddir = -999,
-                     windspeed = -999.9,
-                     windsteadiness = -9,
-                     pressure = -999.9,
-                     temperature2m = -999.9,
-                     temperature10m = -999.9,
-                     temperaturetop = -999.9,
-                     relhumidity = -99,
-                     precipitation = -99)
-  weather <- cleanfields(weather, missingvalues)
+  # Clean missing values, using values specified in met_README
+  weather <- cleanfields(weather, c("windspeed", "pressure", "temperature2m",
+                                    "temperature10m", "temperaturetop"), missingvalue = -999.9)
+  weather <- cleanfields(weather, "winddir", missingvalue = -999)
+  weather <- cleanfields(weather, "windsteadiness", missingvalue = -9)
+  weather <- cleanfields(weather, c("relhumidity", "precipitation"), missingvalue = -99)
   
   return(weather)
+  
 }
 
 cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_1977.txt")
@@ -627,9 +305,10 @@ look sensible using the `summary()` function
 ## Solution
 
 ```{r}
+
+
 loadWeatherData <- function(infile){
-  # Load in a weather data file
-  
+  # Load the weather data stored in infile to a tibble, and return it
   weather <- read_table2(infile,
                         col_names = c("obs",
                                       "yyyy",
@@ -663,21 +342,20 @@ loadWeatherData <- function(infile){
                         )
   )
   
-  
+  #  Generate recdate field
   weather <- weather %>% mutate(recdate = lubridate::ymd_h(paste(yyyy,mm,dd,hh)))
   
-  missingvalues <- c(winddir = -999,
-                     windspeed = -99.9, # Was given as -999.9 in met_README
-                     windsteadiness = -9,
-                     pressure = -999.9,
-                     temperature2m = -999.9,
-                     temperature10m = -999.9,
-                     temperaturetop = -999.9,
-                     relhumidity = -99,
-                     precipitation = -99)
-  weather <- cleanfields(weather, missingvalues)
+  # Clean missing values, using values specified in met_README
+  weather <- cleanfields(weather, c("pressure", "temperature2m",
+                                    "temperature10m", "temperaturetop"), missingvalue = -999.9)
+  
+  weather <- cleanfields(weather, "windspeed", missingvalue = -99.9) # Was given as -999.9 in met_README
+  weather <- cleanfields(weather, "winddir", missingvalue = -999)
+  weather <- cleanfields(weather, "windsteadiness", missingvalue = -9)
+  weather <- cleanfields(weather, c("relhumidity", "precipitation"), missingvalue = -99)
   
   return(weather)
+  
 }
 
 cleanweather <- loadWeatherData("data/met_mlo_insitu_1_obop_hour_1977.txt")
@@ -692,6 +370,8 @@ It (finally) looks like we've read the data in successfully.
 
 Although this has been quite a protracted
 episode it highlights some of the typical problems you will come accross when dealing with real-life data.  We've spent a lot of time on looking at how to work out what's gone wrong, and how to fix it, using a combination of testing and debugging.   It's quite normal to spend a lot of time on these aspects of programming; this is fine.
+
+
 
 
 ```{r, echo=FALSE}
