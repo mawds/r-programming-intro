@@ -27,7 +27,7 @@ The README file explains that the "Fields in each line are delimited by whitespa
 which suggests we can use `read_table()` to load a file.  The missing data value in the CO2 data was all `-999.99`. The README file states that the missing data for some fields are different from this (for example, the missing value for wind direction is `-999`).
 
 > ## Challenge: What do we need to do?
->
+> 
 > With the person sat next to you, discuss the process we will need to go through to load and clean all of the 
 > files, and output a single tibble containing all their contents.  Don't worry if you don't know how to 
 > do all of these tasks in R; the important thing is to think about how we might break the process down into
@@ -39,7 +39,7 @@ which suggests we can use `read_table()` to load a file.  The missing data value
 > > * We will need to process each file in turn.  We know how to loop over a vector of values, using a `for` loop.  We don't *yet* know how to list a series of files that match a pattern
 > > 
 > > In each file:
-> >
+> > 
 > > * We will need to load the data into a tibble.  `readr` comes with lots of functions to do this; we can
 > > use `read_table()` as we did with the CO2 data (although the parameters we use will need to be modified as the 
 > > variables contained in the data are different).
@@ -48,9 +48,9 @@ which suggests we can use `read_table()` to load a file.  The missing data value
 > > do this with the CO2 data. So we're part way there on this
 > > * It would be a good idea to validate the data.  For example, precipitation should be `>=0`, the wind direction 
 > > should be between 0 and 359 degrees.
-> >
+> > 
 > > We will also need to know how combine the weather files that we have loaded into a single file.
-> >
+> > 
 > {: .solution}
 {: .challenge}
 
@@ -100,7 +100,7 @@ weather <- read_table("data/met_mlo_insitu_1_obop_hour_1977.txt",
 {: .language-r}
 
 > ## Challenge
->
+> 
 > Create a new field, `recdate` that contains the date and hour of the observation, stored
 > as a `datetime` (this is a special type of data that will let us handle the date and time
 > in a similar way to the dates we used with the CO2 data).  
@@ -297,7 +297,6 @@ is.null(NULL)
 > 
 > When you have written your function, you should test it still works using the tests we wrote earlier.
 > 
-> 
 > > ## Solution
 > > 
 > > ~~~
@@ -366,7 +365,8 @@ vector
 > Modify your function to implement the missing functionality.
 > 
 > > ## Hint - for loops:
-> >There were two different approaches to using `for`:
+> > 
+> > There were two different approaches to using `for`:
 > > 
 > > ~~~
 > > for(field in fieldlist){
@@ -381,8 +381,9 @@ vector
 > >  
 > > You will find it easier to use the second form, since we will need to refer to the positions of the 
 > > elements in our vector of missing values.
-> >
+> > 
 > {: .solution}
+> 
 > > ## Solution
 > > 
 > > One way of solving this challenge is: 
@@ -426,21 +427,21 @@ vector
 > > 
 > > We could write this more succinctly, for example using `dataset[[ variablenames[i] ]]` instead of defining the 
 > > `variablename` variable on each iteration of the `for` loop.  This is, however, less clear.
-> >
+> > 
 > > One thing you may notice is that we don't now test whether the variables exist if we're using 
 > > our new approach to cleaning the data.  This is not ideal; if there was more time we would 
 > > write a test for this, and then modify the code implement the required functionality.
-> >
+> > 
 > > As the function is written, this would mean we would be testing for variable names in two places, 
 > > which isn't ideal - there would then be places for our code to go wrong.  A better approach might be 
 > > to test whether our input variable has names.  If it does not, we could generate a named vector with the 
 > > default missing value.  
-> >
+> > 
 > > Because we've written tests for our function, we can modify it confidently, knowing that if we break anything
 > > the tests will tell us.
 > > 
-> {: .solution }
-{: .challenge }
+> {: .solution}
+{: .challenge}
 
 
 
@@ -891,8 +892,8 @@ This looks much better, with the exception of the windspeed data, which has `-99
 > > ~~~
 > > {: .output}
 > > 
-> {: .solution }
-{: .challenge } 
+> {: .solution}
+{: .challenge} 
 
 
 It (finally) looks like we've read the data in successfully.   
