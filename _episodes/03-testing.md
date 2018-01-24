@@ -43,12 +43,12 @@ Writing such tests is cumbersome. We may also want to test things besides equali
 example, if we pass invalid data into a function we would want to check we obtained an
 error.   
 
-The R package `testthat` makes it easy for us to write and run tests to verify our function behaves as we'd like.  If you put your functions in a package (see, for example, FIXME), it integrates well with the package development process. 
+The R package `testthat` makes it easy for us to write and run tests to verify our function behaves as we'd like.  If you put your functions in a package (see, for example, [R Packages, by Hadley Wickham](http://r-pkgs.had.co.nz/)), it integrates well with the package development process. 
 
 > ## Installing testthat
 > 
 > Testthat is not installed on the university teaching machines.  It can be installed like any
-> other R pacakge on CRAN, using:
+> other R package on CRAN, using:
 > 
 > 
 > ~~~
@@ -62,8 +62,7 @@ The R package `testthat` makes it easy for us to write and run tests to verify o
 {: .callout}
 
 For now let's put our tests in a separate file.  It is good practice to keep
-your tests in a separate directory, `tests`.  Make a directory in your project folder
-called `tests`, and copy the example test file that was included in the data you downloaded at the start of the course. The file is shown below:
+your tests in a separate directory. If we write an R package, R will expect this directory to be called `tests`, so it is a very good idea to stick with this convention.  When you downloaded the course data, this included some example test, which will be in your project's `tests` folder.  `testthat` test files are named `test_xxx.R`.  The file `test_cleandata.R` contains some initial tests for our function.  The file is shown below:
 
 
 ~~~
@@ -95,6 +94,8 @@ test_that("Can clean multiple fields",{
 {: .language-r}
 
 We can execute the tests by loading the `testthat` package, and running `test_file()`:
+(note that the output of `test_file()` will look slightly different on your machine; the fancy formatting
+used by `testthat` doesn't show correctly in these lessons)
 
 ~~~
 library("testthat")
@@ -117,7 +118,7 @@ Cleaning fields: .......
 
 `tests/test_fail.R` contains a test which expects the result of cleaning the field to
 be `c(2,3,NA)` (not `c(1,2,NA)`). If a test fails we get an informative error message, 
-which shows where in the file the failure occured (the number after the `#` is the line number of the file), and an indication of what the failure was:
+which shows where in the file the failure occurred (the number after the `#` is the line number of the file), and an indication of what the failure was:
 
 
 ~~~
