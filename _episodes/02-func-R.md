@@ -64,9 +64,9 @@ Inside the function, we use a [return statement]({{ page.root }}/reference/#retu
 > ## Automatic Returns
 >
 > In R, it is not necessary to include the return statement.
-> R automatically returns whichever variable is on the last line of the body
-> of the function. Since we are just learning, we will explicitly define the
-> return statement.
+> R automatically returns the value of the last expression that was evaluated in the function.
+> It is usually a good idea to explicitly define the
+> return statement, to make it clear what the function is returning.
 {: .callout}
 
 Let's try running our function.
@@ -190,7 +190,7 @@ Real-life functions will usually be larger than the ones shown here--typically h
 > you'll need to learn how they create their own environments and call other functions.
 > Function calls are managed via the call stack.
 > For more details on the call stack,
-> have a look at the [supplementary material]({{ page.root }}/14-supp-call-stack/). FIXME - original lessson
+> have a look at the [supplementary material](http://swcarpentry.github.io/r-novice-inflammation/14-supp-call-stack/).
 {: .callout}
 
 ## Passing parameters
@@ -253,7 +253,7 @@ call a function without specifying them (either by name or position).
 If we define a variable _within_ our function, then it is only defined within the 
 function, and will no longer be defined when the function exits.
 
-What if we try and use a variable within our function that does not exist?  (either by creating it within the function, or by passing it in as a parameter). In this situation R will look into the _calling environment_ for the variable, and use that instead:
+What if we try and use a variable within our function that does not exist?  (either by creating it within the function, or by passing it in as a parameter). In this situation R will look into the _calling environment_ for the variable, and use that instead.  This means that it will look at the variables that were defined when the function was called:
 
 
 ~~~
@@ -306,7 +306,7 @@ function makes your code more modular (which makes it easier to reuse functions)
 easier to debug.
 
 What if we have the same variable name defined within and outside of the function?
-In this case the function will use the variable as defined within the function.
+In this case the function will use the variable that was defined within the function.
 
 ## Handling missing values
 
@@ -753,21 +753,7 @@ The `if...else` construct lets us take an action if a condition is true:
 ~~~
 x <- 5
 
-x < 3
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] FALSE
-~~~
-{: .output}
-
-
-
-~~~
-if (x < 3) {
+if (x < 3) { # x < 3 will return FALSE
   print("x is less than 3") # This isn't executed
 }
 
@@ -888,64 +874,7 @@ all( c(fieldsWithMissingData, "notHere") %in% names(co2small))
 
 ## Logical tests
 
-We can combine tests using logical operators. `&&` is TRUE if and only if both the left and 
-right hand side of the argument are TRUE:
-
-~~~
-TRUE && TRUE
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] TRUE
-~~~
-{: .output}
-
-
-
-~~~
-TRUE && FALSE
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] FALSE
-~~~
-{: .output}
-
-
-
-~~~
-FALSE && TRUE
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] FALSE
-~~~
-{: .output}
-
-
-
-~~~
-FALSE && TRUE
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] FALSE
-~~~
-{: .output}
-
-`||` (OR) is true if either or both arguments are true:
+We often want to test more than one condition at once, or perhaps run a block of code if one thing OR another is TRUE. We can combine tests using logical operators. For example, to test if either or both expressions are TRUE, we use the OR operator, `||`:
 
 
 ~~~
@@ -1002,95 +931,7 @@ FALSE || TRUE
 ~~~
 {: .output}
 
-The `xor(x,y)` function can be used to test if one (and only one) of the arguments is true.  We can negate a test using the NOT operation, which is represented with `!`:
-
-
-~~~
-xor(TRUE, TRUE)
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] FALSE
-~~~
-{: .output}
-
-
-
-~~~
-xor(TRUE, FALSE)
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] TRUE
-~~~
-{: .output}
-
-
-
-~~~
-xor(FALSE, TRUE)
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] TRUE
-~~~
-{: .output}
-
-
-
-~~~
-xor(FALSE, FALSE)
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] FALSE
-~~~
-{: .output}
-
-
-
-~~~
-!FALSE
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] TRUE
-~~~
-{: .output}
-
-
-
-~~~
-!TRUE
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] FALSE
-~~~
-{: .output}
-
-FIXME - testing equality
-
-The `&&` and `||` operators only operate on the first element of a vector, which is typically what you want when 
-writing an `if` statement.  There are also versions which operate on _each_ element of a vector see `?base::Logic` for more details.
+For full details of R's logical operators, see `?base::Logic`.   There are also versions of the logical operators which operate on _each_ element of a vector.
 
 
 > ## Challenge:
@@ -1121,7 +962,7 @@ writing an `if` statement.  There are also versions which operate on _each_ elem
 > > 
 > > Note that we don't need to use an `else` statement here, as `stop()` causes the function to abort. 
 > >
-> > If there's a less severe problem, the `warning()` function will print the specified message as a warning. For example
+> > If there's a less severe problem, we can use the `warning()` function to print the specified message as a warning. For example
 > > `warning("This is a warning")`
 > {: .solution}
 {: .challenge}
