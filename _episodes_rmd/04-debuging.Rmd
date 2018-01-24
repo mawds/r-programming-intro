@@ -280,7 +280,7 @@ vector
 > >   print(field)
 > > }
 > > 
-> > for(i in 1:length(fieldlist)){
+> > for(i in 1:seq_along(fieldlist)){
 > >   print(fieldlist[i])
 > > }
 > > ```
@@ -314,7 +314,7 @@ vector
 > >   } else {
 > >     
 > >     variablenames <- names(fieldlist) 
-> >     for (i in 1:length(fieldlist)) {
+> >     for (i in 1:seq_along(fieldlist)) {
 > >       
 > >       variablename <- variablenames[i] 
 > >       missingval <- fieldlist[i] 
