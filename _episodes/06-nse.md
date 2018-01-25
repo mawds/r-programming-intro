@@ -19,15 +19,15 @@ source: Rmd
 
 A lot of the "cleverness" of the tidyverse comes from how it handles the values we pass to its functions.
 This lets us write code in a very expressive way (for example, the idea of treating the dplyr
-pipelines as a sentence consisting of a series of verbs, with the `%>%` operator being read as "and then".)
+pipelines as a sentence consisting of a series of verbs (such as `filter()` and `mutate()`), with the `%>%` operator being read as "and then".)
 
-Unfortunately this comes at a price when we come to use `dplyr` in our own functions.  The `dplyr` functions use what is known as "Non Standard Evaluation"; this means that they don't evaluate their parameters in the standard way that the examples in this episode have used so far.  This is probably the most complicted concept we will cover today, so pleae don't worry if you don't "get" it at first attempt. 
+Unfortunately this comes at a price when we come to use `dplyr` in our own functions.  The `dplyr` functions use what is known as "Non Standard Evaluation"; this means that they don't evaluate all of their parameters in the standard way that the examples in this episode have used so far.  This is probably the most complicted concept we will cover today, so pleae don't worry if you don't "get" it at first attempt. 
 
 We'll illustrate this by way of an example.
 
 Let's write a function that will filter our weather data to only keep observations when it is both warm (which we'll define as at least 18 degrees C), and windy (which we'll define as a wind speed of at least 6m/s).
 First, let's think about how we'd do this *without* using a function.  We'll then put our 
-code in a function; this will let us easily repeat the calculation for other years, without re-writing the code.
+code in a function; this will let us easily repeat the calculation for other data-sets, without re-writing the code.
 
 
 ~~~
@@ -36,8 +36,32 @@ warmWindy <- cleanweather %>%
 ~~~
 {: .language-r}
 
+> ## Challenge:
+> 
+> In how many observations is it both warm and windy?
+> 
+> > ## Solution:
+> > 
+> > 
+> > ~~~
+> > nrow(warmWindy)
+> > ~~~
+> > {: .language-r}
+> > 
+> > 
+> > 
+> > ~~~
+> > [1] 97
+> > ~~~
+> > {: .output}
+> > 
+> > It is only warm and windy 97 times in the entire data set.
+> > 
+> {: .solution}
+{: .challenge}
+
 Let's put this code in a function; note that we change the input data to be the parameter we pass when we call
-the function (it's _really_ easy to forget to make these changes when you start making functions from existing code):
+the function, so that we can adjust the wind and temperature thresholds (it's _really_ easy to forget to make these changes when you start making functions from existing code):
 
 
 ~~~
