@@ -113,6 +113,7 @@ test_file("tests/test_cleandata.R")
 Cleaning fields: .......
 
 ══ DONE ═══════════════════════════════════════════════════════════════════
+:)
 ~~~
 {: .output}
 
@@ -139,7 +140,6 @@ c(2, 3, NA) not equal to cleanfield(testvector).
 [2] 3 - 2 == 1
 
 ══ DONE ═══════════════════════════════════════════════════════════════════
-No-one is perfect!
 ~~~
 {: .output}
 
@@ -185,7 +185,7 @@ No-one is perfect!
 > 
 > Write a test to expect a warning if a variable name is repeated.  Run your tests, and check that the test failure (i.e. the lack of warning) is reported.
 > 
-> Then modify your function to return a warning so that the test passes.   Developing code in this way is referred to as test driven development. FIXME - provide a link to good resource.  Ask Rob?
+> Then modify your function to return a warning so that the test passes.   Developing code in this way is referred to as test driven development.  See, for example, [Test Driven Development: By Example, by Beck]( https://www.amazon.co.uk/Test-Driven-Development-Addison-Wesley-Signature/dp/0321146530)
 > 
 > Hint:  There are a number of ways of checking whether a vector contains duplicated elements.  `unique()` returns only the unique elements of a vector.  You could compare the length of this vector to the original vector.  `anyDuplicated()` returns the index of the first duplicated element in a vector, or 0 if there are no duplicate elements.
 > 
