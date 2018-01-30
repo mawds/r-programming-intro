@@ -29,7 +29,7 @@ knitr_fig_path("01-")
 
 ## Introduction 
 
-The aim of this course is to teach you programming techniques using R.  We use the example of loading and analysing historic CO2 and temperature data to illustrate these techniques.  We spend more time than is usual on dealing with _problems_.   Many tutorials assume everything works first time, and don't explain how to debug and test your code.   The reality is that we all spend a great deal of time dealing with imperfectly formatted data and bugs.  By explaining how to debug and deal with these issues efficiently you will save time and frustration.
+The aim of this course is to teach you programming techniques using R.  We use the example of loading and analysing historic CO<sub>2</sub> and temperature data to illustrate these techniques.  We spend more time than is usual on dealing with _problems_.   Many tutorials assume everything works first time, and don't explain how to debug and test your code.   The reality is that we all spend a great deal of time dealing with imperfectly formatted data and bugs.  By explaining how to debug and deal with these issues efficiently you will save time and frustration.
 
 The other University of Manchester R course,  [Data Analysis Using R](https://uomresearchit.github.io/r-tidyverse-intro/) covers:
 
@@ -130,7 +130,7 @@ We explicitly list the column type of each variable in order to improve the robu
 {: .callout}
 
 
-Let's take a look at the CO2 data we will be using in this episode:
+Let's take a look at the CO<sub>2</sub> data we will be using in this episode:
 
 ```
 # --------------------------------------------------------------------
@@ -194,7 +194,7 @@ Let's take a look at the CO2 data we will be using in this episode:
 > ## Different file formats
 >
 > In the previous R course we made extensive use of the gapminder data.
-> Compare the format of the co2 data (`co2_weekly_mlo.txt`) and the gapminder data (`gapminder-FiveYearData.csv`).
+> Compare the format of the CO<sub>2</sub> data (`co2_weekly_mlo.txt`) and the gapminder data (`gapminder-FiveYearData.csv`).
 > What differences in the files' formats do you notice?
 > 
 > > ## Solution
@@ -213,7 +213,7 @@ Let's take a look at the CO2 data we will be using in this episode:
 The `read_csv()` function is designed to read comma separated files (like the gapminder data).  This isn't
 going to work for the CO2 data.  There are two different approaches we can use:
 
-* We can make sure of the fact that each variable starts in the same column in each row; this data is 
+* We can make use of the fact that each variable starts in the same column in each row; this data is
  called "fixed width", and can read with `read_fwf()`.  If we consult the help file for this, fixed width data is described as "painful to parse because you need to describe the length of every field".
  * We can use the fact that there is at least one space between each variable.  The data is tabular, so we use `read_table()`.
  
