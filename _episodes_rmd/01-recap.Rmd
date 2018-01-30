@@ -194,7 +194,7 @@ Let's take a look at the CO2 data we will be using in this episode:
 > ## Different file formats
 >
 > In the previous R course we made extensive use of the gapminder data.
-> Compare the format of the co2 data (`co2_weekly_mlo.txt`) and the gapminder data (`gapminder-FiveYearData.csv`).
+> Compare the format of the co2 data (`data/co2_weekly_mlo.txt`) and the gapminder data [(`gapminder-FiveYearData.csv`)](gapminder-FiveYearData.csv).
 > What differences in the files' formats do you notice?
 > 
 > > ## Solution
@@ -209,6 +209,8 @@ Let's take a look at the CO2 data we will be using in this episode:
 > >   are separated by (varying numbers) of spaces.
 > {: .solution}
 {: .challenge}
+
+[gapminder-FiveYearData.csv]: https://raw.githubusercontent.com/UoMResearchIT/r-tidyverse-intro/gh-pages/data/gapminder-FiveYearData.csv
 
 The `read_csv()` function is designed to read comma separated files (like the gapminder data).  This isn't
 going to work for the CO2 data.  There are two different approaches we can use:
