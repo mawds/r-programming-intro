@@ -278,7 +278,7 @@ demodata <- 1:10
 demodata == 5
 ```
 
-The first argument of `ifelse()` evaluates to a logical vector. If the ith element of the vector is `TRUE`, `ifelse()` will output the ith element of the 2nd argument (so the ith element of `demodata` in this example).  If the element is FALSE the ith element of the 3rd argument will be replaced.  But the 3rd argument is only a single value...what's going on here?  You may remember that R `recycles` vectors if they are too short. This is what happens here; as the 3rd argument in our example consists of a single value, it will be output for all elements that are  `FALSE`
+The first argument of `ifelse()` evaluates to a logical vector. If the nth element of the vector is `TRUE`, `ifelse()` will output the nth element of the 2nd argument (so the nth element of `demodata` in this example).  If the element is FALSE the nth element of the 3rd argument will be replaced.  But the 3rd argument is only a single value...what's going on here?  You may remember that R `recycles` vectors if they are too short. This is what happens here; as the 3rd argument in our example consists of a single value, it will be output for all elements that are  `FALSE`
 
 ```{r}
 co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
