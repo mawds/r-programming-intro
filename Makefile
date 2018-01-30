@@ -10,13 +10,12 @@ DST=_site
 # Set this to Rscript -e if you don't want to build 
 # in Dockerised environment
 RSCRIPT=docker run --rm --user "$$UID" -v "$$PWD":"$$PWD"  -w="$$PWD" -ti mawds/rg11  Rscript -e
-DATAFILES=$(wildcard _episodes_rmd/data/*)
-UNITTESTFILES=$(wildcard _episodes_rmd/tests/*.R)
-SRCFILES=$(wildcard _episodes_rmd/src/*.R)
 
-# This is used in the substitutions to get relative paths in
-# the data zip file:
 RMDDIR=_episodes_rmd/
+DATAFILES=$(wildcard $(RMDDIR)data/*)
+UNITTESTFILES=$(wildcard $(RMDDIR)tests/*.R)
+SRCFILES=$(wildcard $(RMDDIR)src/*.R)
+
 
 # Controls
 .PHONY : commands clean files
@@ -66,12 +65,15 @@ workshop-check :
 	@bin/workshop_check.py .
 
 ## data             : generate the course data download
-data: data/data.zip
+data: data/data.zip sourcefiles
 
-data/data.zip:	${DATAFILES} ${UNITTESTFILES} ${SRCFILES}
+data/data.zip:	${DATAFILES} ${UNITTESTFILES} 
 	cd ${RMDDIR} && zip -u ../$@ $(subst ${RMDDIR},,$^)
 
+sourcefiles: $(subst ${RMDDIR},data/,${SRCFILES})
 
+data/src/%.R: ${RMDDIR}/src/%.R
+	cp $< $@
 ## ----------------------------------------
 ## Command specific to lesson websites.
 

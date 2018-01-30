@@ -20,7 +20,7 @@ In the previous episodes we showed how to create functions, and test that they a
 
 Fortunately, we used the `...` argument in our `cleanfields()` function so that we can override the default for the `missingvalue` argument.
 
-The file `src/loadweather.R` file contains a function that takes a filename as its input argument and loads the weather data contained in that file.  FIXME - screenshots and zip file. It also generates a field containing the date and time of each observation, stored as a `datetime`.  It returns a tibble containing the loaded weather data.  During this episode we will modify the function to clean the data.  
+[Download the file `loadWeather.R`]({{ page.root }}/data/src/loadWeather.R), and copy this to your `src/` director.  The file contains a function that takes a filename as its input argument and loads the weather data contained in that file.  FIXME - screenshots and zip file. It also generates a field containing the date and time of each observation, stored as a `datetime`.  It returns a tibble containing the loaded weather data.  During this episode we will modify the function to clean the data.  
 
 In the next episode we will write a function to load multiple years of weather data.  
 
