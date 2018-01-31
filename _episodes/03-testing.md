@@ -113,7 +113,6 @@ test_file("tests/test_cleandata.R")
 Cleaning fields: .......
 
 ══ DONE ═══════════════════════════════════════════════════════════════════
-:)
 ~~~
 {: .output}
 
