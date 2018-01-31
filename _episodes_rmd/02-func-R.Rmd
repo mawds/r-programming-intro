@@ -149,10 +149,10 @@ Real-life functions will usually be larger than the ones shown here--typically h
 > have a look at the [supplementary material](http://swcarpentry.github.io/r-novice-inflammation/14-supp-call-stack/).
 {: .callout}
 
-## Passing parameters
+## Passing arguments
 
-We refer to the values we pass into a function as the function's parameters. The temperature conversion functions we have written all take a single parameter.  We can pass more than
-one parameter to a function.  There are two ways of specifying passing the parameters; by name or by position.  We can also specify the default value of a parameter when we define the function.
+We refer to the values we pass into a function as the function's arguments. The temperature conversion functions we have written all take a single argument.  We can pass more than
+one argument to a function.  There are two ways of passing the arguments; by name or by position.  We can also specify the default value of a parameter when we define the function.
 
 ```{r}
 add_some <- function(invar, some=2){
@@ -167,7 +167,7 @@ add_some(3, some = 4) # Specify some by name
 
 ```
 
-Parameters without a default value are mandatory; you will get an error if you try and
+Parameters without a default value are mandatory; you will get an error if you try to
 call a function without specifying them (either by name or position).
 
 ## Variable scope 
@@ -175,7 +175,7 @@ call a function without specifying them (either by name or position).
 If we define a variable _within_ our function, then it is only defined within the 
 function, and will no longer be defined when the function exits.
 
-What if we try and use a variable within our function that does not exist?  (either by creating it within the function, or by passing it in as a parameter). In this situation R will look into the _calling environment_ for the variable, and use that instead.  This means that it will look at the variables that were defined when the function was called:
+What if we try to use a variable within our function that does not exist?  (either by creating it within the function, or by passing it in as a parameter). In this situation R will look into the _calling environment_ for the variable, and use that instead.  This means that it will look at the variables that were defined when the function was called:
 
 FIXME Reanable when finished
 ```{r, eval=FALSE}
@@ -204,7 +204,7 @@ In this case the function will use the variable that was defined within the func
 
 ## Handling missing values
 
-Now we've seen how to write a function, and to pass parameters to it, let's write a function that will recode the values in our CO2 data that are invalid to `NA`.  R uses the special `NA` to represent data that are not available.
+Now we've seen how to write a function, and to pass parameters to it, let's write a function that will recode the values in our CO2 data that are invalid to `NA`.  R uses the special value `NA` to represent data that are not available.
 
 It's often useful to work with a smaller version of your data when developing a code, particularly if your program takes some time to run.  Let's just work with the first 5 rows of our CO2 data:
 
