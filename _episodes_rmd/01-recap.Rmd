@@ -225,7 +225,7 @@ Functions in the tidyverse are named systematically.  Suppose we know that `read
 {: .callout}
 
 We also have to deal with the text at the start of the file.  Fortunately the documentation text is 
-preceded with a `#` character on each row.  This is a _comment_ character; just like in R.  The readr `read_xxx()` functions allow us to specify a character to treat as a comment using the `comment="#"` option.
+preceded with a `#` character on each row.  This is a _comment_ character; just like in R.  The readr `read_xxx()` functions (e.g. `read_csv`) allow us to specify a character to treat as a comment using the `comment="#"` option.
 
 ```{r}
 co2weekly <- read_table("data/co2_weekly_mlo.txt",
