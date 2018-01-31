@@ -225,7 +225,10 @@ Let's take a look at the CO<sub>2</sub> data we will be using in this episode:
 > ## Different file formats
 >
 > In the previous R course we made extensive use of the gapminder data.
-> Compare the format of the CO<sub>2</sub> data (`co2_weekly_mlo.txt`) and the gapminder data (`gapminder-FiveYearData.csv`).
+> Compare the format of the  CO<sub>2</sub> data (`data/co2_weekly_mlo.txt`) and the gapminder data (`data/gapminder-FiveYearData.csv`).
+>
+> The gapminder data is included in the [course data]({{ page.root }}/data/data.zip), which you should have already downloaded. 
+>
 > What differences in the files' formats do you notice?
 > 
 > > ## Solution
