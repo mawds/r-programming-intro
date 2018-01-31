@@ -627,10 +627,11 @@ We can use a `for` loop to run our field cleaning function `cleanfield()` on mor
 > 
 > ~~~
 > fieldsWithMissingData <- c("co2Ppm", "co2OneYearAgo", "co2TenYearsAgo", "co2Increase1800")
-> cleanfields(co2small, fieldsWithMissingData)
+> co2clean <- cleanfields(co2small, fieldsWithMissingData)
 > ~~~
 > {: .language-r}
-> should clean our data-file
+> will clean clean the input data and assign the tibble containing the 
+> cleaned data to `co2clean`
 > 
 > > ## Solution
 > >

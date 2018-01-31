@@ -385,9 +385,10 @@ We can use a `for` loop to run our field cleaning function `cleanfield()` on mor
 > 
 > ```{r, eval = FALSE}
 > fieldsWithMissingData <- c("co2Ppm", "co2OneYearAgo", "co2TenYearsAgo", "co2Increase1800")
-> cleanfields(co2small, fieldsWithMissingData)
+> co2clean <- cleanfields(co2small, fieldsWithMissingData)
 > ```
-> should clean our data-file
+> will clean clean the input data and assign the tibble containing the 
+> cleaned data to `co2clean`
 > 
 > > ## Solution
 > >
