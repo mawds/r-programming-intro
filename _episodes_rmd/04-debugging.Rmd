@@ -24,7 +24,7 @@ library(lubridate)
 load("checkpoints/03end.RData")
 ```
 In the previous episodes we showed how to create functions, and test that they are working.  In this episode we will use these ideas, and expand on them to load the weather data that you downloaded at the start of the course.   In your project's `data` folder you will see that there are a series of weather data files, named
-`met_mlo_insitu_1_obop_hour_ddd.txt`, where `dddd` is the year.  There is also a file, `met_README` which explains the format of the data files. Section 5.3 of this file contains information for the files we will be loading.    Take a look at this section now.  In contrast to the CO2 data, where all missing data was represented by `-999.99`, it looks like the missing value for some fields in the weather data are different.  
+`met_mlo_insitu_1_obop_hour_yyyy.txt`, where `yyyy` is the year.  There is also a file, `met_README` which explains the format of the data files. Section 5.3 of this file contains information for the files we will be loading.    Take a look at this section now.  In contrast to the CO2 data, where all missing data was represented by `-999.99`, it looks like the missing value for some fields in the weather data are different.  
 
 Fortunately, we used the `...` argument in our `cleanfields()` function so that we can override the default for the `missingvalue` argument.
 
