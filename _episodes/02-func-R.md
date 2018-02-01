@@ -757,7 +757,7 @@ cleanfields(co2weekly, "days", missingvalue = 6)
 > ~~~
 > {: .language-r}
 > 
-> We don't cover it in this course, but you can examine the aguments that are contained in the `...` parameter
+> We don't cover it in this course, but you can examine the arguments that are contained in the `...` parameter
 > by converting it to a list within your function:
 > 
 > ~~~
