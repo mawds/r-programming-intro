@@ -5,7 +5,7 @@ root: .
 
 This is the [University of Manchester's](http://www.manchester.ac.uk) course on programming in R from [Research IT](http://www.itservices.manchester.ac.uk/research/).  
 
-The course is currently under development. 
+The course is currently under development, and will be piloted in Spring 2018, before being offered as one of [Research IT's training courses](http://www.staffnet.manchester.ac.uk/staff-learning-and-development/academicandresearch/practical-skills-and-knowledge/it-skills/research-computing/research-courses/).   
 
 > ## Prerequisites
 >
