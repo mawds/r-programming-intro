@@ -47,9 +47,9 @@ The solution to these problems is to use a _function_.  A function will take 0 o
 
 ## Managing your code
 
-You should store your functions in an R script file, in the `src` folder of your project (which we created in the previous episode).
+You should store your functions in an R script file, in the `src` folder of your project (which we created in the previous episode).  You can store multiple functions in a single file.
 
-It is often useful to keep your functions in a separate file (or files).  These can be read into the scripts that perform the actual analysis of your data using `source("filename.R")`.   This makes it easier to reuse the functions we have written.    
+It is often useful to keep your functions in a separate file (or files).  These can be read into the scripts that perform the actual analysis of your data using `source("filename.R")`.   This makes it easier to reuse the functions we have written.    Sourcing a file is similar to running it directly, and will load the functions in it to the environment (they will appear in the top right panel of RStudio).
 
 ## Packages
 
