@@ -38,9 +38,21 @@ variables we needed to recode:
 
 The solution to these problems is to use a _function_.  A function will take 0 or more inputs, do stuff, and (usually) return an output.    You've already been using functions (such as `mutate()`) in R.  In this episode we show you how to write your own.
 
-Before we dive in and write a function to recode the missing values, let's illustrate by writing a simple function to convert temperatures: 
+## Managing your code
 
-### Defining a Function
+You should store your functions in an R script file, in the `src` folder of your project (which we created in the previous episode).
+
+It is often useful to keep your functions in a separate file (or files).  These can be read into the scripts that perform the actual analysis of your data using `source("filename.R")`.   This makes it easier to reuse the functions we have written.    
+
+> ## Packages
+> 
+> An extension of this approach is to create an R package. We don't cover this in this course, but see, for example the ["R Packages"" book, by Hadley Wickham](http://r-pkgs.had.co.nz/).   This makes it easy to share your code with others, and makes it easy to include documentation and example data with your code. It also makes it easy to include automatic tests with your code (covered in the next episode)
+> 
+{: .callout}
+
+Before we dive in and write a function to recode the missing values, let's illustrate by writing a function to convert temperatures: 
+
+## Defining a Function
 
 Let's start by defining a function `fahr_to_kelvin` that converts temperatures from Fahrenheit to Kelvin:
 
@@ -255,7 +267,6 @@ function, and will no longer be defined when the function exits.
 
 What if we try to use a variable within our function that does not exist?  (either by creating it within the function, or by passing it in as a parameter). In this situation R will look into the _calling environment_ for the variable, and use that instead.  This means that it will look at the variables that were defined when the function was called:
 
-FIXME Reanable when finished
 
 ~~~
 y <- 2
