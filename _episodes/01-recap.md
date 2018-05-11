@@ -252,7 +252,6 @@ going to work for the CO<sub>2</sub> data.  There are two different approaches w
 
 * We can see that this data is 'fixed width' i.e. columns are not separated by a character like a comma, but data is padded with spaces so that the columns are always the same number of characters wide. Data formatted in this way is  called "fixed width", and can read with `read_fwf()`.  If we consult the help file for this, fixed width data is described as "painful to parse because you need to describe the length of every field".
  * We can use the fact that there is at least one space between each variable.  The data is tabular, so we use `read_table()`.
- 
 
 > ## Command completion
 > 
@@ -262,6 +261,46 @@ going to work for the CO<sub>2</sub> data.  There are two different approaches w
 
 We also have to deal with the text at the start of the file.  Fortunately the documentation text is 
 preceded with a `#` character on each row.  This is a _comment_ character; just like in R.  The readr `read_xxx()` functions (e.g. `read_csv`) allow us to specify a character to treat as a comment using the `comment="#"` option.
+
+Looking at the data itself, you can see that the rows which contain potential variable names also start with a `#`.   It looks like we will need to manually specify coumn names.  Let's see what happens if we don't:
+
+
+~~~
+co2weekly <- read_table("data/co2_weekly_mlo.txt",
+                  comment = "#")
+~~~
+{: .language-r}
+
+
+
+~~~
+Warning: Duplicated column names deduplicated: '-999.99' => '-999.99_1' [8]
+~~~
+{: .error}
+
+
+
+~~~
+Parsed with column specification:
+cols(
+  `1974` = col_integer(),
+  `5` = col_integer(),
+  `19` = col_integer(),
+  `1974.3795` = col_double(),
+  `333.34` = col_double(),
+  `6` = col_integer(),
+  `-999.99` = col_double(),
+  `-999.99_1` = col_double(),
+  `50.36` = col_double()
+)
+~~~
+{: .output}
+
+`read_table()` has taken the first row of data as column names.  As with the gapminder data, `read_table()` guesses the appropriate data type for each column.
+
+We will need to manually specify column names for each column.  `read_table()`'s guesses for each column type are OK, although it makes sense to store the date fields (`yyyy`, `mm`, `dd`, `days`) as integers.   This gives the following command to read the data in:
+
+(This is rather a lot of typing, and to ensure we all use the same variable names I'd suggest cutting and pasting the command into your R script)
 
 
 ~~~
