@@ -310,7 +310,7 @@ co2weekly <- read_table("data/co2_weekly_mlo.txt",
                                 "mm",
                                 "dd",
                                 "decYear",
-                                "co2Ppm",
+                                "co2ppm",
                                 "days",
                                 "co2OneYearAgo",
                                 "co2TenYearsAgo",
@@ -320,7 +320,7 @@ co2weekly <- read_table("data/co2_weekly_mlo.txt",
                     mm = col_integer(),
                     dd = col_integer(),
                     decYear = col_double(),
-                    co2Ppm = col_double(),
+                    co2ppm = col_double(),
                     days = col_integer(),
                     co2OneYearAgo = col_double(),
                     co2TenYearsAgo = col_double(),
@@ -342,7 +342,7 @@ print(co2weekly) # use, e.g. n=100 to print more rows, width = to with of output
 
 ~~~
 # A tibble: 2,233 x 9
-    yyyy    mm    dd  decYear co2Ppm  days co2OneYearAgo co2TenYearsAgo
+    yyyy    mm    dd  decYear co2ppm  days co2OneYearAgo co2TenYearsAgo
    <int> <int> <int>    <dbl>  <dbl> <int>         <dbl>          <dbl>
  1  1974     5    19 1974.380 333.34     6       -999.99        -999.99
  2  1974     5    26 1974.399 332.95     6       -999.99        -999.99
@@ -404,7 +404,7 @@ We can use this to recode the values in our data that represent missing (i.e. -9
 
 
 ~~~
-co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
+co2clean <- co2weekly %>% mutate(co2ppm = ifelse(co2ppm == -999.99, NA, co2ppm),
                                  co2OneYearAgo = ifelse(co2OneYearAgo == -999.99, NA, co2OneYearAgo),
                                  co2TenYearsAgo = ifelse(co2TenYearsAgo == -999.99, NA, co2TenYearsAgo))
 ~~~
@@ -416,7 +416,7 @@ This works, but there is a lot of repetition in our code.  This is bad for sever
 
     
     ~~~
-    co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
+    co2clean <- co2weekly %>% mutate(co2ppm = ifelse(co2ppm == -999.99, NA, co2ppm),
                                      co2OneYearAgo = ifelse(co2OneYearAgo == -999.99, NA, co2OneYearAgo),
                                      co2TenYearsAgo = ifelse(co2TenYearsAgo == -999.99, NA, co2OneYearAgo))
     ~~~
@@ -427,7 +427,7 @@ This works, but there is a lot of repetition in our code.  This is bad for sever
 
     
     ~~~
-    co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
+    co2clean <- co2weekly %>% mutate(co2ppm = ifelse(co2ppm == -999.99, NA, co2ppm),
                                  co2OneYearAgo = ifelse(co2OneYearAgo == -999.99, NA, co2OneYearAgo),
                                  co2TenyearsAgo = ifelse(co2TenYearsAgo == -999.99, NA, co2TenYearsAgo))
     ~~~
@@ -456,7 +456,7 @@ For example, if we wanted to calculate the average CO<sub>2</sub> levels between
 co2clean %>% 
   filter(between(yyyy, 1980, 2000)) %>% 
   group_by(yyyy) %>%
-  summarize(avgco2 = mean(co2Ppm, na.rm = TRUE))
+  summarize(avgco2 = mean(co2ppm, na.rm = TRUE))
 ~~~
 {: .language-r}
 
@@ -491,7 +491,7 @@ We can read this as "Take co2clean *and then* filter yyyy between 1980 and 2000 
 > ~~~
 > co2myyears <- co2clean[co2clean$yyyy >= 1980 & co2clean$yyyy <= 2000, ]
 > 
-> aggregate(co2myyears[,"co2Ppm"], list(co2myyears$yyyy), mean, na.rm=TRUE)
+> aggregate(co2myyears[,"co2ppm"], list(co2myyears$yyyy), mean, na.rm=TRUE)
 > ~~~
 > {: .language-r}
 > 
@@ -686,7 +686,7 @@ co2weekly %>% mutate(sampledate = ymd(paste(yyyy, mm, dd)))
 
 ~~~
 # A tibble: 2,233 x 10
-    yyyy    mm    dd  decYear co2Ppm  days co2OneYearAgo co2TenYearsAgo
+    yyyy    mm    dd  decYear co2ppm  days co2OneYearAgo co2TenYearsAgo
    <int> <int> <int>    <dbl>  <dbl> <int>         <dbl>          <dbl>
  1  1974     5    19 1974.380 333.34     6       -999.99        -999.99
  2  1974     5    26 1974.399 332.95     6       -999.99        -999.99

@@ -315,7 +315,7 @@ There are already functions in R to perform tasks 1 and 3.  We can select a colu
 
 
 ~~~
-co2small[,"co2Ppm"] # Which will return a tibble
+co2small[,"co2ppm"] # Which will return a tibble
 ~~~
 {: .language-r}
 
@@ -323,7 +323,7 @@ co2small[,"co2Ppm"] # Which will return a tibble
 
 ~~~
 # A tibble: 5 x 1
-  co2Ppm
+  co2ppm
    <dbl>
 1 333.34
 2 332.95
@@ -336,7 +336,7 @@ co2small[,"co2Ppm"] # Which will return a tibble
 
 
 ~~~
-co2small$co2Ppm # which will return a vector
+co2small$co2ppm # which will return a vector
 ~~~
 {: .language-r}
 
@@ -350,7 +350,7 @@ co2small$co2Ppm # which will return a vector
 
 
 ~~~
-co2small[["co2Ppm"]] # which will also return a vector
+co2small[["co2ppm"]] # which will also return a vector
 ~~~
 {: .language-r}
 
@@ -365,7 +365,7 @@ You might recall that R is vectorised.  This makes it easy to perform the same o
 
 
 ~~~
-wantedcolumn <- "co2Ppm"
+wantedcolumn <- "co2ppm"
 co2small[[wantedcolumn]]
 ~~~
 {: .language-r}
@@ -376,9 +376,9 @@ Similarly, we can add or replace a new column of data using the assignment opera
 ~~~
 co2small[["newcolumn"]] <- c(10,20,30,40,50)
 
-co2small[["co2Ppm"]] <- c(0,0,0,0,0)
+co2small[["co2ppm"]] <- c(0,0,0,0,0)
 
-co2small %>% select(sampledate, co2Ppm, newcolumn)
+co2small %>% select(sampledate, co2ppm, newcolumn)
 ~~~
 {: .language-r}
 
@@ -386,7 +386,7 @@ co2small %>% select(sampledate, co2Ppm, newcolumn)
 
 ~~~
 # A tibble: 5 x 3
-  sampledate co2Ppm newcolumn
+  sampledate co2ppm newcolumn
       <date>  <dbl>     <dbl>
 1 1974-05-19      0        10
 2 1974-05-26      0        20
@@ -432,7 +432,7 @@ This just leaves task 2 to worry about.   We need to go through each element of 
 We can use the `cleanfield()` function to clean each of our variables in turn.  For example:
 
 ~~~
-co2small[["co2Ppm"]] <- cleanfield(co2small[["co2Ppm"]])
+co2small[["co2ppm"]] <- cleanfield(co2small[["co2ppm"]])
 co2small[["co2OneYearAgo"]] <- cleanfield(co2small[["co2OneYearAgo"]])
 # etc..
 co2small
@@ -443,7 +443,7 @@ co2small
 
 ~~~
 # A tibble: 5 x 10
-   yyyy    mm    dd  decYear co2Ppm  days co2OneYearAgo co2TenYearsAgo
+   yyyy    mm    dd  decYear co2ppm  days co2OneYearAgo co2TenYearsAgo
   <int> <int> <int>    <dbl>  <dbl> <int>         <lgl>          <dbl>
 1  1974     5    19 1974.380 333.34     6            NA        -999.99
 2  1974     5    26 1974.399 332.95     6            NA        -999.99
@@ -455,14 +455,14 @@ co2small
 {: .output}
 The function works, but there is a lot of repetition in our code.  This makes it easy to make mistakes. Compare:
 ```
-co2small[["co2Ppm"]] <- cleanfield(co2small[["co2Ppm"]])
+co2small[["co2ppm"]] <- cleanfield(co2small[["co2ppm"]])
 ```
 and 
 ```
-co2small[["co2PPm"]] <- cleanfield(co2small[["co2Ppm"]])
+co2small[["co2ppm"]] <- cleanfield(co2small[["co2ppm"]])
 ```
 
-The second line of code will produce a *new* column, `co2PPm`, rather than replacing the existing data.
+The second line of code will produce a *new* column, `co2ppm`, rather than replacing the existing data.
 
 Let's write another function that will take a tibble, and a vector of variables we wish to apply
 the `cleanfield()` function to.
@@ -622,7 +622,7 @@ As a recap, we could clean a single column of our data using:
 
 
 ~~~
-co2small[["co2Ppm"]] <- cleanfield(co2small[["co2Ppm"]])
+co2small[["co2ppm"]] <- cleanfield(co2small[["co2ppm"]])
 ~~~
 {: .language-r}
 
@@ -637,7 +637,7 @@ We can use a `for` loop to run our field cleaning function `cleanfield()` on mor
 > 
 > 
 > ~~~
-> fieldsWithMissingData <- c("co2Ppm", "co2OneYearAgo", "co2TenYearsAgo", "co2Increase1800")
+> fieldsWithMissingData <- c("co2ppm", "co2OneYearAgo", "co2TenYearsAgo", "co2Increase1800")
 > co2clean <- cleanfields(co2small, fieldsWithMissingData)
 > ~~~
 > {: .language-r}
@@ -700,7 +700,7 @@ cleanfields(co2weekly, c("co2OneYearAgo", "co2TenYearsAgo"))
 
 ~~~
 # A tibble: 2,233 x 10
-    yyyy    mm    dd  decYear co2Ppm  days co2OneYearAgo co2TenYearsAgo
+    yyyy    mm    dd  decYear co2ppm  days co2OneYearAgo co2TenYearsAgo
    <int> <int> <int>    <dbl>  <dbl> <int>         <dbl>          <dbl>
  1  1974     5    19 1974.380 333.34     6            NA             NA
  2  1974     5    26 1974.399 332.95     6            NA             NA
@@ -728,7 +728,7 @@ cleanfields(co2weekly, "days", missingvalue = 6)
 
 ~~~
 # A tibble: 2,233 x 10
-    yyyy    mm    dd  decYear co2Ppm  days co2OneYearAgo co2TenYearsAgo
+    yyyy    mm    dd  decYear co2ppm  days co2OneYearAgo co2TenYearsAgo
    <int> <int> <int>    <dbl>  <dbl> <int>         <dbl>          <dbl>
  1  1974     5    19 1974.380 333.34    NA       -999.99        -999.99
  2  1974     5    26 1974.399 332.95    NA       -999.99        -999.99
@@ -777,7 +777,7 @@ Let's run our function on our main data-set, and plot the results to  verify it 
 
 
 ~~~
-fieldsWithMissingData <- c("co2Ppm", "co2OneYearAgo", "co2TenYearsAgo", "co2Increase1800")
+fieldsWithMissingData <- c("co2ppm", "co2OneYearAgo", "co2TenYearsAgo", "co2Increase1800")
 co2clean <- cleanfields(co2weekly, fieldsWithMissingData) 
 summary(co2clean)
 ~~~
@@ -794,7 +794,7 @@ summary(co2clean)
  3rd Qu.:2006   3rd Qu.:10.000   3rd Qu.:23.00   3rd Qu.:2006  
  Max.   :2017   Max.   :12.000   Max.   :31.00   Max.   :2017  
                                                                
-     co2Ppm           days       co2OneYearAgo   co2TenYearsAgo 
+     co2ppm           days       co2OneYearAgo   co2TenYearsAgo 
  Min.   :326.7   Min.   :0.000   Min.   :326.8   Min.   :326.6  
  1st Qu.:345.7   1st Qu.:5.000   1st Qu.:345.2   1st Qu.:341.7  
  Median :361.3   Median :6.000   Median :360.4   Median :354.4  
@@ -897,7 +897,7 @@ names(co2small)
 
 ~~~
  [1] "yyyy"            "mm"              "dd"             
- [4] "decYear"         "co2Ppm"          "days"           
+ [4] "decYear"         "co2ppm"          "days"           
  [7] "co2OneYearAgo"   "co2TenYearsAgo"  "co2Increase1800"
 [10] "sampledate"     
 ~~~
@@ -913,7 +913,7 @@ fieldsWithMissingData
 
 
 ~~~
-[1] "co2Ppm"          "co2OneYearAgo"   "co2TenYearsAgo"  "co2Increase1800"
+[1] "co2ppm"          "co2OneYearAgo"   "co2TenYearsAgo"  "co2Increase1800"
 ~~~
 {: .output}
 

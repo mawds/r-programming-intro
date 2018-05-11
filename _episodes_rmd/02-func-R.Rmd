@@ -232,15 +232,15 @@ Let's think about the tasks we need to perform, and how we might write functions
 There are already functions in R to perform tasks 1 and 3.  We can select a column of data from a tibble in several ways:
 
 ```{r}
-co2small[,"co2Ppm"] # Which will return a tibble
-co2small$co2Ppm # which will return a vector
-co2small[["co2Ppm"]] # which will also return a vector
+co2small[,"co2ppm"] # Which will return a tibble
+co2small$co2ppm # which will return a vector
+co2small[["co2ppm"]] # which will also return a vector
 ```
 
 You might recall that R is vectorised.  This makes it easy to perform the same operation on all elements of a vector.  For this reason, the second and third approaches are likely to be more useful when writing functions.   Third approach has the advantage that the column of data we want is named in a string.  So we could put our string in a variable, and then write:
 
 ```{r, eval=FALSE}
-wantedcolumn <- "co2Ppm"
+wantedcolumn <- "co2ppm"
 co2small[[wantedcolumn]]
 ```
 
@@ -249,9 +249,9 @@ Similarly, we can add or replace a new column of data using the assignment opera
 ```{r}
 co2small[["newcolumn"]] <- c(10,20,30,40,50)
 
-co2small[["co2Ppm"]] <- c(0,0,0,0,0)
+co2small[["co2ppm"]] <- c(0,0,0,0,0)
 
-co2small %>% select(sampledate, co2Ppm, newcolumn)
+co2small %>% select(sampledate, co2ppm, newcolumn)
 ```
 
 Before we go any further, let's  regenerate `co2small`, as we've overwritten some of the data:
@@ -291,7 +291,7 @@ cleanfield <- function(indata, missingvalue = -999.99){
 
 We can use the `cleanfield()` function to clean each of our variables in turn.  For example:
 ```{r}
-co2small[["co2Ppm"]] <- cleanfield(co2small[["co2Ppm"]])
+co2small[["co2ppm"]] <- cleanfield(co2small[["co2ppm"]])
 co2small[["co2OneYearAgo"]] <- cleanfield(co2small[["co2OneYearAgo"]])
 # etc..
 co2small
@@ -299,14 +299,14 @@ co2small
 ```
 The function works, but there is a lot of repetition in our code.  This makes it easy to make mistakes. Compare:
 ```
-co2small[["co2Ppm"]] <- cleanfield(co2small[["co2Ppm"]])
+co2small[["co2ppm"]] <- cleanfield(co2small[["co2ppm"]])
 ```
 and 
 ```
-co2small[["co2PPm"]] <- cleanfield(co2small[["co2Ppm"]])
+co2small[["co2ppm"]] <- cleanfield(co2small[["co2ppm"]])
 ```
 
-The second line of code will produce a *new* column, `co2PPm`, rather than replacing the existing data.
+The second line of code will produce a *new* column, `co2ppm`, rather than replacing the existing data.
 
 Let's write another function that will take a tibble, and a vector of variables we wish to apply
 the `cleanfield()` function to.
@@ -382,7 +382,7 @@ print(testdata)
 As a recap, we could clean a single column of our data using:
 
 ```{r}
-co2small[["co2Ppm"]] <- cleanfield(co2small[["co2Ppm"]])
+co2small[["co2ppm"]] <- cleanfield(co2small[["co2ppm"]])
 ```
 
 We can use a `for` loop to run our field cleaning function `cleanfield()` on more than one column at once
@@ -395,7 +395,7 @@ We can use a `for` loop to run our field cleaning function `cleanfield()` on mor
 > For example,
 > 
 > ```{r, eval = FALSE}
-> fieldsWithMissingData <- c("co2Ppm", "co2OneYearAgo", "co2TenYearsAgo", "co2Increase1800")
+> fieldsWithMissingData <- c("co2ppm", "co2OneYearAgo", "co2TenYearsAgo", "co2Increase1800")
 > co2clean <- cleanfields(co2small, fieldsWithMissingData)
 > ```
 > will clean clean the input data and assign the tibble containing the 
@@ -493,7 +493,7 @@ This lets us write functions that are very flexible.
 Let's run our function on our main data-set, and plot the results to  verify it has done what we expected:
 
 ```{r}
-fieldsWithMissingData <- c("co2Ppm", "co2OneYearAgo", "co2TenYearsAgo", "co2Increase1800")
+fieldsWithMissingData <- c("co2ppm", "co2OneYearAgo", "co2TenYearsAgo", "co2Increase1800")
 co2clean <- cleanfields(co2weekly, fieldsWithMissingData) 
 summary(co2clean)
 ```

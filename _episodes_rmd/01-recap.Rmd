@@ -251,7 +251,7 @@ co2weekly <- read_table("data/co2_weekly_mlo.txt",
                                 "mm",
                                 "dd",
                                 "decYear",
-                                "co2Ppm",
+                                "co2ppm",
                                 "days",
                                 "co2OneYearAgo",
                                 "co2TenYearsAgo",
@@ -261,7 +261,7 @@ co2weekly <- read_table("data/co2_weekly_mlo.txt",
                     mm = col_integer(),
                     dd = col_integer(),
                     decYear = col_double(),
-                    co2Ppm = col_double(),
+                    co2ppm = col_double(),
                     days = col_integer(),
                     co2OneYearAgo = col_double(),
                     co2TenYearsAgo = col_double(),
@@ -304,7 +304,7 @@ Here the test (`demodata == 5`) is true for the 5th element.  The recycling rule
 We can use this to recode the values in our data that represent missing (i.e. -999.99) with `NA`:
 
 ```{r}
-co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
+co2clean <- co2weekly %>% mutate(co2ppm = ifelse(co2ppm == -999.99, NA, co2ppm),
                                  co2OneYearAgo = ifelse(co2OneYearAgo == -999.99, NA, co2OneYearAgo),
                                  co2TenYearsAgo = ifelse(co2TenYearsAgo == -999.99, NA, co2TenYearsAgo))
 ```
@@ -315,7 +315,7 @@ This works, but there is a lot of repetition in our code.  This is bad for sever
 
     ```{r, eval=FALSE}
     
-    co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
+    co2clean <- co2weekly %>% mutate(co2ppm = ifelse(co2ppm == -999.99, NA, co2ppm),
                                      co2OneYearAgo = ifelse(co2OneYearAgo == -999.99, NA, co2OneYearAgo),
                                      co2TenYearsAgo = ifelse(co2TenYearsAgo == -999.99, NA, co2OneYearAgo))
     ```
@@ -325,7 +325,7 @@ This works, but there is a lot of repetition in our code.  This is bad for sever
 
     ```{r, eval=FALSE}
 
-    co2clean <- co2weekly %>% mutate(co2Ppm = ifelse(co2Ppm == -999.99, NA, co2Ppm),
+    co2clean <- co2weekly %>% mutate(co2ppm = ifelse(co2ppm == -999.99, NA, co2ppm),
                                  co2OneYearAgo = ifelse(co2OneYearAgo == -999.99, NA, co2OneYearAgo),
                                  co2TenyearsAgo = ifelse(co2TenYearsAgo == -999.99, NA, co2TenYearsAgo))
     ```
@@ -352,7 +352,7 @@ For example, if we wanted to calculate the average CO<sub>2</sub> levels between
 co2clean %>% 
   filter(between(yyyy, 1980, 2000)) %>% 
   group_by(yyyy) %>%
-  summarize(avgco2 = mean(co2Ppm, na.rm = TRUE))
+  summarize(avgco2 = mean(co2ppm, na.rm = TRUE))
 ```
 
 We can read this as "Take co2clean *and then* filter yyyy between 1980 and 2000 *and then* group by yyyy *and then* summarise, taking the mean co2ppm".
@@ -366,7 +366,7 @@ We can read this as "Take co2clean *and then* filter yyyy between 1980 and 2000 
 > 
 > co2myyears <- co2clean[co2clean$yyyy >= 1980 & co2clean$yyyy <= 2000, ]
 > 
-> aggregate(co2myyears[,"co2Ppm"], list(co2myyears$yyyy), mean, na.rm=TRUE)
+> aggregate(co2myyears[,"co2ppm"], list(co2myyears$yyyy), mean, na.rm=TRUE)
 > ```
 > 
 > This is fine.  Although it is slightly shorter than the tidyverse approach, it is (in my opinion) much less clear
