@@ -15,7 +15,7 @@ objectives:
 keypoints:
 - "The tidyverse provdes an integrated set of packages that are useful for data analysis."
 - "Use `read_xxx()` to read in different types of data, e.g. `read_csv()` for comma separated data. The output of a `read_xxx()` function is a tibble."
-- "Tibbles are used for storing tabular data.  They are the tidyverse's take on a data.frame"
+- "Tibbles are used for storing tabular data.  They are the tidyverse's take on a data frame"
 - "Functions in the `dplyr` package let us manipulate tibbles"
 - "We can join dplyr 'verbs' with pipes to perform more complex analyses"
 - "The `lubridate` package makes dealing with dates and times easier."
@@ -370,7 +370,7 @@ We can read this as "Take co2clean *and then* filter yyyy between 1980 and 2000 
 > ```
 > 
 > This is fine.  Although it is slightly shorter than the tidyverse approach, it is (in my opinion) much less clear
-> what's happening.  We also need to make a temporary data.frame to separate our filtering and aggregation operations.
+> what's happening.  We also need to make a temporary data frame to separate our filtering and aggregation operations.
 {: .callout}
 
 
