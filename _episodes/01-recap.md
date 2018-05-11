@@ -363,39 +363,44 @@ In contrast to the gapminder data we used previously, it looks like we will need
 ## Dealing with missing data
 
 It looks like `-999.99` is used as a missing or invalid data value. We can use the `mutate` command to recode the 
-missing data to `NA`. To do this, we'll use the `ifelse()` function:
+missing data to `NA`. To do this, we'll use the `ifelse()` function.  Using an example vector, `demodata`:
+
+
 
 
 ~~~
 demodata <- 1:10
-ifelse(demodata == 5, demodata, NA)
+
+ifelse(demodata >= 5, demodata + 1, -demodata)
 ~~~
 {: .language-r}
 
 
 
 ~~~
- [1] NA NA NA NA  5 NA NA NA NA NA
+ [1] -1 -2 -3 -4  6  7  8  9 10 11
 ~~~
 {: .output}
+The first argument `demodata >= 5` returns a logical vector (FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE).   If the nth element of the first argument is `TRUE`, the nth element of the second argument (`demodata + 1`) is returned.  If the nth element of the first argument is `FALSE`, the nth element of the third argument is returned (`-demodata`).
 
-Let's unpick this to understand what the `ifelse()` function is doing;
+You may remember that R `recycles` vectors if they are too short; often this is annoying, but we can use this to our advantage here.    If want to replace values in a vector if they meet a certain condition, we can use a scalar value for the  second and/or third argument.  For example, to replace the value `5` with `NA` in our `demodata` vector, we can use:
 
 
 ~~~
-demodata <- 1:10
-demodata == 5
+ifelse(demodata == 5, NA, demodata)
 ~~~
 {: .language-r}
 
 
 
 ~~~
- [1] FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE
+ [1]  1  2  3  4 NA  6  7  8  9 10
 ~~~
 {: .output}
 
-The first argument of `ifelse()` evaluates to a logical vector. If the nth element of the vector is `TRUE`, `ifelse()` will output the nth element of the 2nd argument (so the nth element of `demodata` in this example).  If the element is FALSE the nth element of the 3rd argument will be replaced.  But the 3rd argument is only a single value...what's going on here?  You may remember that R `recycles` vectors if they are too short. This is what happens here; as the 3rd argument in our example consists of a single value, it will be output for all elements that are  `FALSE`
+Here the test (`demodata == 5`) is true for the 5th element.  The recycling rule means that we always obtain `NA` for elements that tes to `TRUE`.  Elements that test to `FALSE` will get their original value of `demodata`.
+
+We can use this to recode the values in our data that represent missing (i.e. -999.99) with `NA`:
 
 
 ~~~
