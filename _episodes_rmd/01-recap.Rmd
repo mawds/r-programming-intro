@@ -132,7 +132,7 @@ We explicitly list the column type of each variable in order to improve the robu
 {: .callout}
 
 
-Let's take a look at the CO<sub>2</sub> data we will be using in this episode:
+Let's take a look at the CO<sub>2</sub> data we will be using in this episode.  This in the `data/` directory, and called `co2_weekly_mlo.txt`.  You can preview the file by selecting it in the `Files` tab of RStudio (or using, e.g. Notepad++):
 
 ```
 # --------------------------------------------------------------------
@@ -196,7 +196,8 @@ Let's take a look at the CO<sub>2</sub> data we will be using in this episode:
 > ## Different file formats
 >
 > In the previous R course we made extensive use of the gapminder data.
-> Compare the format of the  CO<sub>2</sub> data (`data/co2_weekly_mlo.txt`) and the gapminder data (`data/gapminder-FiveYearData.csv`).
+> Compare the format of the  CO<sub>2</sub> data (`data/co2_weekly_mlo.txt`) and the gapminder data (`data/gapminder-FiveYearData.csv`).  You can preview the files within RStudio by selecting them in the `Files`
+> tab, or by loading them into, e.g. Notepad++.
 >
 > The gapminder data is included in the [course data]({{ page.root }}/data/data.zip), which you should have already downloaded. 
 >
