@@ -86,7 +86,7 @@ We will be using R Studio in the course; it provides a much nicer environment fo
 > We don't cover version control in this course, however [Research IT offers a course on using git](http://app.manchester.ac.uk/RGIT)
 > (logon required). [Git](https://git-scm.com/) is a popular version control system, 
 > that integrates well with R Studio.  Git makes collaboration with others easy when it is used in 
-> conjunction with [github](https://www.github.com).
+> conjunction with [GitHub](https://www.github.com).
 {: .callout}
 
 
