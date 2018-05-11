@@ -206,18 +206,18 @@ Let's take a look at the CO<sub>2</sub> data we will be using in this episode.  
 > > ## Solution
 > > 
 > > The main differences are:
-> > * The co2 data contains documentation and licencing information at its start.  These rows
+> > * The CO<sub>2</sub> data contains documentation and licencing information at its start.  These rows
 > >   are prefixed with the # symbol.
 > > * The gapminder data contains variable names in its first row (remember we cannot start an R
-> >   variable with a number, and including spaces needs special tricks (and is generally a bad idea)).  The co2 data doesn't 
+> >   variable with a number, and including spaces needs special tricks (and is generally a bad idea)).  The CO<sub>2</sub> data doesn't 
 > >   contain variable names in a nice format.
-> > * In the gapminder data each value is separated by a single comma.  In the co2 data, the values
+> > * In the gapminder data each value is separated by a single comma.  In the CO<sub>2</sub> data, the values
 > >   are separated by (varying numbers) of spaces.
 > {: .solution}
 {: .challenge}
 
 The `read_csv()` function is designed to read comma separated files (like the gapminder data).  This isn't
-going to work for the CO2 data.  There are two different approaches we can use:
+going to work for the CO<sub>2</sub> data.  There are two different approaches we can use:
 
 * We can make use of the fact that each variable starts in the same column in each row; this data is
  called "fixed width", and can read with `read_fwf()`.  If we consult the help file for this, fixed width data is described as "painful to parse because you need to describe the length of every field".
@@ -329,7 +329,7 @@ To deal with this issue we can write a _function_; we will discuss this in the n
 
 We can use dplyr "verbs" and the pipe operator, `%>%` to construct analyses.  Think of the pipe character as meaning "and then".
 
-For example, if we wanted to calculate the average CO2 levels between 1980 and 2000, we could write:
+For example, if we wanted to calculate the average CO<sub>2</sub> levels between 1980 and 2000, we could write:
 
 ```{r}
 co2clean %>% 

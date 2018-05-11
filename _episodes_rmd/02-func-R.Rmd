@@ -36,7 +36,7 @@ load("checkpoints/01end.RData")
 ```
 
 
-In the previous episode we loaded in the CO2 data and recoded the missing values to `NA`.    In this
+In the previous episode we loaded in the CO<sub>2</sub> data and recoded the missing values to `NA`.    In this
 episode we will recode the missing values using a function.   We mentioned in the previous episode that there were several disadvantages to the approach we adopted there, of writing separate code for each of the 
 variables we needed to recode:
 
@@ -215,9 +215,9 @@ In this case the function will use the variable that was defined within the func
 
 ## Handling missing values
 
-Now we've seen how to write a function, and to pass parameters to it, let's write a function that will recode the values in our CO2 data that are invalid to `NA`.  R uses the special value `NA` to represent data that are not available.
+Now we've seen how to write a function, and to pass parameters to it, let's write a function that will recode the values in our CO<sub>2</sub> data that are invalid to `NA`.  R uses the special value `NA` to represent data that are not available.
 
-It's often useful to work with a smaller version of your data when developing a code, particularly if your program takes some time to run.  Let's just work with the first 5 rows of our CO2 data:
+It's often useful to work with a smaller version of your data when developing a code, particularly if your program takes some time to run.  Let's just work with the first 5 rows of our CO<sub>2</sub> data:
 
 ```{r}
 co2small <- co2weekly[1:5,]
@@ -498,7 +498,7 @@ co2clean <- cleanfields(co2weekly, fieldsWithMissingData)
 summary(co2clean)
 ```
 
-The summary shows us that we don't have any negative co2 values, and that we have `NA` values instead.  This suggests that our function is behaving as we expect.  In the next episode we'll look at how to formalise this testing process.
+The summary shows us that we don't have any negative CO<sub>2</sub> values, and that we have `NA` values instead.  This suggests that our function is behaving as we expect.  In the next episode we'll look at how to formalise this testing process.
 
 ## Conditional execution
 

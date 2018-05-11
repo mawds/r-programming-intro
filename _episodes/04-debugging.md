@@ -16,7 +16,7 @@ keypoints:
 
 
 In the previous episodes we showed how to create functions, and test that they are working.  In this episode we will use these ideas, and expand on them to load the weather data that you downloaded at the start of the course.   In your project's `data` folder you will see that there are a series of weather data files, named
-`met_mlo_insitu_1_obop_hour_yyyy.txt`, where `yyyy` is the year.  There is also a file, `met_README` which explains the format of the data files. Section 5.3 of this file contains information for the files we will be loading.    Take a look at this section now.  In contrast to the CO2 data, where all missing data was represented by `-999.99`, it looks like the missing value for some fields in the weather data are different.  
+`met_mlo_insitu_1_obop_hour_yyyy.txt`, where `yyyy` is the year.  There is also a file, `met_README` which explains the format of the data files. Section 5.3 of this file contains information for the files we will be loading.    Take a look at this section now.  In contrast to the CO<sub>2</sub> data, where all missing data was represented by `-999.99`, it looks like the missing value for some fields in the weather data are different.  
 
 Fortunately, we used the `...` argument in our `cleanfields()` function so that we can override the default for the `missingvalue` argument.
 
@@ -43,11 +43,11 @@ can save ourselves a great deal of time and frustration.
 > > In each file:
 > > 
 > > * We will need to load the data into a tibble.  `readr` comes with lots of functions to do this; we can
-> > use `read_table()` as we did with the CO2 data (although the parameters we use will need to be modified as the 
+> > use `read_table()` as we did with the CO<sub>2</sub> data (although the parameters we use will need to be modified as the 
 > > variables contained in the data are different).
-> > * We will need to clean the data.  We have a function that will do this for a single field, with an arbitrary special value to represent "missing".  Our function to handle more than one field doesn't let us specify anything other than the default missing value from our CO2 data.  But we may be able to extend this function.  
+> > * We will need to clean the data.  We have a function that will do this for a single field, with an arbitrary special value to represent "missing".  Our function to handle more than one field doesn't let us specify anything other than the default missing value from our CO<sub>2</sub> data.  But we may be able to extend this function.  
 > > * We will need to handle the date and time fields in the data.  We used `lubridate`'s `ymd()` function to 
-> > do this with the CO2 data. So we're part way there on this
+> > do this with the CO<sub>2</sub> data. So we're part way there on this
 > > * It would be a good idea to validate the data.  For example, precipitation should be `>=0`, the wind direction 
 > > should be between 0 and 359 degrees.
 > > 
