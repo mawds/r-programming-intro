@@ -250,8 +250,7 @@ Let's take a look at the CO<sub>2</sub> data we will be using in this episode.  
 The `read_csv()` function is designed to read comma separated files (like the gapminder data).  This isn't
 going to work for the CO<sub>2</sub> data.  There are two different approaches we can use:
 
-* We can make use of the fact that each variable starts in the same column in each row; this data is
- called "fixed width", and can read with `read_fwf()`.  If we consult the help file for this, fixed width data is described as "painful to parse because you need to describe the length of every field".
+* We can see that this data is 'fixed width' i.e. columns are not separated by a character like a comma, but data is padded with spaces so that the columns are always the same number of characters wide. Data formatted in this way is  called "fixed width", and can read with `read_fwf()`.  If we consult the help file for this, fixed width data is described as "painful to parse because you need to describe the length of every field".
  * We can use the fact that there is at least one space between each variable.  The data is tabular, so we use `read_table()`.
  
 
